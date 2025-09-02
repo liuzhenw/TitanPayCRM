@@ -17,16 +17,17 @@ public class CrmEntityFrameworkCoreModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        ConfigurationEntityOptions();
+        ConfigureEntityOptions();
         AddDbContext(context.Services);
     }
 
-    private void ConfigurationEntityOptions()
+    private void ConfigureEntityOptions()
     {
         Configure<AbpEntityOptions>(options =>
         {
             options.Entity<User>(entity =>
                 entity.DefaultWithDetailsFunc = user => user.Include(x => x.UserRoles));
+           
             options.Entity<Referrer>(entity =>
                 entity.DefaultWithDetailsFunc = referrer => referrer.Include(x => x.Statistics));
         });
