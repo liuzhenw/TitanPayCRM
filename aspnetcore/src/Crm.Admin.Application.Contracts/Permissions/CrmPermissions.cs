@@ -21,6 +21,15 @@ public class CrmPermissions
         public const string Update = Default + ".Update";
         public const string Delete = Default + ".Delete";
     }
+    
+    public static class Products
+    {
+        public const string Default = GroupName + ".Products";
+        public const string Create = Default + ".Create";
+        public const string Update = Default + ".Update";
+        public const string Delete = Default + ".Delete";
+        public const string SaleLogs = Default + ".SaleLogs";
+    }
 
     public static string[] GetAll()
     {

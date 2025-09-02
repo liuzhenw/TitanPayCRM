@@ -1,9 +1,10 @@
 using System;
+using Volo.Abp;
 using Volo.Abp.Domain.Entities;
 
 namespace Crm.Products;
 
-public class Product : BasicAggregateRoot<string>
+public class Product : BasicAggregateRoot<string>, ISoftDelete
 {
     protected Product() { }
 
@@ -44,6 +45,8 @@ public class Product : BasicAggregateRoot<string>
     /// </summary>
     /// <returns></returns>
     public decimal SalesRevenue { get; private set; }
+
+    public bool IsDeleted { get; private set; }
 
     public DateTimeOffset? UpdatedAt { get; set; }
     public DateTimeOffset CreatedAt { get; private set; }
