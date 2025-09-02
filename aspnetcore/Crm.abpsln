@@ -1,0 +1,9 @@
+{
+  "id": "94f73928-59ce-4c1e-a976-5d797cdeeec3",
+  "template": "empty",
+  "modules": {
+    "Crm": {
+      "path": "Crm.abpmdl"
+    }
+  }
+}

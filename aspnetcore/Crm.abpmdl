@@ -1,0 +1,58 @@
+{
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "Crm.Domain": {
+      "path": "src/Crm.Domain/Crm.Domain.abppkg",
+      "folder": "src"
+    },
+    "Crm.Application.Contracts": {
+      "path": "src/Crm.Application.Contracts/Crm.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "Crm.Application": {
+      "path": "src/Crm.Application/Crm.Application.abppkg",
+      "folder": "src"
+    },
+    "Crm.EntityFrameworkCore": {
+      "path": "src/Crm.EntityFrameworkCore/Crm.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "Crm.HttpApi": {
+      "path": "src/Crm.HttpApi/Crm.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "Crm.HttpApi.Client": {
+      "path": "src/Crm.HttpApi.Client/Crm.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "Crm.TestBase": {
+      "path": "test/Crm.TestBase/Crm.TestBase.abppkg",
+      "folder": "test"
+    },
+    "Crm.EntityFrameworkCore.Tests": {
+      "path": "test/Crm.EntityFrameworkCore.Tests/Crm.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "Crm.Domain.Tests": {
+      "path": "test/Crm.Domain.Tests/Crm.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "Crm.Application.Tests": {
+      "path": "test/Crm.Application.Tests/Crm.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "Crm.Domain.Shared": {
+      "path": "src/Crm.Domain.Shared/Crm.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "Crm.Installer": {
+       "path": "src/Crm.Installer/Crm.Installer.abppkg",
+       "folder": "src"
+    }
+  }
+}
