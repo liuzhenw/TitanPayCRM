@@ -57,7 +57,7 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
     /// <summary>
     /// 是否禁用
     /// </summary>
-    public bool IsDisabled { get; private set; }
+    public bool IsDisabled { get; set; }
 
     public string? Remark { get; set; }
 

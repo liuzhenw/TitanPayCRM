@@ -17,7 +17,7 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
     {
         var dbContext = await GetDbContextAsync();
         var query = dbContext.Set<ReferralRelation>()
-            .Where(x => x.RecommendeeId == recommendeeId);
+            .Where(x => x.Recommendee.Id == recommendeeId);
         
         if (minDepth.HasValue)
         {
@@ -31,13 +31,13 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
     {
         var dbContext = await GetDbContextAsync();
         return await dbContext.Set<ReferralRelation>()
-            .FirstOrDefaultAsync(x => x.RecommendeeId == recommendeeId && x.Depth == 1);
+            .FirstOrDefaultAsync(x => x.Recommendee.Id == recommendeeId && x.Depth == 1);
     }
 
     public async Task<bool> ExistsAsync(Guid recommendeeId)
     {
         var dbContext = await GetDbContextAsync();
         return await dbContext.Set<ReferralRelation>()
-            .AnyAsync(x => x.RecommendeeId == recommendeeId);
+            .AnyAsync(x => x.Recommendee.Id == recommendeeId);
     }
 }

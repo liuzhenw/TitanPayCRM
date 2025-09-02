@@ -33,7 +33,7 @@ public class SaleStatistic : Entity<Guid>
 
     public DateTimeOffset? UpdatedAt { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.Now;
-    public virtual Referrer Referrer { get; private set; }
+    public virtual Referrer Referrer { get; private set; } = null!;
 
     public void AddSale(uint volume, decimal revenue, decimal commission)
     {

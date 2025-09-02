@@ -1,9 +1,10 @@
 using System;
+using Crm.Accounts;
 using Volo.Abp.Domain.Entities;
 
 namespace Crm.Referrals;
 
-public class ReferralLevel : BasicAggregateRoot<string>
+public class ReferralLevel : BasicAggregateRoot<string>, IHasConcurrencyStamp
 {
     protected ReferralLevel() { }
 
@@ -13,6 +14,7 @@ public class ReferralLevel : BasicAggregateRoot<string>
         Size = size;
         Multiplier = multiplier;
         CreatedAt = DateTimeOffset.Now;
+        ConcurrencyStamp = Guid.NewGuid().ToString("N");
     }
 
     /// <summary>
@@ -28,21 +30,45 @@ public class ReferralLevel : BasicAggregateRoot<string>
     /// <summary>
     /// 佣金系数
     /// </summary>
-    public decimal Multiplier { get; private set; }
-
+    public decimal Multiplier { get; set; }
 
     /// <summary>
     /// 该等级的人数
     /// </summary>
-    public uint UserCount { get; internal set; }
+    public uint UserCount { get; private set; }
 
     /// <summary>
     /// 该等级累计佣金
     /// </summary>
-    public decimal TotalCommission { get; internal set; }
+    public decimal TotalCommission { get; private set; }
 
+    public DateTimeOffset? UpdatedAt { get; set; }
     public DateTimeOffset CreatedAt { get; private set; }
+    public string ConcurrencyStamp { get; set; } = null!;
+    
+    internal void SetSize(uint size)
+    {
+        Size = size;
+        UpdatedAt = DateTimeOffset.Now;
+    }
 
+    public void OnUserJoined()
+    {
+        UserCount++;
+        UpdatedAt = DateTimeOffset.Now;
+    }
+
+    public void OnUserQuited()
+    {
+        UserCount--;
+        UpdatedAt = DateTimeOffset.Now;
+    }
+
+    public void OnCommissionAdded(decimal commission)
+    {
+        TotalCommission += commission;
+        UpdatedAt = DateTimeOffset.Now;
+    }
 
     #region OverrideOperator
 

@@ -50,7 +50,7 @@ public class ReferralManager(
         var referrer = new Referrer(request);
         await referrerRepo.InsertAsync(referrer);
 
-        level.UserCount++;
+        level.OnUserJoined();
         await levelRepo.UpdateAsync(level);
     }
 
@@ -59,7 +59,7 @@ public class ReferralManager(
         var newLevel = await levelRepo.GetAsync(newLevelId);
         var curLevel = await levelRepo.GetAsync(referrer.LevelId);
         if (newLevel == curLevel) return;
-        
+
         // 确保等级不能低于下级
         if (newLevel < curLevel)
         {
@@ -84,6 +84,9 @@ public class ReferralManager(
         }
 
         referrer.SetLevel(newLevel);
+        newLevel.OnUserJoined();
+        curLevel.OnUserQuited();
+        await levelRepo.UpdateManyAsync([newLevel, curLevel]);
     }
 
     public async Task AddRelationAsync(User recommender, User recommendee)
@@ -104,11 +107,11 @@ public class ReferralManager(
         var ancestorRelations = await relationRepo.GetAncestorListAsync(recommender.Id, 1);
         foreach (var item in ancestorRelations.OrderBy(x => x.Depth))
         {
-            var ancestorUser = await userRepo.GetAsync(item.RecommenderId);
+            var ancestorUser = await userRepo.GetAsync(item.Recommender.Id);
             var ancestorRelation = new ReferralRelation(ancestorUser, recommendee, item.Depth + 1u);
             relations.Add(ancestorRelation);
 
-            var ancestor = await referrerRepo.GetAsync(item.RecommenderId);
+            var ancestor = await referrerRepo.GetAsync(item.Recommender.Id);
             ancestor.OnIndirectReferralAdded();
             referrers.Add(ancestor);
         }
@@ -126,7 +129,7 @@ public class ReferralManager(
         List<ReferralLevel> updatedLevels = [];
         foreach (var relation in ancestorRelations)
         {
-            var referrer = await referrerRepo.GetAsync(relation.RecommenderId);
+            var referrer = await referrerRepo.GetAsync(relation.Recommender.Id);
             if (referrer.IsDisabled) continue;
 
             var level = levels.First(x => x.Id == referrer.LevelId);
@@ -135,7 +138,8 @@ public class ReferralManager(
             await commissionRepo.InsertAsync(commissionLog);
 
             referrer.OnCommissionAdded(saleLog, commission);
-            level.TotalCommission += commission;
+            level.OnCommissionAdded(commission);
+            level.UpdatedAt = DateTimeOffset.Now;
             await referrerRepo.UpdateAsync(referrer);
 
             if (updatedLevels.All(x => x.Id != level.Id))
@@ -171,13 +175,26 @@ public class ReferralManager(
         await referrerRepo.UpdateAsync(referrer);
     }
 
-    public async Task CreateReferralLevelAsync(string id, string name, uint size, decimal multiplier)
+    public async Task<ReferralLevel> CreateReferralLevelAsync(string id, string name, uint size, decimal multiplier)
     {
         if (await levelRepo.ExistsAsync(size))
             throw new UserFriendlyException($"大小为 {size} 的等级已存在!");
 
-        var level = new ReferralLevel(id, name, size, multiplier);
-        await levelRepo.InsertAsync(level);
+        return new ReferralLevel(id, name, size, multiplier);
+    }
+
+    public async Task ModifyReferralLevelSizeAsync(ReferralLevel level, uint newSize)
+    {
+        if (level.Size == newSize) return;
+        
+        if (await levelRepo.ExistsAsync(newSize))
+            throw new UserFriendlyException($"大小为 {newSize} 的等级已存在!");
+
+        // 调小
+        if (level.Size > newSize && level.UserCount > 0)
+            throw new UserFriendlyException("此等级下已有用户,无法调整大小!");
+
+        level.SetSize(newSize);
     }
 
     private async Task ValidateReferrerRequest(User user, ReferralLevel level)
@@ -185,7 +202,7 @@ public class ReferralManager(
         var parentRelations = await relationRepo.FindParentAsync(user.Id);
         if (parentRelations is not null)
         {
-            var parent = await referrerRepo.FindAsync(parentRelations.RecommenderId);
+            var parent = await referrerRepo.FindAsync(parentRelations.Recommender.Id);
             // 上级不是推荐人身份,下级也不能成为推荐人
             if (parent is null)
                 throw new BusinessException(CrmErrorCodes.Referrals.CannotApplyThisLevel);

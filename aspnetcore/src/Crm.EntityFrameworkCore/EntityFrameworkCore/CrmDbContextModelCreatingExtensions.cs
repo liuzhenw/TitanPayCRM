@@ -49,8 +49,20 @@ public static class CrmDbContextModelCreatingExtensions
         });
         builder.Entity<ReferralRelation>(options =>
         {
-            options.Property(x => x.RecommendeeEmail).HasColumnType("citext");
-            options.Property(x => x.RecommenderEmail).HasColumnType("citext");
+            options.OwnsOne(x => x.Recommender, opt =>
+            {
+                opt.Property(x => x.Id).HasColumnName("RecommenderId");
+                opt.Property(x => x.Email)
+                    .HasColumnName("RecommenderEmail")
+                    .HasColumnType("citext");
+            });
+            options.OwnsOne(x => x.Recommendee, opt =>
+            {
+                opt.Property(x => x.Id).HasColumnName("RecommendeeId");
+                opt.Property(x => x.Email)
+                    .HasColumnName("RecommendeeEmail")
+                    .HasColumnType("citext");
+            });
         });
         builder.Entity<Referrer>(options =>
         {
