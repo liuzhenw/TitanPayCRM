@@ -2,6 +2,7 @@ using System.Text;
 using Astra;
 using Astra.Permissions;
 using Crm.Admin;
+using Crm.DbMigrations;
 using Crm.EntityFrameworkCore;
 using Crm.Localization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -42,6 +43,12 @@ public class CrmWebApiModule : AbpModule
         ConfigureSwagger(services, configuration);
         ConfigureRoutePrefix(services);
         Configure<AbpDbContextOptions>(options => options.UseNpgsql());
+    }
+    
+    public override async Task OnPreApplicationInitializationAsync(ApplicationInitializationContext context)
+    {
+        var dbMigrationChecker = context.ServiceProvider.GetRequiredService<DbMigrationChecker>();
+        await dbMigrationChecker.CheckAndApplyDatabaseMigrationsAsync();
     }
 
     public override void OnPostApplicationInitialization(ApplicationInitializationContext context)
