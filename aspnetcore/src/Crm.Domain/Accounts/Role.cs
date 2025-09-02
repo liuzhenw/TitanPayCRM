@@ -20,3 +20,9 @@ public class Role : BasicAggregateRoot<string>
     public DateTimeOffset? UpdatedAt { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.Now;
 }
+
+public class RoleCache
+{
+    public string Id { get; set; } = null!;
+    public string Name { get; set; } = null!;
+}

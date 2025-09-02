@@ -37,8 +37,8 @@ public class Product : BasicAggregateRoot<string>
     /// <summary>
     /// 销售量
     /// </summary>
-    public uint  SalesVolume{ get; private set; }
-    
+    public uint SalesVolume { get; private set; }
+
     /// <summary>
     /// 销售额
     /// </summary>
@@ -54,4 +54,11 @@ public class Product : BasicAggregateRoot<string>
         SalesVolume += log.Quantity;
         UpdatedAt = DateTimeOffset.Now;
     }
+}
+
+public class ProductCache
+{
+    public string Id { get; set; } = null!;
+    public string Name { get; set; } = null!;
+    public string? ImageUri { get; set; }
 }

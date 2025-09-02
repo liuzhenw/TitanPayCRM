@@ -1,7 +1,11 @@
+using Crm.Accounts;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.Modularity;
 using Crm.Products;
+using Crm.Referrals;
+using Microsoft.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.DependencyInjection;
 
 namespace Crm.EntityFrameworkCore;
 
@@ -13,12 +17,39 @@ public class CrmEntityFrameworkCoreModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        context.Services.AddAbpDbContext<CrmDbContext>(options =>
+        ConfigurationEntityOptions();
+        AddDbContext(context.Services);
+    }
+
+    private void ConfigurationEntityOptions()
+    {
+        Configure<AbpEntityOptions>(options =>
+        {
+            options.Entity<Referrer>(entity =>
+                entity.DefaultWithDetailsFunc = referrer => referrer.Include(x => x.Statistics));
+        });
+    }
+
+    private static void AddDbContext(IServiceCollection services)
+    {
+        services.AddAbpDbContext<CrmDbContext>(options =>
         {
             options.AddDefaultRepositories<ICrmDbContext>(includeAllEntities: true);
-            
+
+            // Accounts repositories
+            options.AddRepository<User, UserRepository>();
+            options.AddRepository<Role, RoleRepository>();
+
+            // Products repositories
             options.AddRepository<ProductSaleLog, ProductSaleLogRepository>();
             options.AddRepository<Product, ProductRepository>();
+
+            // Referrals repositories
+            options.AddRepository<ReferrerRequest, ReferrerRequestRepository>();
+            options.AddRepository<CommissionLog, CommissionLogRepository>();
+            options.AddRepository<ReferralLevel, ReferrerLevelRepository>();
+            options.AddRepository<ReferralRelation, ReferralRelationRepository>();
+            options.AddRepository<WithdrawalRequest, WithdrawalRequestRepository>();
         });
     }
 }
