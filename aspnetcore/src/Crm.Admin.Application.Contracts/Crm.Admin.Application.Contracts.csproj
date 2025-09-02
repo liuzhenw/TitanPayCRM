@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props"/>
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Crm.Admin</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\src\Astra.Application.Contracts\Astra.Application.Contracts.csproj"/>
+    <ProjectReference Include="..\Crm.Domain.Shared\Crm.Domain.Shared.csproj"/>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,26 @@
+using Volo.Abp.Application.Dtos;
+
+namespace Crm.Admin.Accounts;
+
+public class UserBasicDto : EntityDto<Guid>
+{
+    public string Email { get; private set; } = null!;
+    public string? AvatarUri { get; set; }
+}
+public class UserDto : UserBasicDto
+{
+    public ushort Attempts { get; set; }
+    public DateTimeOffset? LockedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+}
+
+public class UserWithDetailsDto : UserDto
+{
+    public List<string> Roles { get; set; } = null!;
+}
+
+public class UserQueryInput : PagedAndSortedResultRequestDto
+{
+    public string? Email { get; set; }
+}

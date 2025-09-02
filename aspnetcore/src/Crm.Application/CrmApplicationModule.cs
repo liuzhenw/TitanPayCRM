@@ -10,7 +10,8 @@ namespace Crm;
     typeof(CrmDomainModule),
     typeof(CrmApplicationContractsModule),
     typeof(AstraApplicationModule),
-    typeof(AbpEmailingModule))]
+    typeof(AbpEmailingModule)
+)]
 public class CrmApplicationModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

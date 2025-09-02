@@ -6,7 +6,6 @@ namespace Crm;
 
 [DependsOn(
     typeof(CrmDomainSharedModule),
-    typeof(AstraApplicationContractsModule),
-    typeof(AbpAuthorizationModule)
+    typeof(AstraApplicationContractsModule)
 )]
 public class CrmApplicationContractsModule : AbpModule { }
