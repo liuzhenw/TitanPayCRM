@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Astra.Paged;
 using Volo.Abp.Domain.Entities;
-using Volo.Abp.Domain.Values;
 
 namespace Crm.Accounts;
 
@@ -11,11 +10,16 @@ public class User : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
 {
     protected User() { }
 
-    internal User(Guid id, string email) : base(id)
+    internal User(Guid id, string name, string email) : base(id)
     {
-        if (email.IsNullOrWhiteSpace())
-            throw new ArgumentNullException(nameof(email));
+        if(name.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(name));
+        if (email.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(email));
+        
+        Name = name;
+        Email = email;
     }
+
+    public string Name { get; private set; } = null!;
     public string Email { get; private set; } = null!;
     public string? PasswordHash { get; internal set; }
     public string? AvatarUri { get; set; }
@@ -26,6 +30,7 @@ public class User : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
     public string? PasswordSalt { get; internal set; }
     public string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString("N");
     public virtual List<UserRole> UserRoles { get; internal set; } = [];
+
     internal void OnAttemptFailed()
     {
         Attempts++;
@@ -33,6 +38,7 @@ public class User : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
             LockedAt = DateTimeOffset.Now.AddMinutes(5);
         UpdatedAt = DateTimeOffset.Now;
     }
+
     internal void OnAttemptSucceeded()
     {
         Attempts = 0;
@@ -40,7 +46,6 @@ public class User : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
         UpdatedAt = DateTimeOffset.Now;
     }
 }
-
 
 public class UserPagedParameter : PagedParameter<User>
 {

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Caching.Distributed;
 using Volo.Abp.AspNetCore;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -28,5 +29,8 @@ namespace Astra;
 )]
 public class AstraAspNetCoreModule : AbpModule
 {
-    
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        Configure<DistributedCacheEntryOptions>(options => { options.SlidingExpiration = TimeSpan.FromMinutes(30); });
+    }
 }

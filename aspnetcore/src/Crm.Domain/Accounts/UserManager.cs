@@ -14,34 +14,32 @@ namespace Crm.Accounts;
 public class UserManager(
     IUnitOfWorkManager uowManager,
     IUserRepository userRepo,
-    IRoleRepository roleRepo) : 
+    IRoleRepository roleRepo) :
     DomainService
 {
     public async Task<User> GetOrCreateAsync(string email)
     {
         var user = await userRepo.FindByEmailAsync(email);
         if (user is not null) return user;
-        
-        user = new User(GuidGenerator.Create(), email);
+
+        user = new User(GuidGenerator.Create(), email, email);
         await userRepo.InsertAsync(user, true);
         return user;
     }
 
-    public async Task<User> CreateAsync(string email, string password)
+    public async Task<User> CreateAsync(string email, string name, string password)
     {
         var user = await userRepo.FindByEmailAsync(email);
         if (user is not null)
             throw new UserFriendlyException("用户已存在!");
 
-        user = new User(GuidGenerator.Create(), email);
+        user = new User(GuidGenerator.Create(), name, email);
         user.PasswordHash = CalculatePasswordHash(user, password);
+        if (user.Name != AstraConsts.RootUser) return user;
+        
         // 超级管理员添加 root 角色
-        if (user.Email == AstraConsts.RootUser)
-        {
-            var root = await roleRepo.GetAsync(AstraConsts.RootRole);
-            user.UserRoles.Add(new UserRole(GuidGenerator.Create(), user, root));
-        }
-
+        var root = await roleRepo.GetAsync(AstraConsts.RootRole);
+        user.UserRoles.Add(new UserRole(GuidGenerator.Create(), user, root));
         return user;
     }
 
@@ -54,6 +52,7 @@ public class UserManager(
         user.PasswordSalt = null;
         user.PasswordHash = CalculatePasswordHash(user, newPassword);
     }
+
     public async Task PasswordAuthAsync(User user, string password)
     {
         if (user.LockedAt > DateTimeOffset.Now)

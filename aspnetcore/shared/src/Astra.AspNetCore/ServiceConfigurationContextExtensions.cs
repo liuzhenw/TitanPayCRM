@@ -39,10 +39,11 @@ public static class ServiceConfigurationContextExtensions
     }
 
     public static ServiceConfigurationContext ConfigureAuditing(
-        this ServiceConfigurationContext context, IConfiguration configuration)
+        this ServiceConfigurationContext context, IConfiguration configuration, bool isEnabled = false)
     {
         context.Services.Configure<AbpAuditingOptions>(options =>
         {
+            options.IsEnabled = isEnabled;
             options.ApplicationName = configuration["App:ApplicationName"]!;
             options.IsEnabledForAnonymousUsers = false;
             options.IsEnabledForGetRequests = false;
@@ -50,9 +51,9 @@ public static class ServiceConfigurationContextExtensions
         });
         return context;
     }
-    
+
     public static ServiceConfigurationContext ConfigStringEncryption(
-        this ServiceConfigurationContext context,IConfiguration configuration)
+        this ServiceConfigurationContext context, IConfiguration configuration)
     {
         var passPhrase = configuration["StringEncryption:DefaultPassPhrase"] ?? "dS3o1Q3$vI6CtF0#";
         var initVector = configuration["StringEncryption:InitVector"] ?? "mSK347lrG0idJvt4";
@@ -128,7 +129,7 @@ public static class ServiceConfigurationContextExtensions
             .PersistKeysToFileSystem(new DirectoryInfo("data-protection-keys"));
         return context;
     }
-    
+
 
     public static ServiceConfigurationContext ConfigureDistributedCache(
         this ServiceConfigurationContext context, IConfiguration configuration)
@@ -150,7 +151,7 @@ public static class ServiceConfigurationContextExtensions
     public static ServiceConfigurationContext ConfigureCors(
         this ServiceConfigurationContext context, IConfiguration configuration)
     {
-        var origins = configuration.GetSection("App:Cors:Origins").Get<string[]>()               ?? [];
+        var origins = configuration.GetSection("App:Cors:Origins").Get<string[]>() ?? [];
         var exposedHeaders = configuration.GetSection("App:Cors:ExposedHeaders").Get<string[]>() ?? [];
         context.Services.AddCors(options =>
         {
@@ -189,7 +190,7 @@ public static class ServiceConfigurationContextExtensions
         });
         return context;
     }
-    
+
     public static ServiceConfigurationContext ConfigureCookie(this ServiceConfigurationContext context)
     {
         context.Services.Configure<AbpAntiForgeryOptions>(options =>

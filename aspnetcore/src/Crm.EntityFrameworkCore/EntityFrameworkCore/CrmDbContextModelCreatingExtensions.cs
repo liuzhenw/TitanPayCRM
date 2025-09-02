@@ -14,13 +14,19 @@ public static class CrmDbContextModelCreatingExtensions
     {
         Check.NotNull(builder, nameof(builder));
 
-        builder.Entity<User>(options => { options.Property(x => x.Email).HasColumnType("citext"); });
+        builder.Entity<User>(options =>
+        {
+            options.Property(x => x.Name).HasColumnType("citext");
+            options.Property(x => x.Email).HasColumnType("citext");
+            
+            options.HasIndex(x => x.Name).IsUnique();
+            options.HasIndex(x => x.Email).IsUnique();
+        });
         builder.Entity<Role>(options =>
         {
             options.Property(x => x.Id).HasMaxLength(32);
             options.Property(x => x.Name).HasMaxLength(32);
         });
-
 
         builder.Entity<Product>(options =>
         {

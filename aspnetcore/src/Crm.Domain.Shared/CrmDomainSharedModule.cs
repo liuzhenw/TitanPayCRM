@@ -26,7 +26,7 @@ public class CrmDomainSharedModule : AbpModule
         Configure<AbpLocalizationOptions>(options =>
         {
             options.Resources
-                .Add<CrmResource>("en")
+                .Add<CrmResource>("zh-Hans")
                 .AddBaseTypes(typeof(AbpValidationResource))
                 .AddVirtualJson("/Localization/Crm");
         });
