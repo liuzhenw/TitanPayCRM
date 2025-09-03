@@ -9,6 +9,9 @@ public class CrmPermissionDefinitionProvider : PermissionDefinitionProvider
     {
         var group = context.AddGroup(CrmPermissions.GroupName, F("CRM"));
 
+        var settings = group.AddPermission(CrmPermissions.Settings.Default, F("系统设置"));
+        settings.AddChild(CrmPermissions.Settings.Update, F("修改"));
+        
         var users = group.AddPermission(CrmPermissions.Users.Default, F("用户"));
         users.AddChild(CrmPermissions.Users.Create, F("创建"));
         users.AddChild(CrmPermissions.Users.Update, F("修改"));

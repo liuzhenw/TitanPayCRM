@@ -2,11 +2,13 @@
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.Modularity;
+using Volo.Abp.SettingManagement;
 
 namespace Crm.Admin;
 
 [DependsOn(
     typeof(CrmDomainModule),
+    typeof(AbpSettingManagementDomainModule),
     typeof(CrmAdminApplicationContractsModule),
     typeof(AstraApplicationModule)
 )]

@@ -1,6 +1,17 @@
-@Crm.WebApi_HostAddress = http://localhost:5015
-
-GET {{Crm.WebApi_HostAddress}}/weatherforecast/
+### SendEmail
+POST {{baseUrl}}/api/auth/verification-code
 Accept: application/json
+Content-Type: application/json
 
-###
+{
+  "email": "liuzwmail@gmail.com"
+}
+
+### CodeSignIn
+POST {{baseUrl}}/api/auth/sign-in/code
+Content-Type: application/json
+
+{
+  "email": "liuzwmail@gmail.com",
+  "code": "485033"
+}

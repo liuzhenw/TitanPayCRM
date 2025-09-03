@@ -4,7 +4,8 @@ namespace Crm.Admin.Accounts;
 
 public class UserBasicDto : EntityDto<Guid>
 {
-    public string Email { get; private set; } = null!;
+    public string Name { get; set; } = null!;
+    public string Email { get; set; } = null!;
     public string? AvatarUri { get; set; }
 }
 public class UserDto : UserBasicDto
@@ -23,4 +24,10 @@ public class UserWithDetailsDto : UserDto
 public class UserQueryInput : PagedAndSortedResultRequestDto
 {
     public string? Email { get; set; }
+    public string? Name { get; set; }
+}
+
+public class UserUpdateInput
+{
+    public List<string> Roles { get; set; } = null!;
 }

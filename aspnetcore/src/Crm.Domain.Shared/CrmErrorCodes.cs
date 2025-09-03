@@ -9,11 +9,12 @@ public static class CrmErrorCodes
         public const string Group = Namespace + ":Accounts";
         public const string NotFound = Group + ":NotFound";
         public const string Locked = Group + ":Locked";
-        public const string PasswordInvalid = Group + ":PasswordInvalid";
+        public const string InvalidPassword = Group + ":InvalidPassword";
         public const string InvalidEvmAddress = Group + ":InvalidEvmAddress";
-        public const string InvalidSignature = Group + ":InvalidSignature";
-        public const string EmailAlreadyExist = Group + ":EmailAlreadyExist";
-        public const string EmailAlreadyBound = Group + ":EmailAlreadyBound";
+        public const string InvalidEmailAddress = Group + ":InvalidEmailAddress";
+        public const string InvalidVerificationCode = Group + ":InvalidVerificationCode";
+        public const string SendEmailTooMany = Group + ":SendEmailTooMany";
+        public const string SendEmailTooFast = Group + ":SendEmailTooFast";
     }
 
     public static class Referrals

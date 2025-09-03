@@ -11,4 +11,4 @@ public class AppDbMigrationChecker(
     ICurrentTenant currentTenant,
     IAbpDistributedLock distributedLock) : PendingEfCoreMigrationsChecker<AppDbMigrationContext>(unitOfWorkManager,
     serviceProvider,
-    currentTenant, distributedLock, "crm") { }
+    currentTenant, distributedLock, "crm");

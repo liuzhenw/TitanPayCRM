@@ -1,7 +1,6 @@
 ﻿using Astra;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.AutoMapper;
-using Volo.Abp.Emailing;
 using Volo.Abp.Modularity;
 
 namespace Crm;
@@ -9,8 +8,7 @@ namespace Crm;
 [DependsOn(
     typeof(CrmDomainModule),
     typeof(CrmApplicationContractsModule),
-    typeof(AstraApplicationModule),
-    typeof(AbpEmailingModule)
+    typeof(AstraApplicationModule)
 )]
 public class CrmApplicationModule : AbpModule
 {

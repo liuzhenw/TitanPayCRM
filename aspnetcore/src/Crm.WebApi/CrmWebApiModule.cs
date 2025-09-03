@@ -8,22 +8,28 @@ using Crm.EntityFrameworkCore;
 using Crm.Localization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Volo.Abp;
 using Volo.Abp.Authorization.Permissions;
+using Volo.Abp.Emailing;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.PostgreSql;
 using Volo.Abp.Localization;
+using Volo.Abp.MailKit;
 using Volo.Abp.Modularity;
 
 namespace Crm;
 
 [DependsOn(typeof(AstraAspNetCoreModule),
+    typeof(CrmHttpApiModule),
     typeof(CrmAdminHttpApiModule),
+    typeof(CrmApplicationModule),
     typeof(CrmAdminApplicationModule),
     typeof(CrmEntityFrameworkCoreModule),
-    typeof(AbpEntityFrameworkCorePostgreSqlModule))]
+    typeof(AbpEntityFrameworkCorePostgreSqlModule),
+    typeof(AbpMailKitModule))]
 public class CrmWebApiModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
@@ -44,6 +50,7 @@ public class CrmWebApiModule : AbpModule
         ConfigureSwagger(services, configuration);
         ConfigureRoutePrefix(services);
         ConfigureDbContext(services);
+        ConfigureEmail(services);
     }
 
     private static void ConfigureDbContext(IServiceCollection services)
@@ -148,5 +155,12 @@ public class CrmWebApiModule : AbpModule
             options.Conventions.Insert(0, new RoutePrefixConvention<CrmController>());
             options.Conventions.Insert(1, new RoutePrefixConvention<CrmAdminController>("/api/admin"));
         });
+    }
+
+    private static void ConfigureEmail(IServiceCollection services)
+    {
+#if DEBUG
+        services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
+#endif
     }
 }

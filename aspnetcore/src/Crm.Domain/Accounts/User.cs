@@ -12,11 +12,8 @@ public class User : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
 
     internal User(Guid id, string name, string email) : base(id)
     {
-        if(name.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(name));
-        if (email.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(email));
-        
-        Name = name;
-        Email = email;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Email = email ?? throw new ArgumentNullException(nameof(email));
     }
 
     public string Name { get; private set; } = null!;
@@ -50,17 +47,20 @@ public class User : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
 public class UserPagedParameter : PagedParameter<User>
 {
     public string? Email { get; set; }
+    public string? Name { get; set; }
 
     public override IQueryable<User> BuildPagedQueryable(IQueryable<User> queryable)
     {
         return queryable
-            .WhereIf(Email.IsNullOrWhiteSpace() is false, x => x.Email.StartsWith(Email!));
+            .WhereIf(!Name.IsNullOrWhiteSpace(),x=>x.Name.Contains(Name!))
+            .WhereIf(!Email.IsNullOrWhiteSpace(), x => x.Email.StartsWith(Email!));
     }
 }
 
 public class UserCache
 {
     public Guid Id { get; set; }
+    public string Name { get; set; } = null!;
     public string Email { get; set; } = null!;
     public string? AvatarUri { get; set; }
 }

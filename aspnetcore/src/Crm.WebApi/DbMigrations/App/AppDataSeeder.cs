@@ -2,6 +2,7 @@ using Astra;
 using Crm.Accounts;
 using Crm.Products;
 using Crm.Referrals;
+using Serilog;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 
@@ -11,9 +12,11 @@ public class AppDataSeeder(IServiceProvider services) : IDataSeedContributor, IT
 {
     public async Task SeedAsync(DataSeedContext context)
     {
+        Log.Information("{Seeder} 开始初始化...", nameof(AppDataSeeder));
         await InitAccountsAsync();
         await InitProductsAsync();
         await InitReferralsAsync();
+        Log.Information("{Seeder} 初始化完成!", nameof(AppDataSeeder));
     }
 
     private async Task InitAccountsAsync()
@@ -32,7 +35,7 @@ public class AppDataSeeder(IServiceProvider services) : IDataSeedContributor, IT
         var rootUser = await userRepo.FindByNameAsync(AstraConsts.RootUser);
         if (rootUser is null)
         {
-            rootUser = await userManager.CreateAsync("root@email.com", AstraConsts.RootUser, "P@ssword");
+            rootUser = await userManager.CreateAsync(string.Empty, AstraConsts.RootUser, "P@ssword");
             await userRepo.InsertAsync(rootUser, true);
         }
     }

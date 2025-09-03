@@ -6,6 +6,12 @@ public class CrmPermissions
 {
     public const string GroupName = "Crm";
 
+    public static class Settings
+    {
+        public const string Default = GroupName + ".Settings";
+        public const string Update = Default + ".Update";
+    }
+    
     public static class Users
     {
         public const string Default = GroupName + ".Users";

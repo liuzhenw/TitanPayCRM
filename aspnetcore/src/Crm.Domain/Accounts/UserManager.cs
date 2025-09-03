@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Astra;
+using Astra.Common;
 using Volo.Abp;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
@@ -27,6 +28,13 @@ public class UserManager(
         return user;
     }
 
+    public async Task<User?> FindByEmailOrNameAsync(string nameOrEmail)
+    {
+        return CheckHelper.IsEmailAddress(nameOrEmail)
+            ? await userRepo.FindByEmailAsync(nameOrEmail)
+            : await userRepo.FindByNameAsync(nameOrEmail);
+    }
+
     public async Task<User> CreateAsync(string email, string name, string password)
     {
         var user = await userRepo.FindByEmailAsync(email);
@@ -36,7 +44,7 @@ public class UserManager(
         user = new User(GuidGenerator.Create(), name, email);
         user.PasswordHash = CalculatePasswordHash(user, password);
         if (user.Name != AstraConsts.RootUser) return user;
-        
+
         // 超级管理员添加 root 角色
         var root = await roleRepo.GetAsync(AstraConsts.RootRole);
         user.UserRoles.Add(new UserRole(GuidGenerator.Create(), user, root));
@@ -46,7 +54,7 @@ public class UserManager(
     public async Task ChangePassword(User user, string oldPassword, string newPassword)
     {
         if (oldPassword.IsNullOrWhiteSpace() || newPassword.IsNullOrWhiteSpace())
-            throw new BusinessException(CrmErrorCodes.Accounts.PasswordInvalid);
+            throw new BusinessException(CrmErrorCodes.Accounts.InvalidPassword);
 
         await PasswordAuthAsync(user, oldPassword);
         user.PasswordSalt = null;
@@ -65,7 +73,7 @@ public class UserManager(
             user.OnAttemptFailed();
             await userRepo.UpdateAsync(user);
             await uow.CompleteAsync();
-            throw new BusinessException(CrmErrorCodes.Accounts.PasswordInvalid);
+            throw new BusinessException(CrmErrorCodes.Accounts.InvalidPassword);
         }
 
         user.OnAttemptSucceeded();

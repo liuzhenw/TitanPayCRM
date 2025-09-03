@@ -14,5 +14,9 @@
     <ProjectReference Include="..\Crm.Admin.Application.Contracts\Crm.Admin.Application.Contracts.csproj" />
     <ProjectReference Include="..\Crm.Domain\Crm.Domain.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.SettingManagement.Domain" Version="9.3.2" />
+  </ItemGroup>
 
 </Project>
