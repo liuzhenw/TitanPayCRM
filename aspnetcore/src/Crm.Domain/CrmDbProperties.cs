@@ -6,5 +6,5 @@ public static class CrmDbProperties
 
     public static string? DbSchema { get; set; } = null;
 
-    public const string ConnectionStringName = "Crm";
+    public const string ConnectionStringName = "Default";
 }

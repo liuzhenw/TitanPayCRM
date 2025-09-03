@@ -3,6 +3,7 @@ using Astra;
 using Astra.Permissions;
 using Crm.Admin;
 using Crm.DbMigrations;
+using Crm.DbMigrations.Abp;
 using Crm.EntityFrameworkCore;
 using Crm.Localization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -42,9 +43,15 @@ public class CrmWebApiModule : AbpModule
         ConfigureLocalization(services);
         ConfigureSwagger(services, configuration);
         ConfigureRoutePrefix(services);
-        Configure<AbpDbContextOptions>(options => options.UseNpgsql());
+        ConfigureDbContext(services);
     }
-    
+
+    private static void ConfigureDbContext(IServiceCollection services)
+    {
+        services.Configure<AbpDbContextOptions>(options => options.UseNpgsql());
+        services.AddAbpDbContext<AbpDbMigrationContext>();
+    }
+
     public override async Task OnPreApplicationInitializationAsync(ApplicationInitializationContext context)
     {
         var dbMigrationChecker = context.ServiceProvider.GetRequiredService<DbMigrationChecker>();
@@ -97,13 +104,10 @@ public class CrmWebApiModule : AbpModule
                 };
             });
     }
-    
+
     private static void ConfigurePermission(IServiceCollection services)
     {
-        services.Configure<AbpPermissionOptions>(options =>
-        {
-            options.ValueProviders.Add<RootPermissionValueProvider>();
-        });
+        services.Configure<AbpPermissionOptions>(options => { options.ValueProviders.Add<RootPermissionValueProvider>(); });
     }
 
     private static void ConfigureLocalization(IServiceCollection services)

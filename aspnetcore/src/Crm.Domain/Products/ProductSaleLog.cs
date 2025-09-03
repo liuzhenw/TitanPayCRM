@@ -28,7 +28,7 @@ public class ProductSaleLog : BasicAggregateRoot<Guid>
     public string OrderNo { get; private set; } = null!;
     public uint Quantity { get; private set; }
     public decimal Amount { get; private set; }
-    public JsonObject Data { get; private set; } = new();
+    public JsonNode Data { get; private set; } = new JsonObject();
     public DateTimeOffset CreatedAt { get; private set; }
 }
 
@@ -36,13 +36,13 @@ public class ProductSaleLogPagedParameter : PagedParameter<ProductSaleLog>
 {
     public string? ProductId { get; set; }
     public Guid? CustomerId { get; set; }
-    public string? OrderId { get; set; }
+    public string? OrderNo { get; set; }
 
     public override IQueryable<ProductSaleLog> BuildPagedQueryable(IQueryable<ProductSaleLog> queryable)
     {
         return queryable
             .WhereIf(CustomerId.HasValue, x => x.CustomerId == CustomerId)
             .WhereIf(!ProductId.IsNullOrWhiteSpace(), x => x.ProductId == ProductId)
-            .WhereIf(!OrderId.IsNullOrWhiteSpace(), x => x.OrderNo == OrderId);
+            .WhereIf(!OrderNo.IsNullOrWhiteSpace(), x => x.OrderNo == OrderNo);
     }
 }

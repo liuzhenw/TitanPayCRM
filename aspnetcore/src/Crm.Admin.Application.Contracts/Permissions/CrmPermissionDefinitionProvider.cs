@@ -14,7 +14,7 @@ public class CrmPermissionDefinitionProvider : PermissionDefinitionProvider
         users.AddChild(CrmPermissions.Users.Update, F("修改"));
         users.AddChild(CrmPermissions.Users.Delete, F("删除"));
 
-        var roles = group.AddPermission(CrmPermissions.Users.Default, F("角色"));
+        var roles = group.AddPermission(CrmPermissions.Roles.Default, F("角色"));
         roles.AddChild(CrmPermissions.Roles.Create, F("创建"));
         roles.AddChild(CrmPermissions.Roles.Update, F("修改"));
         roles.AddChild(CrmPermissions.Roles.Delete, F("删除"));

@@ -10,13 +10,8 @@ public class ProductSaleLogService(IProductSaleLogRepository repo) : CrmAdminApp
 {
     public async Task<PagedResultDto<ProductSaleLogDto>> GetPagedListAsync(ProductSaleLogQueryInput input)
     {
-        var parameter = new ProductSaleLogPagedParameter
-        {
-            ProductId = input.ProductId,
-            CustomerId = input.CustomerId,
-            OrderId = input.OrderNo
-        };
-        
+        var parameter = new ProductSaleLogPagedParameter();
+        ObjectMapper.Map(input, parameter);
         var paged = await repo.GetPagedListAsync(parameter);
         return new PagedResultDto<ProductSaleLogDto>(
             paged.TotalCount,

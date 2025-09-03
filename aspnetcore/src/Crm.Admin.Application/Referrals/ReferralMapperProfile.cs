@@ -24,7 +24,8 @@ public class ReferralMapperProfile : Profile
                 d => d.User, s => s.Id)
             .ToValue<Referrer, ReferrerDto, string, ReferralLevelBasicDto, ReferralLevelValueConverter>(
                 d => d.Level, s => s.LevelId);
-        CreateMap<Referrer, ReferrerWithDetails>();
+        CreateMap<Referrer, ReferrerWithDetails>()
+            .IncludeBase<Referrer,ReferrerDto>();
         CreateMap<ReferrerUpdateInput, Referrer>()
             .IgnoreAllPropertiesWithAnInaccessibleSetter()
             .Ignore(x => x.ConcurrencyStamp)
