@@ -15,7 +15,7 @@ public class CommissionLog : BasicAggregateRoot<Guid>
         ProductId = saleLog.ProductId;
         SaleLogId = saleLog.Id;
         ReceiverId = referrer.Id;
-        ReferralLevelId = referrer.LevelId;
+        ReferralLevelId = referrer.LevelId!;
         DescendantId = relation.Recommendee.Id;
         ReferralDepth = relation.Depth;
         Amount = commission;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Astra.Paged;
+using Crm.Accounts;
 using Crm.Products;
 using Volo.Abp;
 using Volo.Abp.Domain.Entities;
@@ -15,14 +16,21 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
     internal Referrer(ReferrerRequest request) : base(request.Id)
     {
         LevelId = request.LevelId;
-        ConcurrencyStamp = Guid.NewGuid().ToString("N");
         CreatedAt = DateTimeOffset.Now;
+        ConcurrencyStamp = Guid.NewGuid().ToString("N");
+    }
+
+    internal Referrer(User user, ReferralLevel? level): base(user.Id)
+    {
+        LevelId = level?.Id;
+        CreatedAt = DateTimeOffset.Now;
+        ConcurrencyStamp = Guid.NewGuid().ToString("N");
     }
 
     /// <summary>
     /// 推荐等级
     /// </summary>
-    public string LevelId { get; private set; } = null!;
+    public string? LevelId { get; private set; }
 
     /// <summary>
     /// 直推人数

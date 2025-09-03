@@ -7,7 +7,7 @@ namespace Crm.Admin.Referrals;
 public class ReferrerDto : EntityDto<Guid>
 {
     public UserBasicDto User { get; set; } = null!;
-    public ReferralLevelBasicDto Level { get; set; } = null!;
+    public ReferralLevelBasicDto? Level { get; set; }
     public uint DirectCount { get; set; }
     public uint IndirectCount { get; set; }
     public uint TotalCount { get; set; }

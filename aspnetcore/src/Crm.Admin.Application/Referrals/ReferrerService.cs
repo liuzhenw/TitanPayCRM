@@ -2,7 +2,6 @@ using Crm.Admin.Permissions;
 using Crm.Referrals;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Application.Dtos;
-using Volo.Abp.Domain.Repositories;
 
 namespace Crm.Admin.Referrals;
 

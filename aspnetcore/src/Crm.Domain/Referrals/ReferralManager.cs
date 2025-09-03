@@ -19,7 +19,14 @@ public class ReferralManager(
     IReferrerRequestRepository requestRepo
 ) : DomainService
 {
-    public async Task CreateReferrerRequestAsync(User user, string levelId)
+    /// <summary>
+    /// 申请成为推荐人
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="levelId"></param>
+    /// <returns></returns>
+    /// <exception cref="BusinessException"></exception>
+    public async Task<ReferrerRequest> ReferrerApplyingAsync(User user, string levelId)
     {
         var request = await requestRepo.FindAsync(user.Id);
         if (request is { Status: ReferrerRequestStatus.Approved })
@@ -38,57 +45,103 @@ public class ReferralManager(
             request.Reset(level);
             await requestRepo.UpdateAsync(request);
         }
+
+        return request;
     }
 
-    public async Task ApproveReferrerRequestAsync(ReferrerRequest request, Guid auditorId)
+    /// <summary>
+    /// 同意成为推荐人的申请
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="auditorId"></param>
+    public async Task<Referrer> ApproveReferrerRequestAsync(ReferrerRequest request, Guid auditorId)
     {
         request.Approve(auditorId);
         var requester = await userRepo.GetAsync(request.Id);
         var level = await levelRepo.GetAsync(request.LevelId);
         await ValidateReferrerRequest(requester, level);
+        await requestRepo.UpdateAsync(request);
 
         var referrer = new Referrer(request);
         await referrerRepo.InsertAsync(referrer);
 
         level.OnUserJoined();
         await levelRepo.UpdateAsync(level);
+        return referrer;
     }
 
+    /// <summary>
+    /// 创建推荐人
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="levelId"></param>
+    public async Task<Referrer> CreateReferrerAsync(User user, string? levelId)
+    {
+        ReferralLevel? level = null;
+        if (levelId is not null) level = await levelRepo.GetAsync(levelId);
+        var referrer = new Referrer(user, level);
+        await referrerRepo.InsertAsync(referrer);
+        if (level is not null)
+        {
+            level.OnUserJoined();
+            await levelRepo.UpdateAsync(level);
+        }
+
+        return referrer;
+    }
+
+    /// <summary>
+    /// 修改推荐人的等级
+    /// </summary>
+    /// <param name="referrer"></param>
+    /// <param name="newLevelId"></param>
+    /// <exception cref="UserFriendlyException"></exception>
+    /// <exception cref="BusinessException"></exception>
     public async Task ModifyReferrerLevelAsync(Referrer referrer, string newLevelId)
     {
         var newLevel = await levelRepo.GetAsync(newLevelId);
-        var curLevel = await levelRepo.GetAsync(referrer.LevelId);
+        ReferralLevel? curLevel = null;
+        if (referrer.LevelId is not null) curLevel = await levelRepo.GetAsync(referrer.LevelId);
         if (newLevel == curLevel) return;
-
-        // 确保等级不能低于下级
-        if (newLevel < curLevel)
+        // 下调:确保等级不能低于下级
+        if (curLevel is not null && newLevel < curLevel)
         {
             var maxLevelDescendant = await referrerRepo.FindMaxLevelDescendantAsync(referrer.Id);
-            if (maxLevelDescendant is not null)
+            if (maxLevelDescendant?.LevelId != null)
             {
                 var minLevel = await levelRepo.GetAsync(maxLevelDescendant.LevelId);
                 if (newLevel <= minLevel)
                     throw new UserFriendlyException($"不能低于 {minLevel.Name} 等级!");
             }
         }
-        // 确保等级不能高于上级
+        // 上调:确保等级不能高于上级
         else
         {
             var parent = await referrerRepo.FindParentAsync(referrer.Id);
-            if (parent is not null)
-            {
-                var maxLevel = await levelRepo.GetAsync(parent.LevelId);
-                if (newLevel >= maxLevel)
-                    throw new BusinessException($"不能高于 {maxLevel} 等级!");
-            }
+            if (parent?.LevelId is null) throw new UserFriendlyException("等级不能高于上级!");
+
+            var maxLevel = await levelRepo.GetAsync(parent.LevelId);
+            if (newLevel >= maxLevel)
+                throw new BusinessException($"不能高于 {maxLevel} 等级!");
+        }
+
+        if (curLevel is not null)
+        {
+            curLevel.OnUserQuited();
+            await levelRepo.UpdateAsync(curLevel);
         }
 
         referrer.SetLevel(newLevel);
         newLevel.OnUserJoined();
-        curLevel.OnUserQuited();
-        await levelRepo.UpdateManyAsync([newLevel, curLevel]);
+        await levelRepo.UpdateAsync(newLevel);
     }
 
+    /// <summary>
+    /// 添加推荐关系
+    /// </summary>
+    /// <param name="recommender"></param>
+    /// <param name="recommendee"></param>
+    /// <exception cref="UserFriendlyException"></exception>
     public async Task AddRelationAsync(User recommender, User recommendee)
     {
         if (recommender.Id == recommendee.Id)
@@ -98,7 +151,7 @@ public class ReferralManager(
             throw new UserFriendlyException($"{recommendee.Email} 已有推荐人!");
 
         // 处理直推
-        var referrer = await referrerRepo.GetAsync(recommender.Id);
+        var referrer = await referrerRepo.FindAsync(recommender.Id) ?? await CreateReferrerAsync(recommender, null);
         referrer.OnDirectReferralAdded();
         var relation = new ReferralRelation(recommender, recommendee, 1);
         List<Referrer> referrers = [referrer];
@@ -120,7 +173,11 @@ public class ReferralManager(
         await referrerRepo.UpdateManyAsync(referrers);
     }
 
-    public async Task AddSalesAsync(ProductSaleLog saleLog)
+    /// <summary>
+    /// 商品售出时触发
+    /// </summary>
+    /// <param name="saleLog"></param>
+    public async Task OnProductSoldAsync(ProductSaleLog saleLog)
     {
         var ancestorRelations = await relationRepo.GetAncestorListAsync(saleLog.CustomerId, 1);
         if (ancestorRelations.Count < 1) return;
@@ -130,13 +187,12 @@ public class ReferralManager(
         foreach (var relation in ancestorRelations)
         {
             var referrer = await referrerRepo.GetAsync(relation.Recommender.Id);
-            if (referrer.IsDisabled) continue;
+            if (referrer.IsDisabled || referrer.LevelId is null) continue;
 
             var level = levels.First(x => x.Id == referrer.LevelId);
             var commission = saleLog.Amount * level.Multiplier;
             var commissionLog = new CommissionLog(GuidGenerator.Create(), referrer, relation, saleLog, commission);
             await commissionRepo.InsertAsync(commissionLog);
-
             referrer.OnCommissionAdded(saleLog, commission);
             level.OnCommissionAdded(commission);
             level.UpdatedAt = DateTimeOffset.Now;
@@ -186,7 +242,7 @@ public class ReferralManager(
     public async Task ModifyReferralLevelSizeAsync(ReferralLevel level, uint newSize)
     {
         if (level.Size == newSize) return;
-        
+
         if (await levelRepo.ExistsAsync(newSize))
             throw new UserFriendlyException($"大小为 {newSize} 的等级已存在!");
 
@@ -204,7 +260,7 @@ public class ReferralManager(
         {
             var parent = await referrerRepo.FindAsync(parentRelations.Recommender.Id);
             // 上级不是推荐人身份,下级也不能成为推荐人
-            if (parent is null)
+            if (parent?.LevelId is null)
                 throw new BusinessException(CrmErrorCodes.Referrals.CannotApplyThisLevel);
 
             var parentLevel = await levelRepo.GetAsync(parent.LevelId);
