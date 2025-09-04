@@ -9,7 +9,7 @@
     />
     <Editor
       v-model="modelValue"
-      :style="{ height: height, overflowY: 'hidden'}"
+      :style="{ height: height, overflowY: 'hidden' }"
       :mode="mode"
       :defaultConfig="editorConfig"
       @onCreated="onCreatedEditor"

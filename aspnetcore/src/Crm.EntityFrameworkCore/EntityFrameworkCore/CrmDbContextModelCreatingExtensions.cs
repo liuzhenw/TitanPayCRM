@@ -52,6 +52,7 @@ public static class CrmDbContextModelCreatingExtensions
         {
             options.Property(x => x.Id).HasMaxLength(32);
             options.Property(x => x.Name).HasMaxLength(32);
+            options.Property(x => x.Description).HasMaxLength(255);
         });
         builder.Entity<ReferralRelation>(options =>
         {

@@ -13,7 +13,7 @@
   import QrcodeVue, { Level, RenderAs } from 'qrcode.vue'
   const { size, value } = defineProps({
     value: { type: String, required: true },
-    size: { type: Number, default: 120 },
+    size: { type: Number, default: 120 }
   })
   const qrcodeConfig = {
     size: size,

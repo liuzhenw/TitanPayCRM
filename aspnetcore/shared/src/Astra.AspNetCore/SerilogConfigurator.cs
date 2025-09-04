@@ -19,8 +19,8 @@ public static class SerilogConfigurator
 #endif
             .MinimumLevel.Override("System", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
             .MinimumLevel.Override("Volo.Abp", LogEventLevel.Warning)
             .MinimumLevel.Override("OpenIddict", LogEventLevel.Warning)
             .MinimumLevel.Override("Quartz", LogEventLevel.Warning)

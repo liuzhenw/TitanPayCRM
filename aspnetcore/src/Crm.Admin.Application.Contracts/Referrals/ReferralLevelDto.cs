@@ -10,9 +10,11 @@ public class ReferralLevelBasicDto : EntityDto<string>
 }
 public class ReferralLevelDto : ReferralLevelBasicDto
 {
+    public string? Description { get; set; } 
     public decimal Multiplier { get; set; }
     public uint UserCount { get; set; }
     public decimal TotalCommission { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
 }
 public class ReferralLevelCreateInput
@@ -29,6 +31,7 @@ public class ReferralLevelCreateInput
 
     [Range(0, double.MaxValue)]
     public decimal Multiplier { get; set; }
+    public string? Description { get; set; } 
 }
 public class ReferralLevelUpdateInput
 {
@@ -40,4 +43,5 @@ public class ReferralLevelUpdateInput
 
     [Range(0, double.MaxValue)]
     public decimal Multiplier { get; set; }
+    public string? Description { get; set; } 
 }

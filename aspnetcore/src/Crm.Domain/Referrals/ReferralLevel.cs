@@ -21,6 +21,7 @@ public class ReferralLevel : BasicAggregateRoot<string>, IHasConcurrencyStamp
     /// 等级名称
     /// </summary>
     public string Name { get; set; } = null!;
+    public string? Description { get; set; } 
 
     /// <summary>
     /// 等级大小

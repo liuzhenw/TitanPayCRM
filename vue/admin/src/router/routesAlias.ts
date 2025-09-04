@@ -2,8 +2,12 @@
  * 路由别名，方便快速找到页面，同时可以用作路由跳转
  */
 export enum RoutesAlias {
-  Users = '/users',
-  UserDetails = '/users/:id',
+  Users = '/users/list',
+  UserDetails = '/users/list/:id',
+  Roles = '/users/roles',
+
+  Products = '/products/list',
+  ProductSaleLogs = '/products/sale-logs',
 
   // 系统管理
   Blockchains = '/system/blockchains', // 区块链

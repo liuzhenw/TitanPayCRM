@@ -72,7 +72,7 @@ public class CrmWebApiModule : AbpModule
 
         if (env.IsDevelopment())
             app.UseDeveloperExceptionPage();
-
+        
         app.UseCorrelationId();
         app.MapAbpStaticAssets();
         app.UseRouting();

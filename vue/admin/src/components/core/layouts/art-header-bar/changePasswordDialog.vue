@@ -1,5 +1,11 @@
 <template>
-  <el-dialog v-model="modelValue" title="修改登录密码" width="400" append-to-body	 @closed="onClosed">
+  <el-dialog
+    v-model="modelValue"
+    title="修改登录密码"
+    width="400"
+    append-to-body
+    @closed="onClosed"
+  >
     <el-form ref="form" :model="model" :rules="rules">
       <el-form-item label="旧的密码" prop="oldPassword">
         <el-input v-model="model.oldPassword" type="password" show-password />

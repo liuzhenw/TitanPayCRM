@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
   import { SearchFormItem } from '@/types'
-    import { Option } from '@/types'
+  import { Option } from '@/types'
 
   export type ValueVO = unknown
 

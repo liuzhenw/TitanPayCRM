@@ -8,6 +8,7 @@ using IdentityModel;
 using Microsoft.IdentityModel.Tokens;
 using Volo.Abp;
 using Volo.Abp.DependencyInjection;
+
 namespace Crm.Services.Auth;
 
 public class AuthService(

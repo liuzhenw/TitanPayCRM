@@ -13,7 +13,7 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Crm.DbMigrations.App.Migrations
 {
     [DbContext(typeof(AppDbMigrationContext))]
-    [Migration("20250903082504_Initial")]
+    [Migration("20250904040405_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -260,6 +260,10 @@ namespace Crm.DbMigrations.App.Migrations
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<decimal>("Multiplier")
                         .HasColumnType("numeric");

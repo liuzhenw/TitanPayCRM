@@ -258,6 +258,10 @@ namespace Crm.DbMigrations.App.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
                     b.Property<decimal>("Multiplier")
                         .HasColumnType("numeric");
 

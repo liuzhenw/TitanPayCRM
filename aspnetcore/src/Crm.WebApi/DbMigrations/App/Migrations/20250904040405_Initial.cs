@@ -77,6 +77,7 @@ namespace Crm.DbMigrations.App.Migrations
                 {
                     Id = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     Name = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    Description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Size = table.Column<long>(type: "bigint", nullable: false),
                     Multiplier = table.Column<decimal>(type: "numeric", nullable: false),
                     UserCount = table.Column<long>(type: "bigint", nullable: false),

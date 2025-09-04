@@ -16,6 +16,33 @@ import { AppRouteRecord } from '@/types/router'
  */
 export const asyncRoutes: AppRouteRecord[] = [
   {
+    name: 'Products',
+    path: '/products',
+    component: RoutesAlias.Layout,
+    meta: {
+      title: '商品管理',
+      icon: '&#xe6e6;'
+    },
+    children: [
+      {
+        name: 'ProductList',
+        path: '/products/list',
+        component: RoutesAlias.Products,
+        meta: {
+          title: '商品列表'
+        }
+      },
+      {
+        name: 'ProductSaleLogs',
+        path: '/products/sale-logs',
+        component: RoutesAlias.ProductSaleLogs,
+        meta: {
+          title: '销售记录'
+        }
+      }
+    ]
+  },
+  {
     name: 'User',
     path: '/users',
     component: RoutesAlias.Layout,
@@ -35,10 +62,18 @@ export const asyncRoutes: AppRouteRecord[] = [
       {
         name: 'UserDetails',
         path: ':id',
-        component: "/users/details",
+        component: '/users/details',
         meta: {
           title: '用户详情',
           isHide: true
+        }
+      },
+      {
+        name: 'RoleList',
+        path: 'roles',
+        component: RoutesAlias.Roles,
+        meta: {
+          title: '角色列表'
         }
       }
     ]

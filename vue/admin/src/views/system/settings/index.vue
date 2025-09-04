@@ -4,7 +4,7 @@
       <h4>系统设置</h4>
     </template>
     <div v-loading="loading" class="warp">
-      <el-tabs v-model="tab" tab-position="left" style="height: 100%" >
+      <el-tabs v-model="tab" tab-position="left" style="height: 100%">
         <el-tab-pane v-for="[groupName, items] in settings" :label="groupName" :name="groupName">
           <SettingGroup :items="items" />
         </el-tab-pane>

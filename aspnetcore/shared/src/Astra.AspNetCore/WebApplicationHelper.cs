@@ -9,7 +9,7 @@ using Volo.Abp.Modularity;
 
 namespace Astra;
 
-public static class WebApplicationBuildHelper
+public static class WebApplicationHelper
 {
     /// <summary>
     /// 运行 Web 程序
@@ -38,6 +38,36 @@ public static class WebApplicationBuildHelper
             await builder.AddApplicationAsync<TStartupModule>();
             var app = builder.Build();
             await app.InitializeApplicationAsync();
+            await app.RunAsync();
+            return 0;
+        }
+        catch (HostAbortedException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "{AppName} terminated unexpectedly!", appName);
+            return 1;
+        }
+        finally
+        {
+            Log.Information("{AppName} stopped!", appName);
+            await Log.CloseAndFlushAsync();
+        }
+    }
+
+    public static async Task<int> RunAsync(WebApplication app)
+    {
+        var appName = Assembly.GetEntryAssembly()?.GetName().Name ?? "Host";
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Async(c => c.Console())
+            .CreateLogger();
+        Log.Information("{AppName} starting..", appName);
+
+        try
+        {
             await app.RunAsync();
             return 0;
         }
