@@ -2,6 +2,7 @@
 using Astra;
 using Crm.Accounts;
 using Crm.Products;
+using Crm.Referrals;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.Domain.Entities.Caching;
@@ -32,5 +33,7 @@ public class CrmDomainModule : AbpModule
         services.AddEntityCache<Role, RoleCache, string>();
 
         services.AddEntityCache<Product, ProductCache, string>();
+
+        services.AddEntityCache<ReferralLevel, ReferralLevelCache, string>();
     }
 }

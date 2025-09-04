@@ -75,6 +75,12 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
 
     public virtual List<SaleStatistic> Statistics { get; private set; } = [];
 
+    public void SetWithdrawalAddress(string address)
+    {
+        WithdrawalAddress = address;
+        UpdatedAt = DateTimeOffset.Now;
+    }
+
     internal void OnDirectReferralAdded()
     {
         DirectCount++;

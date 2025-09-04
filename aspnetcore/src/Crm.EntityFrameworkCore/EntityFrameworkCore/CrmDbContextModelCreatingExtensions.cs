@@ -37,6 +37,7 @@ public static class CrmDbContextModelCreatingExtensions
         });
         builder.Entity<ProductSaleLog>(options =>
         {
+            options.Property(x => x.CustomerEmail).HasColumnType("citext");
             options.Property(x => x.OrderNo).HasColumnType("citext");
             options.Property(x => x.Data)
                 .HasColumnType("jsonb")
@@ -45,6 +46,7 @@ public static class CrmDbContextModelCreatingExtensions
 
         builder.Entity<CommissionLog>(options =>
         {
+            options.Property(x => x.CustomerEmail).HasColumnType("citext");
             options.Property(x => x.ProductId).HasMaxLength(64);
             options.HasIndex(x => x.ReceiverId);
         });

@@ -13,7 +13,7 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Crm.DbMigrations.App.Migrations
 {
     [DbContext(typeof(AppDbMigrationContext))]
-    [Migration("20250904040405_Initial")]
+    [Migration("20250904115010_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -183,6 +183,10 @@ namespace Crm.DbMigrations.App.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CustomerEmail")
+                        .IsRequired()
+                        .HasColumnType("citext");
+
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
@@ -217,8 +221,16 @@ namespace Crm.DbMigrations.App.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("DescendantId")
+                    b.Property<string>("CustomerEmail")
+                        .IsRequired()
+                        .HasColumnType("citext");
+
+                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("LevelId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("ProductId")
                         .IsRequired()
@@ -230,10 +242,6 @@ namespace Crm.DbMigrations.App.Migrations
 
                     b.Property<long>("ReferralDepth")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("ReferralLevelId")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<Guid>("SaleLogId")
                         .HasColumnType("uuid");

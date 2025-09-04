@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Astra.EntityFrameworkCore;
+using Astra.Paged;
 using Crm.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -18,12 +20,10 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
         var dbContext = await GetDbContextAsync();
         var query = dbContext.Set<ReferralRelation>()
             .Where(x => x.Recommendee.Id == recommendeeId);
-        
+
         if (minDepth.HasValue)
-        {
             query = query.Where(x => x.Depth >= minDepth.Value);
-        }
-        
+
         return await query.OrderBy(x => x.Depth).ToListAsync();
     }
 
@@ -39,5 +39,40 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
         var dbContext = await GetDbContextAsync();
         return await dbContext.Set<ReferralRelation>()
             .AnyAsync(x => x.Recommendee.Id == recommendeeId);
+    }
+
+    public async Task<PagedList<RecommendeeView>> GetRecommendeePagedListAsync(RecommendeeViewPagedParameter parameter)
+    {
+        var dbContext = await GetDbContextAsync();
+        var queryable = dbContext.ReferralRelations
+            .WhereIf(parameter.RecommenderId.HasValue, x => x.Recommender.Id == parameter.RecommenderId);
+
+        var totalCount = await queryable.CountAsync();
+
+        // 连表(LeftJoin)
+        var joinQueryable = from rr in queryable
+            join er in dbContext.Referrers on rr.Recommendee.Id equals er.Id into g
+            from er in g.DefaultIfEmpty()
+            select new RecommendeeView
+            {
+                Id = rr.Recommendee.Id,
+                RecommenderId = rr.Recommender.Id,
+                Email = rr.Recommendee.Email,
+                Depth = rr.Depth,
+                CreatedAt = rr.CreatedAt,
+                LevelId = er == null ? null : er.LevelId
+            };
+        
+        // 排序
+        joinQueryable = string.IsNullOrWhiteSpace(parameter.Sorting)
+            ? joinQueryable.OrderByDescending(s => s.Id)
+            : joinQueryable.OrderBy(parameter.Sorting).ThenByDescending(s => s.Id);
+
+        // 分页
+        joinQueryable = joinQueryable
+            .Skip(parameter.SkipCount)
+            .Take(parameter.MaxResultCount);
+        var items = await AsyncExecuter.ToListAsync(joinQueryable);
+        return new PagedList<RecommendeeView>(items, totalCount);
     }
 }

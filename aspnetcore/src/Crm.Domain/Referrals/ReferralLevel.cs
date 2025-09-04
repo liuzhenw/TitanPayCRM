@@ -1,5 +1,4 @@
 using System;
-using Crm.Accounts;
 using Volo.Abp.Domain.Entities;
 
 namespace Crm.Referrals;

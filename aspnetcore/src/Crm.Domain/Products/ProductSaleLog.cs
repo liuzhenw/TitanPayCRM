@@ -16,6 +16,7 @@ public class ProductSaleLog : BasicAggregateRoot<Guid>
     {
         ProductId = product.Id;
         CustomerId = customer.Id;
+        CustomerEmail = customer.Email;
         OrderNo = orderNo;
         Quantity = quantity;
         Amount = product.Price * quantity;
@@ -25,6 +26,7 @@ public class ProductSaleLog : BasicAggregateRoot<Guid>
 
     public string ProductId { get; private set; } = null!;
     public Guid CustomerId { get; private set; }
+    public string CustomerEmail { get; private set; } = null!;
     public string OrderNo { get; private set; } = null!;
     public uint Quantity { get; private set; }
     public decimal Amount { get; private set; }

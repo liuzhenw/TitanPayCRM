@@ -1,0 +1,66 @@
+using System;
+using System.Text.RegularExpressions;
+using Crm.Products;
+using FluentValidation;
+using Volo.Abp.Application.Dtos;
+
+namespace Crm.Referrals;
+
+public class ReferralLevelBasicDto : EntityDto<string>
+{
+    public string Name { get; set; } = null!;
+}
+
+public class ReferralLevelDto : ReferralLevelBasicDto
+{
+    public decimal Multiplier { get; set; }
+    public string? Description { get; set; }
+    public uint Size { get; set; }
+}
+
+public class ReferrerDto : EntityDto<Guid>
+{
+    public ReferralLevelBasicDto? Level { get; set; }
+    public uint DirectCount { get; set; }
+    public uint IndirectCount { get; set; }
+    public uint TotalCount { get; set; }
+    public decimal Commission { get; set; }
+    public decimal Withdrawal { get; set; }
+    public string? WithdrawalAddress { get; set; }
+}
+
+public class ReferrerWithdrawalAddressUpdateInput
+{
+    public string Address { get; set; } = null!;
+}
+
+public class ReferrerWithdrawalAddressUpdateInputValidator : AbstractValidator<ReferrerWithdrawalAddressUpdateInput>
+{
+    public ReferrerWithdrawalAddressUpdateInputValidator()
+    {
+        RuleFor(x => x.Address).Matches(@"^0x[a-fA-F0-9]{40}$");
+    }
+}
+
+public class ReferrerRequestDto : EntityDto<Guid>
+{
+    public ReferralLevelBasicDto Level { get; set; } = null!;
+    public string Status { get; set; } = null!;
+    public string? RejectReason { get; set; }
+}
+
+public class ReferrerApplyInput
+{
+    public string LevelId { get; set; } = null!;
+}
+
+public class RecommendeeDto : EntityDto<Guid>
+{
+    public string Email { get; set; } = null!;
+    public ReferralLevelBasicDto? Level { get; set; }
+    public uint Depth { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+}
+
+public class RecommendeeQueryInput : PagedAndSortedResultRequestDto;
+

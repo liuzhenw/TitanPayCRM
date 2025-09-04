@@ -51,12 +51,12 @@ public class UserManager(
         return user;
     }
 
-    public async Task ChangePassword(User user, string oldPassword, string newPassword)
+    public async Task ChangePassword(User user, string? oldPassword, string newPassword)
     {
-        if (oldPassword.IsNullOrWhiteSpace() || newPassword.IsNullOrWhiteSpace())
+        if (newPassword.IsNullOrWhiteSpace())
             throw new BusinessException(CrmErrorCodes.Accounts.InvalidPassword);
 
-        await PasswordAuthAsync(user, oldPassword);
+        if(oldPassword is not null) await PasswordAuthAsync(user, oldPassword);
         user.PasswordSalt = null;
         user.PasswordHash = CalculatePasswordHash(user, newPassword);
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Astra.Paged;
 using Crm.Products;
 using Volo.Abp.Domain.Entities;
@@ -15,8 +16,9 @@ public class CommissionLog : BasicAggregateRoot<Guid>
         ProductId = saleLog.ProductId;
         SaleLogId = saleLog.Id;
         ReceiverId = referrer.Id;
-        ReferralLevelId = referrer.LevelId!;
-        DescendantId = relation.Recommendee.Id;
+        LevelId = referrer.LevelId!;
+        CustomerId = saleLog.CustomerId;
+        CustomerEmail = saleLog.CustomerEmail;
         ReferralDepth = relation.Depth;
         Amount = commission;
         CreatedAt = DateTimeOffset.Now;
@@ -25,18 +27,27 @@ public class CommissionLog : BasicAggregateRoot<Guid>
     public string ProductId { get; private set; } = null!;
     public Guid SaleLogId { get; private set; }
     public Guid ReceiverId { get; private set; }
-    public string ReferralLevelId { get; private set; } = null!;
-    public Guid DescendantId { get; private set; }
+    public string LevelId { get; private set; } = null!;
+    public Guid CustomerId { get; private set; }
+    public string CustomerEmail { get; private set; } = null!;
     public uint ReferralDepth { get; private set; }
     public decimal Amount { get; private set; }
-
     public DateTimeOffset CreatedAt { get; private set; }
 }
 
 public class CommissionLogPagedParameter : PagedParameter<CommissionLog>
 {
     public string? ProductId { get; set; }
-    public Guid? ReferrerId { get; set; }
-    public string? ReferrerLevelId { get; set; }
+    public Guid? ReceiverId { get; set; }
+    public string? LevelId { get; set; }
     public ushort? ReferralDepth { get; set; }
+
+    public override IQueryable<CommissionLog> BuildPagedQueryable(IQueryable<CommissionLog> queryable)
+    {
+        return queryable
+            .WhereIf(!ProductId.IsNullOrWhiteSpace(), x => x.ProductId == ProductId)
+            .WhereIf(!LevelId.IsNullOrWhiteSpace(), x => x.LevelId == LevelId)
+            .WhereIf(ReceiverId.HasValue, x => x.ReceiverId == ReceiverId)
+            .WhereIf(ReferralDepth.HasValue, x => x.ReferralDepth == ReferralDepth);
+    }
 }

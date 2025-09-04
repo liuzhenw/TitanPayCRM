@@ -1,10 +1,11 @@
+@email=user1@email.com
 ### SendEmail
 POST {{baseUrl}}/api/auth/verification-code
 Accept: application/json
 Content-Type: application/json
 
 {
-  "email": "liuzwmail@gmail.com"
+  "email": "{{email}}"
 }
 
 ### CodeSignIn
@@ -12,6 +13,35 @@ POST {{baseUrl}}/api/auth/sign-in/code
 Content-Type: application/json
 
 {
-  "email": "liuzwmail@gmail.com",
-  "code": "485033"
+  "email": "{{email}}",
+  "code": "110779"
 }
+
+> {%
+    client.global.set("accessToken",response.body["accessToken"])
+%}
+
+### User
+GET {{baseUrl}}/api/user
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### ChangePassword
+PUT {{baseUrl}}/api/user/password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "newPassword": "123456"
+}
+
+### Levels
+GET {{baseUrl}}/api/referral/levels
+
+### Referrer
+GET {{baseUrl}}/api/referral/referrer
+Authorization: Bearer {{accessToken}}
+
+### Recommendees
+GET {{baseUrl}}/api/referral/recommendees?sorting=createdAt
+Authorization: Bearer {{accessToken}}

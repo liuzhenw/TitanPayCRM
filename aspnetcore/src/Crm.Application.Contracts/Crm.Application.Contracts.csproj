@@ -13,4 +13,8 @@
     <ProjectReference Include="..\Crm.Domain.Shared\Crm.Domain.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.FluentValidation" Version="9.3.2" />
+  </ItemGroup>
+
 </Project>

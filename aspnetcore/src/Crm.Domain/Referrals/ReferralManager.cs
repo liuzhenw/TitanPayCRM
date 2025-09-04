@@ -151,7 +151,13 @@ public class ReferralManager(
             throw new UserFriendlyException($"{recommendee.Email} 已有推荐人!");
 
         // 处理直推
-        var referrer = await referrerRepo.FindAsync(recommender.Id) ?? await CreateReferrerAsync(recommender, null);
+        var referrer = await referrerRepo.FindAsync(recommender.Id);
+        if (referrer is null)
+        {
+            referrer = new Referrer(recommender, null);
+            await referrerRepo.InsertAsync(referrer, true);
+        }
+
         referrer.OnDirectReferralAdded();
         var relation = new ReferralRelation(recommender, recommendee, 1);
         List<Referrer> referrers = [referrer];
@@ -173,40 +179,7 @@ public class ReferralManager(
         await referrerRepo.UpdateManyAsync(referrers);
     }
 
-    /// <summary>
-    /// 商品售出时触发
-    /// </summary>
-    /// <param name="saleLog"></param>
-    public async Task OnProductSoldAsync(ProductSaleLog saleLog)
-    {
-        var ancestorRelations = await relationRepo.GetAncestorListAsync(saleLog.CustomerId, 1);
-        if (ancestorRelations.Count < 1) return;
-
-        var levels = await levelRepo.GetListAsync();
-        List<ReferralLevel> updatedLevels = [];
-        foreach (var relation in ancestorRelations)
-        {
-            var referrer = await referrerRepo.GetAsync(relation.Recommender.Id);
-            if (referrer.IsDisabled || referrer.LevelId is null) continue;
-
-            var level = levels.First(x => x.Id == referrer.LevelId);
-            var commission = saleLog.Amount * level.Multiplier;
-            var commissionLog = new CommissionLog(GuidGenerator.Create(), referrer, relation, saleLog, commission);
-            await commissionRepo.InsertAsync(commissionLog);
-            referrer.OnCommissionAdded(saleLog, commission);
-            level.OnCommissionAdded(commission);
-            level.UpdatedAt = DateTimeOffset.Now;
-            await referrerRepo.UpdateAsync(referrer);
-
-            if (updatedLevels.All(x => x.Id != level.Id))
-                updatedLevels.Add(level);
-        }
-
-        if (updatedLevels.Count > 0)
-            await levelRepo.UpdateManyAsync(levels);
-    }
-
-    public async Task CreateWithdrawalRequestAsync(Referrer referrer, decimal amount)
+    public async Task<WithdrawalRequest> CreateWithdrawalRequestAsync(Referrer referrer, decimal amount)
     {
         if (referrer.WithdrawalAddress.IsNullOrWhiteSpace())
             throw new BusinessException(CrmErrorCodes.Referrals.WithdrawalAddressNotSet);
@@ -219,6 +192,7 @@ public class ReferralManager(
 
         referrer.OnWithdrawal(request);
         await referrerRepo.UpdateAsync(referrer);
+        return request;
     }
 
     public async Task RefundWithdrawalAsync(WithdrawalRequest request, string reason, Guid auditorId)
@@ -251,6 +225,39 @@ public class ReferralManager(
             throw new UserFriendlyException("此等级下已有用户,无法调整大小!");
 
         level.SetSize(newSize);
+    }
+    
+    /// <summary>
+    /// 商品售出时触发
+    /// </summary>
+    /// <param name="saleLog"></param>
+    internal async Task OnProductSoldAsync(ProductSaleLog saleLog)
+    {
+        var ancestorRelations = await relationRepo.GetAncestorListAsync(saleLog.CustomerId, 1);
+        if (ancestorRelations.Count < 1) return;
+
+        var levels = await levelRepo.GetListAsync();
+        List<ReferralLevel> updatedLevels = [];
+        foreach (var relation in ancestorRelations)
+        {
+            var referrer = await referrerRepo.GetAsync(relation.Recommender.Id);
+            if (referrer.IsDisabled || referrer.LevelId is null) continue;
+
+            var level = levels.First(x => x.Id == referrer.LevelId);
+            var commission = saleLog.Amount * level.Multiplier;
+            var commissionLog = new CommissionLog(GuidGenerator.Create(), referrer, relation, saleLog, commission);
+            await commissionRepo.InsertAsync(commissionLog);
+            referrer.OnCommissionAdded(saleLog, commission);
+            level.OnCommissionAdded(commission);
+            level.UpdatedAt = DateTimeOffset.Now;
+            await referrerRepo.UpdateAsync(referrer);
+
+            if (updatedLevels.All(x => x.Id != level.Id))
+                updatedLevels.Add(level);
+        }
+
+        if (updatedLevels.Count > 0)
+            await levelRepo.UpdateManyAsync(levels);
     }
 
     private async Task ValidateReferrerRequest(User user, ReferralLevel level)
