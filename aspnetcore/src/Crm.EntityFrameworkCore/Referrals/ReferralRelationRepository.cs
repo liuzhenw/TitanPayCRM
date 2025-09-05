@@ -51,21 +51,26 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
             select new RecommendeeView
             {
                 Id = rr.Recommendee.Id,
+                AncestorId = rr.Ancestor.Id,
+                AncestorEmail = rr.Ancestor.Email,
                 RecommenderId = rr.Recommender.Id,
+                RecommenderEmail = rr.Recommender.Email,
                 Email = rr.Recommendee.Email,
                 Depth = rr.Depth,
                 CreatedAt = rr.CreatedAt,
-                LevelId = er == null ? null : er.LevelId
+                LevelId = er == null ? null : er.LevelId,
+                TotalCommission = er == null ? 0 : er.TotalCommission,
+                Statistics = er == null ? null : er.Statistics,
             };
-        
+
         // 过滤
         joinQueryable = parameter.BuildPagedQueryable(joinQueryable);
-        
+
         // 排序
         joinQueryable = string.IsNullOrWhiteSpace(parameter.Sorting)
             ? joinQueryable.OrderByDescending(s => s.Id)
             : joinQueryable.OrderBy(parameter.Sorting).ThenByDescending(s => s.Id);
-        
+
         // 计数
         var totalCount = await joinQueryable.CountAsync();
 

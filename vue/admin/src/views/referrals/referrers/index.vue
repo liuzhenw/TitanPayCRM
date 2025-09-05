@@ -64,21 +64,23 @@
             align="right"
             width="110"
             sortable="custom"
+            show-overflow-tooltip
           >
             <template #default="{ row }">
-              {{ row.commission }}
+              {{ row.commission }} USD
             </template>
           </el-table-column>
           <el-table-column
-            key="withdrawal"
-            prop="withdrawal"
-            label="累计提款"
+            key="totalCommission"
+            prop="totalCommission"
+            label="累计佣金"
             align="right"
             width="110"
             sortable="custom"
+            show-overflow-tooltip
           >
             <template #default="{ row }">
-              {{ row.withdrawal }}
+              {{ row.totalCommission }} USD
             </template>
           </el-table-column>
           <el-table-column key="status" prop="isDisabled" label="状态" width="80" align="center">
@@ -88,10 +90,11 @@
           </el-table-column>
           <el-table-column
             key="createdAt"
-            width="180"
+            width="160"
             label="创建时间"
             align="right"
             sortable="custom"
+            show-overflow-tooltip
           >
             <template #default="{ row }">
               <Datetime :value="row.createdAt" />

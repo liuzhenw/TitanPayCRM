@@ -23,8 +23,11 @@ public class ReferralMapperProfile : Profile
 
         CreateMap<RecommendeeView, RecommendeeDto>()
             .ToValue<RecommendeeView, RecommendeeDto, string, ReferralLevelBasicDto, ReferralLevelConverter>(
-                d => d.Level, s => s.LevelId);
+                d => d.Level, s => s.LevelId)
+            .ForMember(d => d.CreatedAt,
+                o => o.MapFrom(s => s.CreatedAt.ToUnixTimeSeconds()));
         CreateMap<RecommendeeQueryInput, RecommendeeViewPagedParameter>()
+            .Ignore(x => x.AncestorId)
             .Ignore(x => x.RecommenderId);
 
         CreateMap<ReferrerRequest, ReferrerRequestDto>()

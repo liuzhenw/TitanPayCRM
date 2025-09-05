@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Astra.Paged;
 
@@ -10,19 +11,28 @@ public class RecommendeeView
     public string Email { get; set; } = null!;
     public string? LevelId { get; set; }
     public Guid RecommenderId { get; set; }
+    public string RecommenderEmail { get; set; } = null!;
+    public Guid AncestorId { get; set; }
+    public string AncestorEmail { get; set; } = null!;
     public uint Depth { get; set; }
+    public decimal TotalCommission { get; set; }
+    public List<SaleStatistic>? Statistics { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
 }
 
 public class RecommendeeViewPagedParameter : PagedParameter<RecommendeeView>
 {
+    public Guid?  AncestorId { get; set; }
     public Guid? RecommenderId { get; set; }
     public string? LevelId { get; set; }
+    public uint? Depth { get; set; }
 
     public override IQueryable<RecommendeeView> BuildPagedQueryable(IQueryable<RecommendeeView> queryable)
     {
         return queryable
+            .WhereIf(AncestorId.HasValue, x => x.AncestorId == AncestorId)
             .WhereIf(RecommenderId.HasValue, x => x.RecommenderId == RecommenderId)
+            .WhereIf(Depth.HasValue, x => x.Depth == Depth)
             .WhereIf(!LevelId.IsNullOrWhiteSpace(), x => x.LevelId == LevelId);
     }
 }

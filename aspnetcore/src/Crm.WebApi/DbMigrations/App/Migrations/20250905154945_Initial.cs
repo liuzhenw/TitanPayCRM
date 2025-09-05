@@ -45,6 +45,7 @@ namespace Crm.DbMigrations.App.Migrations
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
                     SalesVolume = table.Column<long>(type: "bigint", nullable: false),
                     SalesRevenue = table.Column<decimal>(type: "numeric", nullable: false),
+                    TotalCommission = table.Column<decimal>(type: "numeric", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
@@ -55,7 +56,7 @@ namespace Crm.DbMigrations.App.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductSales",
+                name: "ProductSaleLogs",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -65,12 +66,13 @@ namespace Crm.DbMigrations.App.Migrations
                     OrderNo = table.Column<string>(type: "citext", nullable: false),
                     Quantity = table.Column<long>(type: "bigint", nullable: false),
                     Amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    TotalCommission = table.Column<decimal>(type: "numeric", nullable: false),
                     Data = table.Column<string>(type: "jsonb", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductSales", x => x.Id);
+                    table.PrimaryKey("PK_ProductSaleLogs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -98,6 +100,8 @@ namespace Crm.DbMigrations.App.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    AncestorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AncestorEmail = table.Column<string>(type: "citext", nullable: false),
                     RecommenderId = table.Column<Guid>(type: "uuid", nullable: false),
                     RecommenderEmail = table.Column<string>(type: "citext", nullable: false),
                     RecommendeeId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -136,6 +140,7 @@ namespace Crm.DbMigrations.App.Migrations
                     DirectCount = table.Column<long>(type: "bigint", nullable: false),
                     IndirectCount = table.Column<long>(type: "bigint", nullable: false),
                     TotalCount = table.Column<long>(type: "bigint", nullable: false),
+                    TotalCommission = table.Column<decimal>(type: "numeric", nullable: false),
                     Commission = table.Column<decimal>(type: "numeric", nullable: false),
                     Withdrawal = table.Column<decimal>(type: "numeric", nullable: false),
                     WithdrawalAddress = table.Column<string>(type: "citext", nullable: true),
@@ -143,6 +148,7 @@ namespace Crm.DbMigrations.App.Migrations
                     Remark = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    Statistics = table.Column<string>(type: "jsonb", nullable: false),
                     ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false)
                 },
                 constraints: table =>
@@ -173,6 +179,7 @@ namespace Crm.DbMigrations.App.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "citext", nullable: false),
                     Email = table.Column<string>(type: "citext", nullable: false),
+                    TotalConsumption = table.Column<decimal>(type: "numeric", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: true),
                     AvatarUri = table.Column<string>(type: "text", nullable: true),
                     Attempts = table.Column<int>(type: "integer", nullable: false),
@@ -209,30 +216,6 @@ namespace Crm.DbMigrations.App.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SaleStatistics",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ReferrerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProductId = table.Column<string>(type: "text", nullable: false),
-                    Volume = table.Column<long>(type: "bigint", nullable: false),
-                    Revenue = table.Column<decimal>(type: "numeric", nullable: false),
-                    Commission = table.Column<decimal>(type: "numeric", nullable: false),
-                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SaleStatistics", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SaleStatistics_Referrers_ReferrerId",
-                        column: x => x.ReferrerId,
-                        principalTable: "Referrers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserRole",
                 columns: table => new
                 {
@@ -255,11 +238,6 @@ namespace Crm.DbMigrations.App.Migrations
                 name: "IX_CommissionLogs_ReceiverId",
                 table: "CommissionLogs",
                 column: "ReceiverId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SaleStatistics_ReferrerId",
-                table: "SaleStatistics",
-                column: "ReferrerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRole_UserId",
@@ -289,7 +267,7 @@ namespace Crm.DbMigrations.App.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "ProductSales");
+                name: "ProductSaleLogs");
 
             migrationBuilder.DropTable(
                 name: "ReferralLevels");
@@ -301,19 +279,16 @@ namespace Crm.DbMigrations.App.Migrations
                 name: "ReferrerRequests");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "Referrers");
 
             migrationBuilder.DropTable(
-                name: "SaleStatistics");
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "UserRole");
 
             migrationBuilder.DropTable(
                 name: "WithdrawalRequests");
-
-            migrationBuilder.DropTable(
-                name: "Referrers");
 
             migrationBuilder.DropTable(
                 name: "Users");

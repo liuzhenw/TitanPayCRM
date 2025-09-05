@@ -13,7 +13,7 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Crm.DbMigrations.App.Migrations
 {
     [DbContext(typeof(AppDbMigrationContext))]
-    [Migration("20250904115010_Initial")]
+    [Migration("20250905154945_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -94,6 +94,9 @@ namespace Crm.DbMigrations.App.Migrations
                     b.Property<string>("PasswordSalt")
                         .HasColumnType("text");
 
+                    b.Property<decimal>("TotalConsumption")
+                        .HasColumnType("numeric");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -164,6 +167,9 @@ namespace Crm.DbMigrations.App.Migrations
                     b.Property<long>("SalesVolume")
                         .HasColumnType("bigint");
 
+                    b.Property<decimal>("TotalCommission")
+                        .HasColumnType("numeric");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -205,9 +211,12 @@ namespace Crm.DbMigrations.App.Migrations
                     b.Property<long>("Quantity")
                         .HasColumnType("bigint");
 
+                    b.Property<decimal>("TotalCommission")
+                        .HasColumnType("numeric");
+
                     b.HasKey("Id");
 
-                    b.ToTable("ProductSales");
+                    b.ToTable("ProductSaleLogs");
                 });
 
             modelBuilder.Entity("Crm.Referrals.CommissionLog", b =>
@@ -349,6 +358,13 @@ namespace Crm.DbMigrations.App.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
+                    b.Property<string>("Statistics")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<decimal>("TotalCommission")
+                        .HasColumnType("numeric");
+
                     b.Property<long>("TotalCount")
                         .HasColumnType("bigint");
 
@@ -396,40 +412,6 @@ namespace Crm.DbMigrations.App.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ReferrerRequests");
-                });
-
-            modelBuilder.Entity("Crm.Referrals.SaleStatistic", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("Commission")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ProductId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ReferrerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("Revenue")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("Volume")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReferrerId");
-
-                    b.ToTable("SaleStatistics");
                 });
 
             modelBuilder.Entity("Crm.Referrals.WithdrawalRequest", b =>
@@ -492,6 +474,28 @@ namespace Crm.DbMigrations.App.Migrations
 
             modelBuilder.Entity("Crm.Referrals.ReferralRelation", b =>
                 {
+                    b.OwnsOne("Crm.Referrals.ReferralRelationUser", "Ancestor", b1 =>
+                        {
+                            b1.Property<Guid>("ReferralRelationId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Email")
+                                .IsRequired()
+                                .HasColumnType("citext")
+                                .HasColumnName("AncestorEmail");
+
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("uuid")
+                                .HasColumnName("AncestorId");
+
+                            b1.HasKey("ReferralRelationId");
+
+                            b1.ToTable("ReferralRelations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ReferralRelationId");
+                        });
+
                     b.OwnsOne("Crm.Referrals.ReferralRelationUser", "Recommendee", b1 =>
                         {
                             b1.Property<Guid>("ReferralRelationId")
@@ -536,6 +540,9 @@ namespace Crm.DbMigrations.App.Migrations
                                 .HasForeignKey("ReferralRelationId");
                         });
 
+                    b.Navigation("Ancestor")
+                        .IsRequired();
+
                     b.Navigation("Recommendee")
                         .IsRequired();
 
@@ -543,25 +550,9 @@ namespace Crm.DbMigrations.App.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Crm.Referrals.SaleStatistic", b =>
-                {
-                    b.HasOne("Crm.Referrals.Referrer", "Referrer")
-                        .WithMany("Statistics")
-                        .HasForeignKey("ReferrerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Referrer");
-                });
-
             modelBuilder.Entity("Crm.Accounts.User", b =>
                 {
                     b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("Crm.Referrals.Referrer", b =>
-                {
-                    b.Navigation("Statistics");
                 });
 #pragma warning restore 612, 618
         }

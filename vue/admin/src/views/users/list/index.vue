@@ -28,7 +28,23 @@
               {{ row.email }}
             </template>
           </el-table-column>
-          <el-table-column key="createdAt" width="180" label="创建时间" align="right">
+          <el-table-column
+            key="totalConsumption"
+            prop="totalConsumption"
+            label="累计消费"
+            width="120"
+            align="right"
+            sortable="custom"
+          >
+            <template #default="{ row }"> {{ row.totalConsumption }} USD </template>
+          </el-table-column>
+          <el-table-column
+            key="createdAt"
+            width="180"
+            label="创建时间"
+            align="right"
+            sortable="custom"
+          >
             <template #default="{ row }">
               <Datetime :value="row.createdAt" />
             </template>
@@ -49,7 +65,7 @@
   import { UserService, UserDto, UserQueryInput } from '@/api/services'
   import { SearchFormItem } from '@/types'
   import { RoutesAlias } from '@/router/routesAlias'
-import { on } from 'events'
+  import { on } from 'events'
 
   const router = useRouter()
   const tableData = ref<UserDto[]>([])

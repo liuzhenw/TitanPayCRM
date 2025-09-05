@@ -45,6 +45,10 @@ public class Product : BasicAggregateRoot<string>, ISoftDelete
     /// </summary>
     /// <returns></returns>
     public decimal SalesRevenue { get; private set; }
+    /// <summary>
+    /// 累计佣金
+    /// </summary>
+    public decimal TotalCommission { get; private set; }
 
     public bool IsDeleted { get; private set; }
 
@@ -55,6 +59,7 @@ public class Product : BasicAggregateRoot<string>, ISoftDelete
     {
         SalesRevenue += log.Amount;
         SalesVolume += log.Quantity;
+        TotalCommission += log.TotalCommission;
         UpdatedAt = DateTimeOffset.Now;
     }
 }

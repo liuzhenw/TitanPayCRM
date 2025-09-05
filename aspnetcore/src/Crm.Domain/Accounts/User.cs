@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Astra.Paged;
+using Crm.Products;
 using Volo.Abp.Domain.Entities;
 
 namespace Crm.Accounts;
@@ -18,6 +19,7 @@ public class User : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
 
     public string Name { get; private set; } = null!;
     public string Email { get; private set; } = null!;
+    public decimal TotalConsumption { get; private set; }
     public string? PasswordHash { get; internal set; }
     public string? AvatarUri { get; set; }
     public ushort Attempts { get; private set; }
@@ -42,6 +44,12 @@ public class User : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
         LockedAt = null;
         UpdatedAt = DateTimeOffset.Now;
     }
+
+    internal void OnBuy(ProductSaleLog log)
+    {
+        TotalConsumption += log.Amount;
+        UpdatedAt = DateTimeOffset.MaxValue;
+    }
 }
 
 public class UserPagedParameter : PagedParameter<User>
@@ -52,7 +60,7 @@ public class UserPagedParameter : PagedParameter<User>
     public override IQueryable<User> BuildPagedQueryable(IQueryable<User> queryable)
     {
         return queryable
-            .WhereIf(!Name.IsNullOrWhiteSpace(),x=>x.Name.Contains(Name!))
+            .WhereIf(!Name.IsNullOrWhiteSpace(), x => x.Name.Contains(Name!))
             .WhereIf(!Email.IsNullOrWhiteSpace(), x => x.Email.StartsWith(Email!));
     }
 }

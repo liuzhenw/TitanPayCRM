@@ -14,7 +14,7 @@ public class CrmDbContext(DbContextOptions<CrmDbContext> options) : AbpDbContext
     public DbSet<Role> Roles { get; set; }
     
     public DbSet<Product> Products { get; set; }
-    public DbSet<ProductSaleLog> ProductSales { get; set; }
+    public DbSet<ProductSaleLog> ProductSaleLogs { get; set; }
     
     public DbSet<Referrer> Referrers { get; set; }
     public DbSet<ReferralLevel> ReferralLevels { get; set; }
@@ -22,7 +22,6 @@ public class CrmDbContext(DbContextOptions<CrmDbContext> options) : AbpDbContext
     public DbSet<ReferralRelation> ReferralRelations { get; set; }
     public DbSet<CommissionLog> CommissionLogs { get; set; }
     public DbSet<WithdrawalRequest> WithdrawalRequests { get; set; }
-    public DbSet<SaleStatistic> SaleStatistics { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -6,6 +6,7 @@ namespace Crm.Users;
 
 public class UserDto : EntityDto<Guid>
 {
+    public decimal TotalConsumption { get; set; }
     public string Email { get; set; } = null!;
     public bool HasPassword { get; set; }
     public string? AvatarUrl { get; set; }

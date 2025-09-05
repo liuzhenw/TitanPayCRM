@@ -39,7 +39,7 @@ public class ReferralService(
 
     public async Task<PagedResultDto<RecommendeeDto>> GetRecommendeePagedListAsync(RecommendeeQueryInput input)
     {
-        var parameter = new RecommendeeViewPagedParameter { RecommenderId = CurrentUserId };
+        var parameter = new RecommendeeViewPagedParameter { AncestorId = CurrentUserId };
         ObjectMapper.Map(input, parameter);
         var paged = await relationRepo.GetRecommendeePagedListAsync(parameter);
         return new PagedResultDto<RecommendeeDto>(

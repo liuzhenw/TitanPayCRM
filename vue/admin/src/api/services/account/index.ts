@@ -10,6 +10,7 @@ export interface UserWithDetailsDto {
   id: string
   name: string
   email: string
+  totalConsumption: number
   avatarUrl?: string
   avatarUri?: string
   attempts: number

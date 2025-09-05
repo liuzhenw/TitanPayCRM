@@ -1,45 +1,76 @@
 using System;
-using Volo.Abp.Domain.Entities;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using Crm.Products;
+using Volo.Abp.Domain.Values;
 
 namespace Crm.Referrals;
 
-public class SaleStatistic : Entity<Guid>
+public class SaleStatistic : ValueObject
 {
+    [JsonConstructor]
     protected SaleStatistic() { }
 
-    internal SaleStatistic(Guid id, Guid referrerId, string productId) : base(id)
+    public SaleStatistic(string productId)
     {
-        ReferrerId = referrerId;
         ProductId = productId;
     }
 
-    public Guid ReferrerId { get; private set; }
-    public string ProductId { get; private set; } = null!;
+    public string ProductId { get; set; } = null!;
 
     /// <summary>
     /// 销售量
     /// </summary>
-    public uint Volume { get; private set; }
+    public uint Volume { get; set; }
 
     /// <summary>
     /// 销售额
     /// </summary>
-    public decimal Revenue { get; private set; }
+    public decimal Revenue { get; set; }
 
     /// <summary>
     /// 累计佣金
     /// </summary>
-    public decimal Commission { get; private set; }
+    public decimal Commission { get; set; }
 
-    public DateTimeOffset? UpdatedAt { get; private set; }
-    public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.Now;
-    public virtual Referrer Referrer { get; private set; } = null!;
-
-    public void AddSale(uint volume, decimal revenue, decimal commission)
+    public void AddSale(ProductSaleLog log, decimal commission)
     {
-        Volume += volume;
-        Revenue += revenue;
+        Volume += log.Quantity;
+        Revenue += log.Amount;
         Commission += commission;
-        UpdatedAt = DateTimeOffset.Now;
+    }
+
+    public SaleStatistic Clone()
+    {
+        return new SaleStatistic
+        {
+            ProductId = ProductId,
+            Commission = Commission,
+            Revenue = Revenue,
+            Volume = Volume
+        };
+    }
+
+    protected override IEnumerable<object> GetAtomicValues()
+    {
+        yield return ProductId;
+        yield return Volume;
+        yield return Revenue;
+        yield return Commission;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is not null && ValueEquals(obj);
+    }
+
+    protected bool Equals(SaleStatistic other)
+    {
+        return ValueEquals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(ProductId, Volume, Revenue, Commission);
     }
 }

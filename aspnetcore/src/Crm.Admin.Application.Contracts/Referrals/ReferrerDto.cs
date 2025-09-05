@@ -13,6 +13,7 @@ public class ReferrerDto : EntityDto<Guid>
     public uint IndirectCount { get; set; }
     public uint TotalCount { get; set; }
     public decimal Commission { get; set; }
+    public decimal TotalCommission { get; set; }
     public decimal Withdrawal { get; set; }
     public string? WithdrawalAddress { get; set; }
     public bool IsDisabled { get; set; }
@@ -65,12 +66,10 @@ public class ReferrerQueryInput : PagedAndSortedResultRequestDto
     public string? LevelId { get; set; }
 }
 
-public class ReferrerSaleStatisticDto : EntityDto<Guid>
+public class ReferrerSaleStatisticDto
 {
     public ProductBasicDto Product { get; set; } = null!;
     public uint Volume { get; set; }
     public decimal Revenue { get; set; }
     public decimal Commission { get; set; }
-    public DateTimeOffset? UpdatedAt { get; set; }
-    public DateTimeOffset CreatedAt { get; set; }
 }

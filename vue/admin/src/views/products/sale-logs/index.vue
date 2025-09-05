@@ -19,29 +19,33 @@
           @pagination:size-change="onPaginationChange"
           @sort-change="onSortChange"
         >
-          <el-table-column key="product" prop="product" label="商品名称">
+          <el-table-column key="product" prop="product" label="商品名称" show-overflow-tooltip>
             <template #default="{ row }">
               <div>{{ row.product.name }}</div>
             </template>
           </el-table-column>
-          <el-table-column key="customer" prop="customer" label="买家">
+          <el-table-column key="customer" prop="customer" label="买家" show-overflow-tooltip>
             <template #default="{ row }">
               <div>{{ row.customer.email }}</div>
             </template>
           </el-table-column>
           <el-table-column key="orderNo" prop="orderNo" label="订单号" show-overflow-tooltip />
-          <el-table-column key="quantity" prop="quantity" label="数量" align="right" />
-          <el-table-column key="amount" prop="amount" label="金额" align="right" />
-          <el-table-column key="createdAt" prop="createdAt" label="创建时间" align="right">
+          <el-table-column key="quantity" prop="quantity" label="数量" width="80" align="right" />
+          <el-table-column key="amount" prop="amount" label="金额" width="120" align="right">
+            <template #default="{ row }"> {{ row.amount }} USD </template>
+          </el-table-column>
+           <el-table-column key="amount" prop="amount" label="佣金" width="120" align="right">
+            <template #default="{ row }"> {{ row.totalCommission }} USD </template>
+          </el-table-column>
+          <el-table-column key="createdAt" prop="createdAt" label="创建时间" align="right" show-overflow-tooltip>
             <template #default="{ row }">
               <Datetime :value="row.createdAt" />
             </template>
           </el-table-column>
-          <el-table-column key="actions" width="140" align="right">
+          <el-table-column key="actions" width="110" align="right">
             <template #default="{ row }">
               <el-space>
                 <ArtButtonTable type="edit" />
-                <ArtButtonTable type="delete" />
               </el-space>
             </template>
           </el-table-column>

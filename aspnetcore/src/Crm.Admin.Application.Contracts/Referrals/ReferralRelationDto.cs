@@ -16,6 +16,7 @@ public class ReferralRelationUserDto
 }
 public class ReferralRelationQueryInput : PagedAndSortedResultRequestDto
 {
+    public Guid? AncestorId { get; set; }
     public Guid? RecommenderId { get; set; }
     public Guid? RecommendeeId { get; set; }
     public uint? MinDepth { get; set; }

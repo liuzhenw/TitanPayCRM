@@ -12,6 +12,8 @@ export interface ReferrerDto {
   /** @format int32 */
   totalCount: number
   /** @format double */
+  totalCommission: number
+  /** @format double */
   commission: number
   /** @format double */
   withdrawal: number
@@ -25,8 +27,6 @@ export interface ReferrerDto {
 }
 
 export interface ReferrerSaleStatisticDto {
-  /** @format uuid */
-  id?: string
   product: ProductBasicDto
   /** @format int32 */
   volume?: number
@@ -34,10 +34,6 @@ export interface ReferrerSaleStatisticDto {
   revenue?: number
   /** @format double */
   commission?: number
-  /** @format date-time */
-  updatedAt?: string | null
-  /** @format date-time */
-  createdAt?: string
 }
 
 export interface ReferrerWithDetailsDto extends ReferrerDto {

@@ -14,7 +14,7 @@ Content-Type: application/json
 
 {
   "email": "{{email}}",
-  "code": "300185"
+  "code": "128658"
 }
 
 > {%
@@ -43,7 +43,7 @@ GET {{baseUrl}}/api/referral/referrer
 Authorization: Bearer {{accessToken}}
 
 ### Recommendees
-GET {{baseUrl}}/api/referral/recommendees?sorting=createdAt desc
+GET {{baseUrl}}/api/referral/recommendees?sorting=totalCommission desc
 Authorization: Bearer {{accessToken}}
 
 ### Applying

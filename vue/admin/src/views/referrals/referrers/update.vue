@@ -113,6 +113,7 @@
 
   onMounted(async () => {
     levels.value = await ReferralLevelService.getOptions()
+    await ReferrerService.get(value.id);
   })
 </script>
 

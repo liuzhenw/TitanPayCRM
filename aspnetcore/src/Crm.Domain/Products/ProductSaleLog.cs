@@ -30,8 +30,14 @@ public class ProductSaleLog : BasicAggregateRoot<Guid>
     public string OrderNo { get; private set; } = null!;
     public uint Quantity { get; private set; }
     public decimal Amount { get; private set; }
+    public decimal TotalCommission { get; private set; }
     public JsonNode Data { get; private set; } = new JsonObject();
     public DateTimeOffset CreatedAt { get; private set; }
+
+    internal void OnCommissionAdded(decimal amount)
+    {
+        TotalCommission += amount;
+    }
 }
 
 public class ProductSaleLogPagedParameter : PagedParameter<ProductSaleLog>

@@ -7,6 +7,7 @@ export interface ProductSaleLogDto {
   orderNo: string
   quantity: number
   amount: number
+  totalCommission: number
   createdAt: string
 }
 

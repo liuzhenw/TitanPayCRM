@@ -20,7 +20,7 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
         ConcurrencyStamp = Guid.NewGuid().ToString("N");
     }
 
-    internal Referrer(User user, ReferralLevel? level): base(user.Id)
+    internal Referrer(User user, ReferralLevel? level) : base(user.Id)
     {
         LevelId = level?.Id;
         CreatedAt = DateTimeOffset.Now;
@@ -50,6 +50,11 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
     /// <summary>
     /// 累计佣金
     /// </summary>
+    public decimal TotalCommission { get; private set; }
+
+    /// <summary>
+    /// 可用佣金
+    /// </summary>
     public decimal Commission { get; private set; }
 
     /// <summary>
@@ -71,9 +76,8 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
 
     public DateTimeOffset? UpdatedAt { get; set; }
     public DateTimeOffset CreatedAt { get; private set; }
+    public List<SaleStatistic> Statistics { get; private set; } = [];
     public string ConcurrencyStamp { get; set; } = null!;
-
-    public virtual List<SaleStatistic> Statistics { get; private set; } = [];
 
     public void SetWithdrawalAddress(string address)
     {
@@ -97,9 +101,15 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
 
     internal void OnCommissionAdded(ProductSaleLog log, decimal commission)
     {
-        var statistic = Statistics.FirstOrDefault(x => x.ProductId == log.ProductId)
-                        ?? new SaleStatistic(Guid.CreateVersion7(), Id, log.ProductId);
-        statistic.AddSale(log.Quantity, log.Amount, commission);
+        TotalCommission += commission; 
+        Commission += commission;
+        var statistic = Statistics.FirstOrDefault(x => x.ProductId == log.ProductId);
+        if (statistic is null)
+        {
+            statistic = new SaleStatistic(log.ProductId);
+            Statistics.Add(statistic);
+        }
+        statistic.AddSale(log, commission);
     }
 
     internal void OnWithdrawal(WithdrawalRequest request)

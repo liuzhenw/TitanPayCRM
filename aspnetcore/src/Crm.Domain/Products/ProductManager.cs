@@ -6,7 +6,7 @@ using Volo.Abp.Domain.Services;
 
 namespace Crm.Products;
 
-public class ProductManager(IProductSaleLogRepository logRepo, IProductRepository productRepo) : DomainService
+public class ProductManager(IProductSaleLogRepository logRepo) : DomainService
 {
     public async Task SoldAsync(Product product, User customer, string orderNo, uint quantity, JsonObject data)
     {
@@ -15,8 +15,5 @@ public class ProductManager(IProductSaleLogRepository logRepo, IProductRepositor
 
         var log = new ProductSaleLog(GuidGenerator.Create(), product, customer, orderNo, quantity, data);
         await logRepo.InsertAsync(log);
-
-        product.OnSold(log);
-        await productRepo.UpdateAsync(product);
     }
 }

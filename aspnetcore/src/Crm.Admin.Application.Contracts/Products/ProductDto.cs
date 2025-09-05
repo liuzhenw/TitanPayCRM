@@ -16,6 +16,7 @@ public class ProductDto : ProductBasicDto
     public decimal Price { get; set; }
     public uint SalesVolume { get; set; }
     public decimal SalesRevenue { get; set; }
+    public decimal TotalCommission { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
 }

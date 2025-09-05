@@ -10,6 +10,7 @@ public class ProductSaleLogDto : EntityDto<Guid>
     public string OrderNo { get; set; } = null!;
     public uint Quantity { get; set; }
     public decimal Amount { get; set; }
+    public decimal TotalCommission { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
 }
 

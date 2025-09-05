@@ -163,7 +163,7 @@ public class AppDataSeeder(IServiceProvider services, IAbpHostEnvironment enviro
         var saleLogRepo = services.GetRequiredService<IProductSaleLogRepository>();
         if (await saleLogRepo.GetCountAsync() > 0) return;
 
-        List<string> customers =
+        List<string> emails =
         [
             "user1-1@email.com",
             "user1-1@email.com",
@@ -185,7 +185,7 @@ public class AppDataSeeder(IServiceProvider services, IAbpHostEnvironment enviro
         ];
 
         var uowManager = services.GetRequiredService<IUnitOfWorkManager>();
-        foreach (var customer in customers)
+        foreach (var email in emails)
         {
             await using var scope = services.CreateAsyncScope();
             using var uow = uowManager.Begin(true);
@@ -193,7 +193,7 @@ public class AppDataSeeder(IServiceProvider services, IAbpHostEnvironment enviro
             var productRepo = scope.ServiceProvider.GetRequiredService<IProductRepository>();
             var productManager = scope.ServiceProvider.GetRequiredService<ProductManager>();
             var product = await productRepo.GetAsync(CrmConsts.ProductUCard);
-            var user = await userRepo.FindByEmailAsync(customer);
+            var user = await userRepo.FindByEmailAsync(email);
             await productManager.SoldAsync(
                 product, user!, DateTimeOffset.Now.Ticks.ToString(), 1, new JsonObject());
             await uow.CompleteAsync();

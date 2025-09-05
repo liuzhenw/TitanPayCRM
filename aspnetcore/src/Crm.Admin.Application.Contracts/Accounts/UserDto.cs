@@ -10,6 +10,7 @@ public class UserBasicDto : EntityDto<Guid>
 }
 public class UserDto : UserBasicDto
 {
+    public decimal TotalConsumption { get; set; }
     public ushort Attempts { get; set; }
     public DateTimeOffset? LockedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Crm.Products;
 using FluentValidation;
 using Volo.Abp.Application.Dtos;
@@ -25,13 +24,14 @@ public class ReferrerDto : EntityDto<Guid>
     public uint DirectCount { get; set; }
     public uint IndirectCount { get; set; }
     public uint TotalCount { get; set; }
+    public decimal TotalCommission { get; set; }
     public decimal Commission { get; set; }
     public decimal Withdrawal { get; set; }
     public string? WithdrawalAddress { get; set; }
     public List<ReferrerSaleStatisticDto> Statistics { get; set; } = null!;
 }
 
-public class ReferrerSaleStatisticDto : EntityDto<Guid>
+public class ReferrerSaleStatisticDto
 {
     public ProductBasicDto Product { get; set; } = null!;
     public uint Volume { get; set; }
@@ -68,12 +68,15 @@ public class RecommendeeDto : EntityDto<Guid>
 {
     public string Email { get; set; } = null!;
     public ReferralLevelBasicDto? Level { get; set; }
+    public string RecommenderEmail { get; set; } = null!;
     public uint Depth { get; set; }
-    public DateTimeOffset CreatedAt { get; set; }
+    public decimal TotalCommission { get; set; }
+    public long CreatedAt { get; set; }
+    public List<ReferrerSaleStatisticDto>? Statistics { get; set; }
 }
 
 public class RecommendeeQueryInput : PagedAndSortedResultRequestDto
 {
     public string? LevelId { get; set; }
+    public uint? Depth { get; set; }
 }
-

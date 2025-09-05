@@ -16,7 +16,8 @@ public class ReferralManager(
     IReferrerLevelRepository levelRepo,
     ICommissionLogRepository commissionRepo,
     IWithdrawalRequestRepository withdrawalRepo,
-    IReferrerRequestRepository requestRepo
+    IReferrerRequestRepository requestRepo,
+    IProductRepository productRepo
 ) : DomainService
 {
     /// <summary>
@@ -165,7 +166,7 @@ public class ReferralManager(
                 var parent = await referrerRepo.FindParentAsync(referrer.Id);
                 if (parent is not null)
                 {
-                    if (parent.LevelId is null) 
+                    if (parent.LevelId is null)
                         throw new UserFriendlyException("等级不能高于上级!");
 
                     var maxLevel = await levelRepo.GetAsync(parent.LevelId);
@@ -183,7 +184,7 @@ public class ReferralManager(
         {
             curLevel.OnUserQuited();
             await levelRepo.UpdateAsync(curLevel);
-            
+
             var request = await requestRepo.FindAsync(referrer.Id);
             if (request is not null)
                 await requestRepo.DeleteAsync(request);
@@ -215,18 +216,19 @@ public class ReferralManager(
         }
 
         referrer.OnDirectReferralAdded();
-        var relation = new ReferralRelation(recommender, recommendee, 1);
+
+        var relation = new ReferralRelation(recommendee, recommender, recommender, 1);
         List<Referrer> referrers = [referrer];
         List<ReferralRelation> relations = [relation];
         // 处理间推
         var ancestorRelations = await relationRepo.GetAncestorListAsync(recommender.Id, 1);
         foreach (var item in ancestorRelations.OrderBy(x => x.Depth))
         {
-            var ancestorUser = await userRepo.GetAsync(item.Recommender.Id);
-            var ancestorRelation = new ReferralRelation(ancestorUser, recommendee, item.Depth + 1u);
+            var ancestorUser = await userRepo.GetAsync(item.Ancestor.Id);
+            var ancestorRelation = new ReferralRelation(recommendee, recommender, ancestorUser, item.Depth + 1u);
             relations.Add(ancestorRelation);
 
-            var ancestor = await referrerRepo.GetAsync(item.Recommender.Id);
+            var ancestor = await referrerRepo.GetAsync(item.Ancestor.Id);
             ancestor.OnIndirectReferralAdded();
             referrers.Add(ancestor);
         }
@@ -289,14 +291,18 @@ public class ReferralManager(
     /// <param name="saleLog"></param>
     internal async Task OnProductSoldAsync(ProductSaleLog saleLog)
     {
-        var ancestorRelations = await relationRepo.GetAncestorListAsync(saleLog.CustomerId, 1);
+        var customer = await userRepo.GetAsync(saleLog.CustomerId);
+        customer.OnBuy(saleLog);
+        await userRepo.UpdateAsync(customer);
+
+        var ancestorRelations = await relationRepo.GetAncestorListAsync(saleLog.CustomerId);
         if (ancestorRelations.Count < 1) return;
 
         var levels = await levelRepo.GetListAsync();
         List<ReferralLevel> updatedLevels = [];
         foreach (var relation in ancestorRelations)
         {
-            var referrer = await referrerRepo.GetAsync(relation.Recommender.Id);
+            var referrer = await referrerRepo.GetAsync(relation.Ancestor.Id);
             if (referrer.IsDisabled || referrer.LevelId is null) continue;
 
             var level = levels.First(x => x.Id == referrer.LevelId);
@@ -304,16 +310,19 @@ public class ReferralManager(
             var commissionLog = new CommissionLog(GuidGenerator.Create(), referrer, relation, saleLog, commission);
             await commissionRepo.InsertAsync(commissionLog);
             referrer.OnCommissionAdded(saleLog, commission);
-            level.OnCommissionAdded(commission);
-            level.UpdatedAt = DateTimeOffset.Now;
             await referrerRepo.UpdateAsync(referrer);
-
+            level.OnCommissionAdded(commission);
+            saleLog.OnCommissionAdded(commission);
             if (updatedLevels.All(x => x.Id != level.Id))
                 updatedLevels.Add(level);
         }
 
         if (updatedLevels.Count > 0)
             await levelRepo.UpdateManyAsync(levels);
+        
+        var product = await productRepo.GetAsync(saleLog.ProductId);
+        product.OnSold(saleLog);
+        await productRepo.UpdateAsync(product);
     }
 
     private async Task ValidateReferrerRequest(User user, ReferralLevel level)
@@ -321,7 +330,7 @@ public class ReferralManager(
         var parentRelations = await relationRepo.FindParentAsync(user.Id);
         if (parentRelations is not null)
         {
-            var parent = await referrerRepo.FindAsync(parentRelations.Recommender.Id);
+            var parent = await referrerRepo.FindAsync(parentRelations.Ancestor.Id);
             // 上级不是推荐人身份,下级也不能成为推荐人
             if (parent?.LevelId is null)
                 throw new BusinessException(CrmErrorCodes.Referrals.CannotApplyThisLevel);

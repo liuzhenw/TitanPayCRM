@@ -1,8 +1,13 @@
-﻿using Astra.EntityFrameworkCore.EntityPropertyConverters;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using Astra.EntityFrameworkCore.EntityPropertyConverters;
 using Crm.Accounts;
 using Crm.Products;
 using Crm.Referrals;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp;
 
@@ -18,7 +23,7 @@ public static class CrmDbContextModelCreatingExtensions
         {
             options.Property(x => x.Name).HasColumnType("citext");
             options.Property(x => x.Email).HasColumnType("citext");
-            
+
             options.HasIndex(x => x.Name).IsUnique();
             options.HasIndex(x => x.Email).IsUnique();
         });
@@ -58,19 +63,20 @@ public static class CrmDbContextModelCreatingExtensions
         });
         builder.Entity<ReferralRelation>(options =>
         {
+            options.OwnsOne(x => x.Ancestor, opt =>
+            {
+                opt.Property(x => x.Id).HasColumnName("AncestorId");
+                opt.Property(x => x.Email).HasColumnName("AncestorEmail").HasColumnType("citext");
+            });
             options.OwnsOne(x => x.Recommender, opt =>
             {
                 opt.Property(x => x.Id).HasColumnName("RecommenderId");
-                opt.Property(x => x.Email)
-                    .HasColumnName("RecommenderEmail")
-                    .HasColumnType("citext");
+                opt.Property(x => x.Email).HasColumnName("RecommenderEmail").HasColumnType("citext");
             });
             options.OwnsOne(x => x.Recommendee, opt =>
             {
                 opt.Property(x => x.Id).HasColumnName("RecommendeeId");
-                opt.Property(x => x.Email)
-                    .HasColumnName("RecommendeeEmail")
-                    .HasColumnType("citext");
+                opt.Property(x => x.Email).HasColumnName("RecommendeeEmail").HasColumnType("citext");
             });
         });
         builder.Entity<Referrer>(options =>
@@ -78,9 +84,16 @@ public static class CrmDbContextModelCreatingExtensions
             options.Property(x => x.LevelId).HasMaxLength(32);
             options.Property(x => x.WithdrawalAddress).HasColumnType("citext");
             options.Property(x => x.Remark).HasMaxLength(32);
-            options.HasMany(x => x.Statistics)
-                .WithOne(x => x.Referrer)
-                .HasForeignKey(x => x.ReferrerId);
+            options.Property(x => x.Statistics)
+                .HasColumnType("jsonb")
+                .HasConversion(
+                    to => JsonSerializer.Serialize(to, JsonSerializerOptions.Web),
+                    from => JsonSerializer.Deserialize<List<SaleStatistic>>(from, JsonSerializerOptions.Web)!)
+                .Metadata.SetValueComparer(new ValueComparer<List<SaleStatistic>>(
+                    (c1, c2) => c1!.SequenceEqual(c2!),
+                    c => c.Aggregate(0, (a, s) => HashCode.Combine(a, s.GetHashCode())),
+                    c => c.Select(x => x.Clone()).ToList()
+                ));
         });
         builder.Entity<ReferrerRequest>(options =>
         {

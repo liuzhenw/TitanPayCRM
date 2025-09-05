@@ -27,9 +27,6 @@ public class CrmEntityFrameworkCoreModule : AbpModule
         {
             options.Entity<User>(entity =>
                 entity.DefaultWithDetailsFunc = user => user.Include(x => x.UserRoles));
-           
-            options.Entity<Referrer>(entity =>
-                entity.DefaultWithDetailsFunc = referrer => referrer.Include(x => x.Statistics));
         });
     }
 

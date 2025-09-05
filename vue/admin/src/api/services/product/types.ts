@@ -9,6 +9,7 @@ export interface ProductDto extends ProductBasicDto {
   price: number
   salesVolume: number
   salesRevenue: number
+  totalCommission: number
   createdAt: string
   updatedAt?: string
 }
