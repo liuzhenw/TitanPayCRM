@@ -7,5 +7,6 @@ public interface IReferrerService : IApplicationService
 {
     Task<ReferrerWithDetails> GetAsync(Guid id);
     Task<PagedResultDto<ReferrerDto>> GetPagedListAsync(ReferrerQueryInput input);
+    Task<ReferrerWithDetails> CreateAsync(ReferrerCreateInput input);
     Task<ReferrerWithDetails> UpdateAsync(Guid id, ReferrerUpdateInput input);
 }

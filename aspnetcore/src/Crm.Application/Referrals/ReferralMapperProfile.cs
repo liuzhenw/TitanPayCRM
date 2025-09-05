@@ -17,6 +17,9 @@ public class ReferralMapperProfile : Profile
         CreateMap<Referrer, ReferrerDto>()
             .ToValue<Referrer, ReferrerDto, string, ReferralLevelBasicDto, ReferralLevelConverter>(
                 d => d.Level, s => s.LevelId);
+        CreateMap<SaleStatistic, ReferrerSaleStatisticDto>()
+            .ToValue<SaleStatistic, ReferrerSaleStatisticDto, string, ProductBasicDto, ProductValueConverter>(
+                d => d.Product, s => s.ProductId);
 
         CreateMap<RecommendeeView, RecommendeeDto>()
             .ToValue<RecommendeeView, RecommendeeDto, string, ReferralLevelBasicDto, ReferralLevelConverter>(
@@ -30,12 +33,14 @@ public class ReferralMapperProfile : Profile
 
         CreateMap<CommissionLog, CommissionLogDto>()
             .ToValue<CommissionLog, CommissionLogDto, string, ProductBasicDto, ProductValueConverter>(
-                d => d.Product, s => s.ProductId);
+                d => d.Product, s => s.ProductId)
+            .ToValue<CommissionLog, CommissionLogDto, string, ReferralLevelBasicDto, ReferralLevelConverter>(
+                d => d.Level, s => s.LevelId);
         CreateMap<CommissionLogQueryInput, CommissionLogPagedParameter>()
             .Ignore(x => x.ReceiverId);
 
         CreateMap<WithdrawalRequest, WithdrawalRequestDto>()
-            .ForMember(d => d.CreatedAt, 
+            .ForMember(d => d.CreatedAt,
                 o => o.MapFrom(d => d.CreatedAt.ToUnixTimeSeconds()))
             .ForMember(d => d.CompletedAt,
                 o => o.MapFrom(d => d.CompletedAt == null ? 0 : d.CompletedAt.Value.ToUnixTimeSeconds()));

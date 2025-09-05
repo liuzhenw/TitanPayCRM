@@ -119,9 +119,9 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
         UpdatedAt = DateTimeOffset.Now;
     }
 
-    internal void SetLevel(ReferralLevel newLevel)
+    internal void SetLevel(ReferralLevel? newLevel)
     {
-        LevelId = newLevel.Id;
+        LevelId = newLevel?.Id;
         UpdatedAt = DateTimeOffset.Now;
     }
 }

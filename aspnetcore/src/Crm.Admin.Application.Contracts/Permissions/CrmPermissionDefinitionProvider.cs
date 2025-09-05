@@ -29,12 +29,16 @@ public class CrmPermissionDefinitionProvider : PermissionDefinitionProvider
         products.AddChild(CrmPermissions.Products.SaleLogs, F("销售记录"));
 
         var referrers = group.AddPermission(CrmPermissions.Referrers.Default, F("推销员"));
+        referrers.AddChild(CrmPermissions.Referrers.Create, F("创建"));
         referrers.AddChild(CrmPermissions.Referrers.Update, F("修改"));
 
         var levels = group.AddPermission(CrmPermissions.ReferralLevels.Default, F("推荐等级"));
         levels.AddChild(CrmPermissions.ReferralLevels.Create, F("创建"));
         levels.AddChild(CrmPermissions.ReferralLevels.Update, F("修改"));
         levels.AddChild(CrmPermissions.ReferralLevels.Delete, F("删除"));
+
+        var requests = group.AddPermission(CrmPermissions.ReferrerRequests.Default, F("推广申请"));
+        requests.AddChild(CrmPermissions.ReferrerRequests.Update, F("修改"));
 
     }
 

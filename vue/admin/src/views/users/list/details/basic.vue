@@ -8,10 +8,10 @@
           </template>
           <el-form label-width="auto" label-suffix=":" style="min-width: 400px">
             <el-form-item label="用户名称">
-              <EllipticalLabel :value="value.name" />
+              {{ value.name }}
             </el-form-item>
             <el-form-item label="邮件地址">
-              <EllipticalLabel :value="value.email" />
+               {{ value.email }}
             </el-form-item>
             <el-form-item label="锁定时间" v-if="value.lockedAt">
               <Datetime :value="value.lockedAt" />
@@ -31,12 +31,12 @@
             <span>用户角色</span>
           </template>
           <el-tag
-            v-if="roles.length"
-            v-for="role in roles"
-            :key="role.id"
+            v-if="value.roles.length"
+            v-for="role in value.roles"
+            :key="role"
             style="margin-bottom: 8px; margin-right: 8px"
           >
-            {{ role.name }}
+            {{ getRoleName(role) }}
           </el-tag>
           <el-empty v-else />
         </el-card>
@@ -52,6 +52,10 @@
     value: UserWithDetailsDto
   }>()
   const roles = ref<RoleDto[]>([])
+  const getRoleName = (id: string) => {
+    const role = roles.value.find((x) => x.id === id)
+    return role ? role.name : id
+  }
   onMounted(async () => {
     roles.value = await RoleService.getList()
   })

@@ -1,7 +1,20 @@
 {
   "culture": "zh-Hant",
   "texts": {
-    "MyAccount": "我的賬戶",
-    "SamplePageMessage": "Crm 模塊的示例頁面"
+    "Crm:Accounts:NotFound": "帳號不存在,請先去註冊!",
+    "Crm:Accounts:Locked": "您的帳號已被鎖定,請稍後再試!",
+    "Crm:Accounts:InvalidPassword": "登入密碼錯誤!",
+    "Crm:Accounts:InvalidEmailAddress": "無效的電子郵件地址!",
+    "Crm:Accounts:InvalidVerificationCode": "無效的驗證碼!",
+    "Crm:Accounts:SendEmailTooMany": "郵件發送頻繁,請稍後再試!",
+    "Crm:Accounts:SendEmailTooFast": "郵件發送頻率過快,請稍後再試!",
+    
+    "Crm:Referrals:CommissionInsufficient": "可用佣金不足!",
+    "Crm:Referrals:WithdrawalAddressNotSet": "提款地址未設置!",
+    "Crm:Referrals:ReferrerRequestIsApproved": "推廣代理申請已通過!",
+    "Crm:Referrals:CannotApplyThisLevel": "暫不能申請這個推廣等級!",
+    "Crm:Referrals:RequestIsDisabled": "您已被禁止成為推廣人!",
+    "Crm:Referrals:RequestRepeated": "已有正在處理的推廣代理申請,請勿重複申請!",
+    "Crm:Referrals:ReferrerExisted": "已經是推廣代理身份!"
   }
 }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FluentValidation;
 using Volo.Abp.Application.Dtos;
 
 namespace Crm.Admin.Referrals;
@@ -19,29 +20,37 @@ public class ReferralLevelDto : ReferralLevelBasicDto
 }
 public class ReferralLevelCreateInput
 {
-    [Required]
-    [MaxLength(32)]
     public string Id { get; set; } = null!;
-
-    [Required]
-    [MaxLength(32)]
     public string Name { get; set; } = null!;
-
     public uint Size { get; set; }
-
-    [Range(0, double.MaxValue)]
     public decimal Multiplier { get; set; }
     public string? Description { get; set; } 
 }
 public class ReferralLevelUpdateInput
 {
-    [Required]
-    [MaxLength(32)]
     public string Name { get; set; } = null!;
-
     public uint Size { get; set; }
-
-    [Range(0, double.MaxValue)]
     public decimal Multiplier { get; set; }
     public string? Description { get; set; } 
+}
+
+public class ReferralLevelCreateInputValidator : AbstractValidator<ReferralLevelCreateInput>
+{
+    public ReferralLevelCreateInputValidator()
+    {
+        RuleFor(x => x.Id).NotEmpty().MaximumLength(32);
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(32);
+        RuleFor(x => x.Description).NotEmpty().MaximumLength(255);
+        RuleFor(x => x.Multiplier).GreaterThan(0);
+    }
+}
+
+public class ReferralLevelUpdateInputValidator : AbstractValidator<ReferralLevelUpdateInput>
+{
+    public ReferralLevelUpdateInputValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(32);
+        RuleFor(x => x.Description).NotEmpty().MaximumLength(255);
+        RuleFor(x => x.Multiplier).GreaterThan(0);
+    }
 }

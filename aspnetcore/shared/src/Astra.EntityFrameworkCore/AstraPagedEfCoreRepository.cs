@@ -14,14 +14,17 @@ public abstract class AstraPagedEfCoreRepository<TDbContext, TEntity, TKey, TPag
 {
     public virtual async Task<PagedList<TEntity>> GetPagedListAsync(TPagedRequest request)
     {
+        // 过滤
         var queryable = request.BuildPagedQueryable(await GetQueryableAsync());
-
-        // 总数
-        var count = await AsyncExecuter.CountAsync(queryable);
+        
         // 排序
         queryable = string.IsNullOrWhiteSpace(request.Sorting)
             ? queryable.OrderByDescending(s => s.Id)
             : queryable.OrderBy(request.Sorting).ThenByDescending(s => s.Id);
+        
+        // 计数
+        var count = await AsyncExecuter.CountAsync(queryable);
+        
         // 分页
         queryable = queryable
             .Skip(request.SkipCount)

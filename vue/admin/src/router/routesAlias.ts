@@ -3,11 +3,16 @@
  */
 export enum RoutesAlias {
   Users = '/users/list',
-  UserDetails = '/users/list/:id',
+  UserDetails = '/users/:id/details',
   Roles = '/users/roles',
 
   Products = '/products/list',
   ProductSaleLogs = '/products/sale-logs',
+
+  Referrers = '/referrals/referrers',
+  ReferrerDetails = '/referrals/referrers/:id',
+
+  ReferrerRequests = '/referrals/requests',
 
   // 系统管理
   Blockchains = '/system/blockchains', // 区块链

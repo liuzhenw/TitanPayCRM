@@ -1,3 +1,6 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Volo.Abp.AspNetCore;
 using Volo.Abp.AspNetCore.Serilog;
@@ -32,5 +35,13 @@ public class AstraAspNetCoreModule : AbpModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         Configure<DistributedCacheEntryOptions>(options => { options.SlidingExpiration = TimeSpan.FromMinutes(30); });
+        Configure<JsonOptions>(options =>
+        {
+            // 将 enum 序列化成 string
+            options.JsonSerializerOptions.Converters.Add(
+                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: false));
+            // 大小写不敏感
+            options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        });
     }
 }

@@ -1,3 +1,5 @@
+using FluentValidation;
+
 namespace Crm.Admin.Settings;
 
 public class SettingItemDto
@@ -13,4 +15,13 @@ public class SettingUpdateInput
 {
     public string Name { get; set; } = null!;
     public string? Value { get; set; }
+}
+
+public class SettingUpdateInputValidator : AbstractValidator<SettingUpdateInput>
+{
+    public SettingUpdateInputValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(64);
+        RuleFor(x => x.Value).MaximumLength(255);
+    }
 }

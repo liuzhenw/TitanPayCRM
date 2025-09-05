@@ -7,7 +7,7 @@ namespace Crm.Referrals;
 public class CommissionLogDto : EntityDto<Guid>
 {
     public ProductBasicDto Product { get; set; } = null!;
-    public string LevelId { get; set; } = null!;
+    public ReferralLevelBasicDto Level { get; set; } = null!;
     public string CustomerEmail { get; set; } = null!;
     public uint ReferralDepth { get; set; }
     public decimal Amount { get; set; }

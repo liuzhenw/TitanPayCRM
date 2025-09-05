@@ -14,7 +14,7 @@ Content-Type: application/json
 
 {
   "email": "{{email}}",
-  "code": "110779"
+  "code": "300185"
 }
 
 > {%
@@ -43,5 +43,22 @@ GET {{baseUrl}}/api/referral/referrer
 Authorization: Bearer {{accessToken}}
 
 ### Recommendees
-GET {{baseUrl}}/api/referral/recommendees?sorting=createdAt
+GET {{baseUrl}}/api/referral/recommendees?sorting=createdAt desc
+Authorization: Bearer {{accessToken}}
+
+### Applying
+POST {{baseUrl}}/api/referral/request
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "levelId": "shareholder"
+}
+
+### GetApply
+GET {{baseUrl}}/api/referral/request
+Authorization: Bearer {{accessToken}}
+
+### Commissions
+GET {{baseUrl}}/api/commissions
 Authorization: Bearer {{accessToken}}

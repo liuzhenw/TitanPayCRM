@@ -44,13 +44,8 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
     public async Task<PagedList<RecommendeeView>> GetRecommendeePagedListAsync(RecommendeeViewPagedParameter parameter)
     {
         var dbContext = await GetDbContextAsync();
-        var queryable = dbContext.ReferralRelations
-            .WhereIf(parameter.RecommenderId.HasValue, x => x.Recommender.Id == parameter.RecommenderId);
-
-        var totalCount = await queryable.CountAsync();
-
         // 连表(LeftJoin)
-        var joinQueryable = from rr in queryable
+        var joinQueryable = from rr in dbContext.ReferralRelations
             join er in dbContext.Referrers on rr.Recommendee.Id equals er.Id into g
             from er in g.DefaultIfEmpty()
             select new RecommendeeView
@@ -63,10 +58,16 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
                 LevelId = er == null ? null : er.LevelId
             };
         
+        // 过滤
+        joinQueryable = parameter.BuildPagedQueryable(joinQueryable);
+        
         // 排序
         joinQueryable = string.IsNullOrWhiteSpace(parameter.Sorting)
             ? joinQueryable.OrderByDescending(s => s.Id)
             : joinQueryable.OrderBy(parameter.Sorting).ThenByDescending(s => s.Id);
+        
+        // 计数
+        var totalCount = await joinQueryable.CountAsync();
 
         // 分页
         joinQueryable = joinQueryable

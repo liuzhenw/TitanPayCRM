@@ -1,9 +1,5 @@
 import request from '@/utils/http'
-import {
-  ReferralLevelDto,
-  ReferralLevelCreateInput,
-  ReferralLevelUpdateInput
-} from './types'
+import { ReferralLevelDto, ReferralLevelCreateInput, ReferralLevelUpdateInput } from './types'
 
 export class ReferralLevelService {
   static apiUrl = '/api/admin/referrals/levels'
@@ -33,5 +29,15 @@ export class ReferralLevelService {
     return request.del<void>({
       url: `${this.apiUrl}/${id}`
     })
+  }
+
+  static async getOptions() {
+    const levels = await this.getList()
+    return levels
+      .sort((a, b) => a.size - b.size)
+      .map((level) => ({
+        label: level.name,
+        value: level.id
+      }))
   }
 }

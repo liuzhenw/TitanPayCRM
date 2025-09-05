@@ -40,6 +40,7 @@ public class CrmPermissions
     public static class Referrers
     {
         public const string Default = GroupName + ".Referrers";
+        public const string Create = Default + ".Create";
         public const string Update = Default + ".Update";
     }
     
@@ -49,6 +50,12 @@ public class CrmPermissions
         public const string Create = Default + ".Create";
         public const string Update = Default + ".Update";
         public const string Delete = Default + ".Delete";
+    }
+
+    public static class ReferrerRequests
+    {
+        public const string Default = GroupName + ".ReferrerRequests";
+        public const string Update = Default + ".Update";
     }
     
 

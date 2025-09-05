@@ -1,7 +1,20 @@
 {
   "culture": "en-US",
   "texts": {
-    "MyAccount":  "My account",
-    "SamplePageMessage": "A sample page for the Crm module"
+    "Crm:Accounts:NotFound": "Account not found, please register first!",
+    "Crm:Accounts:Locked": "Your account has been locked, please try again later!",
+    "Crm:Accounts:InvalidPassword": "Incorrect password!",
+    "Crm:Accounts:InvalidEmailAddress": "Invalid email address!",
+    "Crm:Accounts:InvalidVerificationCode": "Invalid verification code!",
+    "Crm:Accounts:SendEmailTooMany": "Email sent too frequently, please try again later!",
+    "Crm:Accounts:SendEmailTooFast": "Email sending frequency too fast, please try again later!",
+    
+    "Crm:Referrals:CommissionInsufficient": "Insufficient available commission!",
+    "Crm:Referrals:WithdrawalAddressNotSet": "Withdrawal address not set!",
+    "Crm:Referrals:ReferrerRequestIsApproved": "Referral agent application has been approved!",
+    "Crm:Referrals:CannotApplyThisLevel": "Cannot apply for this referral level yet!",
+    "Crm:Referrals:RequestIsDisabled": "You have been banned from becoming a referrer!",
+    "Crm:Referrals:RequestRepeated": "There is already a referral agent application being processed, please do not apply repeatedly!",
+    "Crm:Referrals:ReferrerExisted": "Already have referrer status!"
   }
 }

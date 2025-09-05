@@ -10,7 +10,7 @@ public class BasicPagedParameter
 }
 
 public abstract class PagedParameter<TEntity> : BasicPagedParameter
-    where TEntity : class, IEntity
+    where TEntity : class
 {
     public virtual IQueryable<TEntity> BuildPagedQueryable(IQueryable<TEntity> queryable)
     {

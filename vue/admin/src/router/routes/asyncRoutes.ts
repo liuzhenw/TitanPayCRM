@@ -16,12 +16,39 @@ import { AppRouteRecord } from '@/types/router'
  */
 export const asyncRoutes: AppRouteRecord[] = [
   {
+    name: 'Referrals',
+    path: '/referrals',
+    component: RoutesAlias.Layout,
+    meta: {
+      title: '推广管理',
+      icon: '&#xe67a;'
+    },
+    children: [
+      {
+        name: 'ReferrerList',
+        path: 'referrers',
+        component: RoutesAlias.Referrers,
+        meta: {
+          title: '推广代理'
+        }
+      },
+      {
+        name: 'ReferrerRequests',
+        path: 'requests',
+        component: RoutesAlias.ReferrerRequests,
+        meta: {
+          title: '代理申请'
+        }
+      }
+    ]
+  },
+  {
     name: 'Products',
     path: '/products',
     component: RoutesAlias.Layout,
     meta: {
       title: '商品管理',
-      icon: '&#xe6e6;'
+      icon: '&#xe737;'
     },
     children: [
       {
@@ -61,8 +88,8 @@ export const asyncRoutes: AppRouteRecord[] = [
       },
       {
         name: 'UserDetails',
-        path: ':id',
-        component: '/users/details',
+        path: ':id/details',
+        component: '/users/list/details',
         meta: {
           title: '用户详情',
           isHide: true

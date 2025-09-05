@@ -16,8 +16,9 @@ public class ReferralMapperProfile : Profile
         CreateMap<ReferralLevel, ReferralLevelDto>();
         CreateMap<ReferralLevelUpdateInput, ReferralLevel>()
             .IgnoreAllPropertiesWithAnInaccessibleSetter()
-            .Ignore(x=>x.ConcurrencyStamp)
+            .Ignore(x => x.ConcurrencyStamp)
             .ForMember(d => d.UpdatedAt, o => o.MapFrom(_ => DateTimeOffset.Now));
+        CreateMap<ReferrerQueryInput, ReferrerPagedParameter>();
 
         CreateMap<Referrer, ReferrerDto>()
             .ToValue<Referrer, ReferrerDto, Guid, UserBasicDto, UserValueConverter>(
@@ -25,7 +26,7 @@ public class ReferralMapperProfile : Profile
             .ToValue<Referrer, ReferrerDto, string, ReferralLevelBasicDto, ReferralLevelValueConverter>(
                 d => d.Level, s => s.LevelId);
         CreateMap<Referrer, ReferrerWithDetails>()
-            .IncludeBase<Referrer,ReferrerDto>();
+            .IncludeBase<Referrer, ReferrerDto>();
         CreateMap<ReferrerUpdateInput, Referrer>()
             .IgnoreAllPropertiesWithAnInaccessibleSetter()
             .Ignore(x => x.ConcurrencyStamp)
@@ -37,6 +38,13 @@ public class ReferralMapperProfile : Profile
         CreateMap<ReferralRelation, ReferralRelationDto>();
         CreateMap<ReferralRelationUser, ReferralRelationUserDto>();
         CreateMap<ReferralRelationQueryInput, ReferralRelationPagedParameter>();
+
+        CreateMap<ReferrerRequest, ReferrerRequestDto>()
+            .ToValue<ReferrerRequest, ReferrerRequestDto, Guid, UserBasicDto, UserValueConverter>(
+                d => d.User, s => s.Id)
+            .ToValue<ReferrerRequest, ReferrerRequestDto, string, ReferralLevelBasicDto, ReferralLevelValueConverter>(
+                d => d.Level, s => s.LevelId);
+        CreateMap<ReferrerRequestQueryInput, ReferrerRequestPagedParameter>();
     }
 }
 

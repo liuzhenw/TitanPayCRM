@@ -37,14 +37,14 @@ public class ReferrerRequest : BasicAggregateRoot<Guid>
         AuditorId = auditorId;
         UpdatedAt = DateTimeOffset.Now;
     }
-    
+
     internal void Reset(ReferralLevel level)
     {
         if (Status is ReferrerRequestStatus.Disabled)
             throw new BusinessException(CrmErrorCodes.Referrals.RequestIsDisabled);
 
         if (Status is not ReferrerRequestStatus.Rejected)
-            throw new BusinessException(CrmErrorCodes.Referrals.RequestNotRejected);
+            throw new BusinessException(CrmErrorCodes.Referrals.RequestRepeated);
 
         LevelId = level.Id;
         Status = ReferrerRequestStatus.Pending;
@@ -76,12 +76,14 @@ public class ReferrerRequest : BasicAggregateRoot<Guid>
 
 public class ReferrerRequestPagedParameter : PagedParameter<ReferrerRequest>
 {
+    public Guid? Id { get; set; }
     public string? LevelId { get; set; }
     public ReferrerRequestStatus? Status { get; set; }
 
     public override IQueryable<ReferrerRequest> BuildPagedQueryable(IQueryable<ReferrerRequest> queryable)
     {
         return queryable
+            .WhereIf(Id.HasValue, x => x.Id == Id)
             .WhereIf(!LevelId.IsNullOrWhiteSpace(), x => x.LevelId == LevelId)
             .WhereIf(Status.HasValue, x => x.Status == Status);
     }

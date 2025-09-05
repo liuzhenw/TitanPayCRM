@@ -1,10 +1,8 @@
-import { ProductBasicDto, UserBasicDto } from '../index'
-
 export interface ReferralLevelBasicDto {
-  id?: string | null
-  name?: string | null
+  id: string
+  name: string
   /** @format int32 */
-  size?: number
+  size: number
 }
 
 export interface ReferralLevelDto extends ReferralLevelBasicDto {

@@ -6,22 +6,22 @@ export interface ReferrerDto {
   user: UserBasicDto
   level?: ReferralLevelBasicDto
   /** @format int32 */
-  directCount?: number
+  directCount: number
   /** @format int32 */
-  indirectCount?: number
+  indirectCount: number
   /** @format int32 */
-  totalCount?: number
+  totalCount: number
   /** @format double */
-  commission?: number
+  commission: number
   /** @format double */
-  withdrawal?: number
-  withdrawalAddress?: string | null
-  isDisabled?: boolean
-  remark?: string | null
+  withdrawal: number
+  withdrawalAddress?: string
+  isDisabled: boolean
+  remark?: string
   /** @format date-time */
   updatedAt?: string | null
   /** @format date-time */
-  createdAt?: string
+  createdAt: string
 }
 
 export interface ReferrerSaleStatisticDto {
@@ -44,10 +44,16 @@ export interface ReferrerWithDetailsDto extends ReferrerDto {
   statistics: ReferrerSaleStatisticDto[]
 }
 
+export interface ReferrerCreateInput {
+  email: string
+  levelId?: string
+  remark?: string
+}
+
 export interface ReferrerUpdateInput {
-  levelId?: string | null
+  levelId?: string
   isDisabled: boolean
-  remark?: string | null
+  remark?: string
 }
 
 export interface ReferrerQueryInput extends Api.Query.PagedRequestBase {

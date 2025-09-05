@@ -10,7 +10,6 @@ public static class CrmErrorCodes
         public const string NotFound = Group + ":NotFound";
         public const string Locked = Group + ":Locked";
         public const string InvalidPassword = Group + ":InvalidPassword";
-        public const string InvalidEvmAddress = Group + ":InvalidEvmAddress";
         public const string InvalidEmailAddress = Group + ":InvalidEmailAddress";
         public const string InvalidVerificationCode = Group + ":InvalidVerificationCode";
         public const string SendEmailTooMany = Group + ":SendEmailTooMany";
@@ -35,8 +34,12 @@ public static class CrmErrorCodes
         /// </summary>
         public const string RequestIsDisabled = Group + ":RequestIsDisabled";
         /// <summary>
-        /// 申请未被拒绝
+        /// 重复申请
         /// </summary>
-        public const string RequestNotRejected = Group + ":RequestNotRejected";
+        public const string RequestRepeated = Group + ":RequestRepeated";
+        /// <summary>
+        /// 代理身份已存在
+        /// </summary>
+        public const string ReferrerExisted  = Group + ":ReferrerExisted";
     }
 }

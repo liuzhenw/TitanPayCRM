@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FluentValidation;
 using Volo.Abp.Application.Dtos;
 
 namespace Crm.Admin.Products;
@@ -21,36 +22,39 @@ public class ProductDto : ProductBasicDto
 
 public class CreateProductInput
 {
-    [Required]
-    [StringLength(64)]
     public string Id { get; set; } = null!;
-
-    [Required]
-    [StringLength(64)]
     public string Name { get; set; } = null!;
-
-    [StringLength(128)]
     public string? ImageUri { get; set; }
-
-    [StringLength(255)]
     public string? Description { get; set; }
-
-    [Range(0, double.MaxValue)]
     public decimal Price { get; set; }
 }
 
 public class UpdateProductInput
 {
-    [Required]
-    [StringLength(64)]
     public string Name { get; set; } = null!;
-
-    [StringLength(128)]
     public string? ImageUri { get; set; }
-
-    [StringLength(255)]
     public string? Description { get; set; }
-
-    [Range(0, double.MaxValue)]
     public decimal Price { get; set; }
+}
+
+public class CreateProductInputValidator : AbstractValidator<CreateProductInput>
+{
+    public CreateProductInputValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(64);
+        RuleFor(x => x.ImageUri).NotEmpty().MaximumLength(128);
+        RuleFor(x => x.Description).MaximumLength(255);
+        RuleFor(x => x.Price).GreaterThan(0);
+    }
+}
+
+public class UpdateProductInputValidator : AbstractValidator<UpdateProductInput>
+{
+    public UpdateProductInputValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(64);
+        RuleFor(x => x.ImageUri).NotEmpty().MaximumLength(128);
+        RuleFor(x => x.Description).MaximumLength(255);
+        RuleFor(x => x.Price).GreaterThan(0);
+    }
 }

@@ -8,34 +8,43 @@
         @reset="onReset"
       />
       <el-card shadow="never" class="art-table-card">
+        <ArtTableHeader @refresh="onSearch"></ArtTableHeader>
         <ArtTable
           row-key="id"
           :data="tableData"
           :loading="dataLoading"
+          v-model:pagination="pagination"
           :marginTop="10"
-          :pagination="pagination"
-          @pagination:current-change="onPaginationCurrentChange"
-          @pagination:size-change="onPaginationSizeChange"
+          @pagination:current-change="onPaginationChange"
+          @pagination:size-change="onPaginationChange"
           @sort-change="onSortChange"
         >
-          <el-table-column key="name" prop="name" label="名称">
+          <el-table-column key="email" prop="user.email" label="邮箱地址" show-overflow-tooltip>
             <template #default="{ row }">
-              {{ row.name }}
+              {{ row.user.email }}
             </template>
           </el-table-column>
-          <el-table-column key="email" prop="email" label="邮箱" show-overflow-tooltip>
+          <el-table-column key="level" prop="level.name" label="申请等级">
             <template #default="{ row }">
-              {{ row.email }}
+              <LevelTag :value="row.level" />
             </template>
           </el-table-column>
-          <el-table-column key="createdAt" width="180" label="创建时间" align="right">
+          <el-table-column key="status" prop="status" label="状态" width="100">
+            <template #default="{ row }">
+              <StatusTag :value="row.status" />
+            </template>
+          </el-table-column>
+          <el-table-column key="createdAt" prop="createdAt" label="申请时间" align="right">
             <template #default="{ row }">
               <Datetime :value="row.createdAt" />
             </template>
           </el-table-column>
-          <el-table-column key="actions" width="100" align="right">
+          <el-table-column key="actions" width="140" align="right">
             <template #default="{ row }">
-              <ArtButtonTable type="view" @click="toDetailsPage(row)" />
+              <el-space>
+                <ArtButtonTable type="edit" />
+                <ArtButtonTable type="delete" />
+              </el-space>
             </template>
           </el-table-column>
         </ArtTable>
@@ -46,19 +55,41 @@
 
 <script setup lang="ts">
   import { ref } from 'vue'
-  import { UserService, UserDto, UserQueryInput } from '@/api/services'
+  import {
+    ReferrerRequestService,
+    ReferrerRequestDto,
+    ReferrerRequestQueryInput,
+    ReferralLevelService
+  } from '@/api/services'
   import { SearchFormItem } from '@/types'
-  import { RoutesAlias } from '@/router/routesAlias'
-import { on } from 'events'
+  import LevelTag from '../levelTag.vue'
+  import StatusTag from './statusTag.vue'
 
-  const router = useRouter()
-  const tableData = ref<UserDto[]>([])
-  const filter = reactive<UserQueryInput>({})
+  const tableData = ref<ReferrerRequestDto[]>([])
+  const filter = reactive<ReferrerRequestQueryInput>({})
   const filterItems: SearchFormItem[] = [
     {
       label: '邮箱地址',
-      prop: 'email',
-      type: 'input',
+      prop: 'id',
+      type: 'userSearch',
+      config: {
+        clearable: true
+      }
+    },
+    {
+      label: '申请状态',
+      prop: 'status',
+      type: 'select',
+      options: ReferrerRequestService.getStatusOptions(),
+      config: {
+        clearable: true
+      }
+    },
+    {
+      label: '申请等级',
+      prop: 'levelId',
+      type: 'select',
+      options: ()=> ReferralLevelService.getOptions(),
       config: {
         clearable: true
       }
@@ -69,32 +100,24 @@ import { on } from 'events'
     size: 10,
     total: 0
   })
-
   const dataLoading = ref(false)
-  const fetchData = async (input: UserQueryInput) => {
+  const fetchData = async (input: ReferrerRequestQueryInput) => {
     dataLoading.value = true
     try {
-      const res = await UserService.getList(input)
+      const res = await ReferrerRequestService.getList(input)
       pagination.total = res.totalCount
       tableData.value = res.items
     } finally {
       dataLoading.value = false
     }
   }
-  const onPaginationCurrentChange = (val: number) => {
-    pagination.current = val
-    onPaginationChange()
-  }
-  const onPaginationSizeChange = (val: number) => {
-    pagination.size = val
-    pagination.current = 1
-    onPaginationChange()
-  }
+
   const onPaginationChange = () => {
     filter.maxResultCount = pagination.size
     filter.skipCount = (pagination.current - 1) * pagination.size
     fetchData(filter)
   }
+
   const onSortChange = (data: { column: any; prop: string; order: any }) => {
     if (!data.prop || !data.order) {
       filter.sorting = undefined
@@ -103,7 +126,6 @@ import { on } from 'events'
       const dire = data.order === 'ascending' ? 'asc' : 'desc'
       filter.sorting = `${field} ${dire}`
     }
-    pagination.current = 1
     fetchData(filter)
   }
   const onSearch = () => {
@@ -111,11 +133,10 @@ import { on } from 'events'
     fetchData(filter)
   }
   const onReset = () => {
-    filter.name = undefined
+    filter.id = undefined
+    filter.levelId = undefined
+    filter.status = undefined
     onSearch()
-  }
-  const toDetailsPage = (item: UserDto) => {
-    router.push(RoutesAlias.UserDetails.replace(':id', item.id))
   }
 
   onMounted(() => {

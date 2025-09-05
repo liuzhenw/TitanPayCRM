@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Crm.Products;
 using FluentValidation;
@@ -27,6 +28,15 @@ public class ReferrerDto : EntityDto<Guid>
     public decimal Commission { get; set; }
     public decimal Withdrawal { get; set; }
     public string? WithdrawalAddress { get; set; }
+    public List<ReferrerSaleStatisticDto> Statistics { get; set; } = null!;
+}
+
+public class ReferrerSaleStatisticDto : EntityDto<Guid>
+{
+    public ProductBasicDto Product { get; set; } = null!;
+    public uint Volume { get; set; }
+    public decimal Revenue { get; set; }
+    public decimal Commission { get; set; }
 }
 
 public class ReferrerWithdrawalAddressUpdateInput
@@ -62,5 +72,8 @@ public class RecommendeeDto : EntityDto<Guid>
     public DateTimeOffset CreatedAt { get; set; }
 }
 
-public class RecommendeeQueryInput : PagedAndSortedResultRequestDto;
+public class RecommendeeQueryInput : PagedAndSortedResultRequestDto
+{
+    public string? LevelId { get; set; }
+}
 

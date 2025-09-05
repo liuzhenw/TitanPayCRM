@@ -16,6 +16,9 @@ export * from './referrer/types'
 export * from './referralLevel'
 export * from './referralLevel/types'
 
+export * from './referrerRequest'
+export * from './referrerRequest/types'
+
 export * from './product'
 export * from './product/types'
 

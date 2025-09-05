@@ -34,7 +34,7 @@ public class AppDataSeeder(IServiceProvider services, IAbpHostEnvironment enviro
         if (!environment.IsDevelopment()) return;
         
         await SeedReferralRelationsAsync();
-        //await SeedProductSaleLogsAsync();
+        await SeedProductSaleLogsAsync();
     }
 
     private async Task InitAccountsAsync()
@@ -89,7 +89,7 @@ public class AppDataSeeder(IServiceProvider services, IAbpHostEnvironment enviro
         if (await levelRepo.GetCountAsync() < 1)
         {
             var referralManager = scope.ServiceProvider.GetRequiredService<ReferralManager>();
-            var team = await referralManager.CreateReferralLevelAsync("team", "团队长", 1, 0.1m);
+            var team = await referralManager.CreateReferralLevelAsync("agent", "推广代理", 1, 0.1m);
             var group = await referralManager.CreateReferralLevelAsync("group", "大团队长", 2, 0.2m);
             var shareholder = await referralManager.CreateReferralLevelAsync("shareholder", "股东", 3, 0.25m);
             await levelRepo.InsertManyAsync([team, group, shareholder]);
@@ -115,9 +115,13 @@ public class AppDataSeeder(IServiceProvider services, IAbpHostEnvironment enviro
             new("user1-1@email.com", "user1-1-2@email.com"),
             new("user1-1@email.com", "user1-1-3@email.com"),
             new("user1-1@email.com", "user1-1-4@email.com"),
+            new("user1-2@email.com", "user1-2-1@email.com"),
+            new("user1-2@email.com", "user1-2-2@email.com"),
             new("user1-1-1@email.com", "user1-1-1-1@email.com"),
             new("user1-1-1@email.com", "user1-1-1-2@email.com"),
             new("user1-1-1@email.com", "user1-1-1-3@email.com"),
+            new("user1-2-1@email.com", "user1-2-1-1@email.com"),
+            new("user1-2-2@email.com", "user1-2-2-1@email.com"),
             new("user1-1-1-1@email.com", "user1-1-1-1-1@email.com"),
             new("user1-1-1-1@email.com", "user1-1-1-1-2@email.com"),
 
@@ -125,6 +129,8 @@ public class AppDataSeeder(IServiceProvider services, IAbpHostEnvironment enviro
             new("user2-1@email.com", "user2-1-1@email.com"),
             new("user2-1@email.com", "user2-1-2@email.com"),
             new("user2-1@email.com", "user2-1-3@email.com"),
+            new("user2-1-1@email.com", "user2-1-1-1@email.com"),
+            new("user2-1-1@email.com", "user2-1-2-1@email.com"),
 
             new("user3@email.com", "user3-1@email.com"),
             new("user3@email.com", "user3-2@email.com"),

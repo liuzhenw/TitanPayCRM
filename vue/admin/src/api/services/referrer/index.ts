@@ -3,13 +3,14 @@ import {
   ReferrerWithDetailsDto,
   ReferrerUpdateInput,
   ReferrerDto,
-  ReferrerQueryInput
+  ReferrerQueryInput,
+  ReferrerCreateInput
 } from './types'
 
 export class ReferrerService {
   static apiUrl = '/api/admin/referrals/referrers'
 
-    static getList(params?: ReferrerQueryInput) {
+  static getList(params?: ReferrerQueryInput) {
     return request.get<Api.Query.PagedResult<ReferrerDto>>({
       url: this.apiUrl,
       params
@@ -22,6 +23,13 @@ export class ReferrerService {
     })
   }
 
+  static create(input: ReferrerCreateInput) {
+    return request.post<ReferrerWithDetailsDto>({
+      url: this.apiUrl,
+      data: input
+    })
+  }
+  
   static update(id: string, input: ReferrerUpdateInput) {
     return request.put<ReferrerWithDetailsDto>({
       url: `${this.apiUrl}/${id}`,
