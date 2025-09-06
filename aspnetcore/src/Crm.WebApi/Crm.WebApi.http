@@ -1,4 +1,11 @@
 @email=user1@email.com
+
+### Home
+GET {{baseUrl}}/api/home
+
+### Check
+GET {{baseUrl}}/api/user/check/{{email}}
+
 ### SendEmail
 POST {{baseUrl}}/api/auth/verification-code
 Accept: application/json

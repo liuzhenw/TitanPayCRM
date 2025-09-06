@@ -25,4 +25,11 @@ public class UserService(IUserRepository repo, UserManager userManager) : CrmApp
         await repo.UpdateAsync(user);
         return ObjectMapper.Map<User, UserDto>(user);
     }
+
+    [AllowAnonymous]
+    public async Task<UserCheckDto> CheckAsync(string email)
+    {
+        var user = await repo.FindByEmailAsync(email);
+        return new UserCheckDto(email, user is not null);
+    }
 }

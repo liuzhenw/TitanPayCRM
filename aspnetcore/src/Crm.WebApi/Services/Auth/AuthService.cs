@@ -38,6 +38,10 @@ public class AuthService(
 
     public async Task SendEmailVerificationCodeAsync(SendEmailVerificationCodeInput input)
     {
+        var user = await userManager.FindByEmailOrNameAsync(input.Email);
+        if (user is null)
+            throw new BusinessException(CrmErrorCodes.Accounts.NotFound);
+        
         await codeService.SendAsync(input.Email);
     }
 

@@ -12,6 +12,8 @@ public class UserDto : EntityDto<Guid>
     public string? AvatarUrl { get; set; }
 }
 
+public record UserCheckDto(string Email, bool Exist);
+
 public class ChangePasswordInput
 {
     public string? OldPassword { get; set; }
