@@ -24,3 +24,6 @@ export * from './product/types'
 
 export * from './productSaleLog'
 export * from './productSaleLog/types'
+
+export * from './commissionLog'
+export * from './commissionLog/types'

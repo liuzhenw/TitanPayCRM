@@ -8,6 +8,11 @@ namespace Crm.Controllers;
 [Route("home")]
 public class HomeController(ISettingProvider settingProvider) : CrmController
 {
+    /// <summary>
+    /// 获取主页数据
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
     public async Task<HomeViewModel> GetAsync()
     {
         var totalSaleVolume = await settingProvider.GetAsync<ulong>(CrmSettings.UCardTotalSaleVolume);

@@ -58,6 +58,11 @@ public class CrmPermissions
         public const string Update = Default + ".Update";
     }
     
+    public static class CommissionLogs
+    {
+        public const string Default = GroupName + ".CommissionLogs";
+    }
+    
 
     public static string[] GetAll()
     {

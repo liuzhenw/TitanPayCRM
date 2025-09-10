@@ -13,6 +13,7 @@ export enum RoutesAlias {
   ReferrerDetails = '/referrals/referrers/:id',
 
   ReferrerRequests = '/referrals/requests',
+  CommissionLogs = '/referrals/commission-logs',
 
   // 系统管理
   Blockchains = '/system/blockchains', // 区块链

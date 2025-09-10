@@ -45,6 +45,17 @@ public class ReferralMapperProfile : Profile
             .ToValue<ReferrerRequest, ReferrerRequestDto, string, ReferralLevelBasicDto, ReferralLevelValueConverter>(
                 d => d.Level, s => s.LevelId);
         CreateMap<ReferrerRequestQueryInput, ReferrerRequestPagedParameter>();
+
+        CreateMap<CommissionLog, CommissionLogDto>()
+            .ToValue<CommissionLog, CommissionLogDto, string, ProductBasicDto, ProductValueConverter>(
+                d => d.Product, s => s.ProductId)
+            .ToValue<CommissionLog, CommissionLogDto, Guid, UserBasicDto, UserValueConverter>(
+                d => d.Receiver, s => s.ReceiverId)
+            .ToValue<CommissionLog, CommissionLogDto, Guid, UserBasicDto, UserValueConverter>(
+                d => d.Customer, s => s.CustomerId)
+            .ToValue<CommissionLog, CommissionLogDto, string, ReferralLevelBasicDto, ReferralLevelValueConverter>(
+                d => d.Level, s => s.LevelId);
+        CreateMap<CommissionLogQueryInput, CommissionLogPagedParameter>();
     }
 }
 

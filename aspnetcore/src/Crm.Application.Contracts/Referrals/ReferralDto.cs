@@ -34,8 +34,17 @@ public class ReferrerDto : EntityDto<Guid>
 public class ReferrerSaleStatisticDto
 {
     public ProductBasicDto Product { get; set; } = null!;
+    /// <summary>
+    /// 销售量
+    /// </summary>
     public uint Volume { get; set; }
+    /// <summary>
+    /// 销售额
+    /// </summary>
     public decimal Revenue { get; set; }
+    /// <summary>
+    /// 佣金
+    /// </summary>
     public decimal Commission { get; set; }
 }
 

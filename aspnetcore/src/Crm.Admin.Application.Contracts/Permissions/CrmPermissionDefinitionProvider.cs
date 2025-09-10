@@ -40,6 +40,8 @@ public class CrmPermissionDefinitionProvider : PermissionDefinitionProvider
         var requests = group.AddPermission(CrmPermissions.ReferrerRequests.Default, F("推广申请"));
         requests.AddChild(CrmPermissions.ReferrerRequests.Update, F("修改"));
 
+        var commissionLogs = group.AddPermission(CrmPermissions.CommissionLogs.Default, F("佣金记录"));
+
     }
 
     private static FixedLocalizableString F(string name)

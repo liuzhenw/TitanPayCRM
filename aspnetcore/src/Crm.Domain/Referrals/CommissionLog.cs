@@ -39,6 +39,7 @@ public class CommissionLogPagedParameter : PagedParameter<CommissionLog>
 {
     public string? ProductId { get; set; }
     public Guid? ReceiverId { get; set; }
+    public Guid? CustomerId { get; set; }
     public string? LevelId { get; set; }
     public ushort? ReferralDepth { get; set; }
 
@@ -48,6 +49,7 @@ public class CommissionLogPagedParameter : PagedParameter<CommissionLog>
             .WhereIf(!ProductId.IsNullOrWhiteSpace(), x => x.ProductId == ProductId)
             .WhereIf(!LevelId.IsNullOrWhiteSpace(), x => x.LevelId == LevelId)
             .WhereIf(ReceiverId.HasValue, x => x.ReceiverId == ReceiverId)
+            .WhereIf(CustomerId.HasValue, x => x.CustomerId == CustomerId)
             .WhereIf(ReferralDepth.HasValue, x => x.ReferralDepth == ReferralDepth);
     }
 }

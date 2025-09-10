@@ -39,6 +39,14 @@ export const asyncRoutes: AppRouteRecord[] = [
         meta: {
           title: '代理申请'
         }
+      },
+      {
+        name: 'CommissionLogs',
+        path: 'commission-logs',
+        component: RoutesAlias.CommissionLogs,
+        meta: {
+          title: '佣金记录'
+        }
       }
     ]
   },
