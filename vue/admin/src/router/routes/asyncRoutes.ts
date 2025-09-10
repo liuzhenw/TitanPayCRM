@@ -33,6 +33,15 @@ export const asyncRoutes: AppRouteRecord[] = [
         }
       },
       {
+        name: 'ReferrerDetails',
+        path: 'referrers/:id',
+        component: '/referrals/referrers/details',
+        meta: {
+          title: '推广代理详情',
+          isHide: true
+        }
+      },
+      {
         name: 'ReferrerRequests',
         path: 'requests',
         component: RoutesAlias.ReferrerRequests,

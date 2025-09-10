@@ -2,7 +2,7 @@
 <template>
   <div
     :class="['btn-text', buttonClass]"
-    :style="{ backgroundColor: buttonBgColor, color: iconColor }"
+    :style="btnStyle"
     @click.stop="handleClick"
   >
     <i v-if="iconContent" class="iconfont-sys" v-html="iconContent"></i>
@@ -25,6 +25,7 @@
     iconColor?: string
     /** 按钮背景色 */
     buttonBgColor?: string
+    disabled?: boolean
   }
 
   const props = withDefaults(defineProps<Props>(), {})
@@ -53,8 +54,16 @@
   })
 
   const handleClick = () => {
+    if (props.disabled) return
     emit('click')
   }
+  const btnStyle = computed(() => {
+    return {
+      backgroundColor: props.buttonBgColor, 
+      color: props.iconColor, 
+      cursor: props.disabled ? 'not-allowed' : 'pointer'
+    }
+  })
 </script>
 
 <style scoped lang="scss">

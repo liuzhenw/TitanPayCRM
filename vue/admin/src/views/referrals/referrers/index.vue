@@ -101,9 +101,10 @@
             </template>
           </el-table-column>
 
-          <el-table-column key="actions" width="110" align="right">
+          <el-table-column key="actions" width="160" align="right">
             <template #default="{ row }">
               <el-space>
+                <ArtButtonTable type="view" @click="onView(row)" />
                 <ArtButtonTable type="edit" @click="onEdit(row)" />
               </el-space>
             </template>
@@ -123,13 +124,14 @@
 
 <script setup lang="ts">
   import { ref } from 'vue'
+  import { useRouter } from 'vue-router'
   import { ReferrerService, ReferrerDto, ReferrerQueryInput } from '@/api/services'
   import { SearchFormItem } from '@/types'
   import LevelTag from '../levelTag.vue'
   import ReferrerCreateDialog from './create.vue'
   import ReferrerUpdateDrawer from './update.vue'
-  import { on } from 'events'
 
+  const router = useRouter()
   const tableData = ref<ReferrerDto[]>([])
   const filter = reactive<ReferrerQueryInput>({})
   const filterItems: SearchFormItem[] = [
@@ -200,6 +202,10 @@
 
   const updateVisible = ref(false)
   const selectedReferrer = ref<ReferrerDto>()
+  const onView = (row: ReferrerDto) => {
+    router.push(`/referrals/referrers/${row.id}`)
+  }
+
   const onEdit = (row: ReferrerDto) => {
     selectedReferrer.value = row
     updateVisible.value = true
