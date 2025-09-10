@@ -15,8 +15,8 @@
           :loading="dataLoading"
           v-model:pagination="pagination"
           :marginTop="10"
-          @pagination:current-change="onPaginationChange"
-          @pagination:size-change="onPaginationChange"
+          @pagination:current-change="onPaginationCurrentChange"
+          @pagination:size-change="onPaginationSizeChange"
           @sort-change="onSortChange"
         >
           <el-table-column key="product" prop="product" label="商品名称" show-overflow-tooltip>
@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue'
+  import { ref, reactive } from 'vue'
   import {
     ProductSaleLogService,
     ProductSaleLogDto,
@@ -95,6 +95,17 @@
     }
   }
 
+  const onPaginationCurrentChange = (val: number) => {
+    pagination.current = val
+    onPaginationChange()
+  }
+
+  const onPaginationSizeChange = (val: number) => {
+    pagination.size = val
+    pagination.current = 1
+    onPaginationChange()
+  }
+
   const onPaginationChange = () => {
     filter.maxResultCount = pagination.size
     filter.skipCount = (pagination.current - 1) * pagination.size
@@ -109,6 +120,7 @@
       const dire = data.order === 'ascending' ? 'asc' : 'desc'
       filter.sorting = `${field} ${dire}`
     }
+    pagination.current = 1
     fetchData(filter)
   }
   const onSearch = () => {

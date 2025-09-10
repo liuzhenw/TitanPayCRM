@@ -13,10 +13,10 @@
           row-key="id"
           :data="tableData"
           :loading="dataLoading"
-          v-model:pagination="pagination"
           :marginTop="10"
-          @pagination:current-change="onPaginationChange"
-          @pagination:size-change="onPaginationChange"
+          :pagination="pagination"
+          @pagination:current-change="onPaginationCurrentChange"
+          @pagination:size-change="onPaginationSizeChange"
           @sort-change="onSortChange"
         >
           <el-table-column key="product" prop="product.name" label="产品名称" show-overflow-tooltip>
@@ -34,12 +34,12 @@
               {{ row.customer.email }}
             </template>
           </el-table-column>
-          <el-table-column key="level" prop="level.name" label="推荐等级" width="100">
+          <el-table-column key="level" prop="level.name" label="推荐等级">
             <template #default="{ row }">
               <LevelTag :value="row.level" />
             </template>
           </el-table-column>
-          <el-table-column key="referralDepth" prop="referralDepth" label="推荐层级" width="80" align="right">
+          <el-table-column key="referralDepth" prop="referralDepth" label="推荐层级" width="100" align="center">
             <template #default="{ row }">
               {{ row.referralDepth }}
             </template>
@@ -155,6 +155,17 @@
     }
   }
 
+  const onPaginationCurrentChange = (val: number) => {
+    pagination.current = val
+    onPaginationChange()
+  }
+
+  const onPaginationSizeChange = (val: number) => {
+    pagination.size = val
+    pagination.current = 1
+    onPaginationChange()
+  }
+
   const onPaginationChange = () => {
     filter.maxResultCount = pagination.size
     filter.skipCount = (pagination.current - 1) * pagination.size
@@ -169,6 +180,7 @@
       const dire = data.order === 'ascending' ? 'asc' : 'desc'
       filter.sorting = `${field} ${dire}`
     }
+    pagination.current = 1
     fetchData(filter)
   }
 

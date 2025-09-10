@@ -251,3 +251,4 @@ pnpm run prepare
 - **Admin modules** follow the same layered architecture as core modules
 - **Frontend** is a single-page application that consumes both APIs
 - **PostgreSQL** is the primary database with EF Core migrations
+- views 中的文件夹以烤串命名法命名
