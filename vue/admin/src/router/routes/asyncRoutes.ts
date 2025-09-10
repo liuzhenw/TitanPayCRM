@@ -61,7 +61,7 @@ export const asyncRoutes: AppRouteRecord[] = [
     children: [
       {
         name: 'ProductList',
-        path: '/products/list',
+        path: 'list',
         component: RoutesAlias.Products,
         meta: {
           title: '商品列表'
@@ -69,10 +69,19 @@ export const asyncRoutes: AppRouteRecord[] = [
       },
       {
         name: 'ProductSaleLogs',
-        path: '/products/sale-logs',
+        path: 'sale-logs',
         component: RoutesAlias.ProductSaleLogs,
         meta: {
           title: '销售记录'
+        }
+      },
+      {
+        name: 'ProductSaleLogDetails',
+        path: 'sale-logs/:id/details',
+        component: '/products/sale-logs/details',
+        meta: {
+          title: '销售记录详情',
+          isHide: true
         }
       }
     ]

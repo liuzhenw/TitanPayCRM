@@ -1,4 +1,6 @@
 import { ProductBasicDto, UserBasicDto } from '../index'
+import { ProductDto } from '../product/types'
+import { UserDto } from '../users/types'
 
 export interface ProductSaleLogDto {
   id: string

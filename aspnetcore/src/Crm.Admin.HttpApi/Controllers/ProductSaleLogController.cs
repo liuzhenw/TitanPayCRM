@@ -11,4 +11,7 @@ public class ProductSaleLogController(IProductSaleLogService saleLogService) : C
     [HttpGet]
     public Task<PagedResultDto<ProductSaleLogDto>> 
         GetListAsync([FromQuery] ProductSaleLogQueryInput input) => saleLogService.GetPagedListAsync(input);
+    
+    [HttpGet("{id:guid}")]
+    public Task<ProductSaleLogDto> GetAsync(Guid id) => saleLogService.GetAsync(id);
 }

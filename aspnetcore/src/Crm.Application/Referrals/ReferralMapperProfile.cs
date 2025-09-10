@@ -40,7 +40,8 @@ public class ReferralMapperProfile : Profile
             .ToValue<CommissionLog, CommissionLogDto, string, ReferralLevelBasicDto, ReferralLevelConverter>(
                 d => d.Level, s => s.LevelId);
         CreateMap<CommissionLogQueryInput, CommissionLogPagedParameter>()
-            .Ignore(x => x.ReceiverId);
+            .Ignore(x => x.ReceiverId)
+            .Ignore(x => x.SaleLogId);
 
         CreateMap<WithdrawalRequest, WithdrawalRequestDto>()
             .ForMember(d => d.CreatedAt,

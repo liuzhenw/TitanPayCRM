@@ -8,6 +8,12 @@ namespace Crm.Admin.Products;
 [Authorize(CrmPermissions.Products.SaleLogs)]
 public class ProductSaleLogService(IProductSaleLogRepository repo) : CrmAdminAppService, IProductSaleLogService
 {
+    public async Task<ProductSaleLogDto> GetAsync(Guid id)
+    {
+        var log = await repo.GetAsync(id);
+        return ObjectMapper.Map<ProductSaleLog, ProductSaleLogDto>(log);
+    }
+
     public async Task<PagedResultDto<ProductSaleLogDto>> GetPagedListAsync(ProductSaleLogQueryInput input)
     {
         var parameter = new ProductSaleLogPagedParameter();

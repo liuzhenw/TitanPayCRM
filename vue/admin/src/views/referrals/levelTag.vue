@@ -3,6 +3,7 @@
 </template>
 
 <script setup lang="ts">
+  import { computed } from 'vue'
   import { ReferralLevelBasicDto } from '@/api/services'
 
   const { value } = defineProps<{ value: ReferralLevelBasicDto }>()

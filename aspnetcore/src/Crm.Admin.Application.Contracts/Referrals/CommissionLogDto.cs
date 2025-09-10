@@ -23,4 +23,5 @@ public class CommissionLogQueryInput : PagedAndSortedResultRequestDto
     public string? LevelId { get; set; }
     public Guid? CustomerId { get; set; }
     public ushort? ReferralDepth { get; set; }
+    public Guid? SaleLogId { get; set; }
 }

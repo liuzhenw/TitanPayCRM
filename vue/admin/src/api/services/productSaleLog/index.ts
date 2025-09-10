@@ -10,4 +10,11 @@ export class ProductSaleLogService {
       params: input
     })
   }
+
+  static get(id: string) {
+    return request.get<ProductSaleLogDto>({
+      url: `${this.apiUrl}/${id}`
+    })
+  }
+
 }

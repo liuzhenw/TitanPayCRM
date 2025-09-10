@@ -26,4 +26,6 @@ export interface CommissionLogQueryInput extends Api.Query.PagedRequestBase {
   customerId?: string
   /** @format uint16 */
   referralDepth?: number
+  /** @format uuid */
+  saleLogId?: string
 }

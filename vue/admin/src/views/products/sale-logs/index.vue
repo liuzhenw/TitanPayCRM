@@ -45,7 +45,7 @@
           <el-table-column key="actions" width="110" align="right">
             <template #default="{ row }">
               <el-space>
-                <ArtButtonTable type="edit" />
+                <ArtButtonTable type="view" @click="toDetailsPage(row)" />
               </el-space>
             </template>
           </el-table-column>
@@ -64,7 +64,10 @@
     ProductService
   } from '@/api/services'
   import { SearchFormItem } from '@/types'
+  import { RoutesAlias } from '@/router/routesAlias'
+  import { useRouter } from 'vue-router'
 
+  const router = useRouter()
   const tableData = ref<ProductSaleLogDto[]>([])
   const filter = reactive<ProductSaleLogQueryInput>({})
   const filterItems: SearchFormItem[] = [
@@ -125,11 +128,17 @@
   }
   const onSearch = () => {
     pagination.current = 1
-    fetchData(filter)
+    onPaginationChange()
   }
   const onReset = () => {
     filter.productId = undefined
     onSearch()
+  }
+
+  const toDetailsPage = (item: ProductSaleLogDto) => {
+    const path = RoutesAlias.ProductSaleLogDetails.replace(':id', item.id)
+    console.debug(path)
+    router.push(path)
   }
 
   onMounted(() => {

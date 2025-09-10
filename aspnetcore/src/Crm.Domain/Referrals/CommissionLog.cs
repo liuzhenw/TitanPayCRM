@@ -42,12 +42,14 @@ public class CommissionLogPagedParameter : PagedParameter<CommissionLog>
     public Guid? CustomerId { get; set; }
     public string? LevelId { get; set; }
     public ushort? ReferralDepth { get; set; }
+    public Guid? SaleLogId { get; set; }
 
     public override IQueryable<CommissionLog> BuildPagedQueryable(IQueryable<CommissionLog> queryable)
     {
         return queryable
             .WhereIf(!ProductId.IsNullOrWhiteSpace(), x => x.ProductId == ProductId)
             .WhereIf(!LevelId.IsNullOrWhiteSpace(), x => x.LevelId == LevelId)
+            .WhereIf(SaleLogId.HasValue, x => x.SaleLogId == SaleLogId)
             .WhereIf(ReceiverId.HasValue, x => x.ReceiverId == ReceiverId)
             .WhereIf(CustomerId.HasValue, x => x.CustomerId == CustomerId)
             .WhereIf(ReferralDepth.HasValue, x => x.ReferralDepth == ReferralDepth);

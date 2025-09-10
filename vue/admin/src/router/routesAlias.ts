@@ -8,6 +8,7 @@ export enum RoutesAlias {
 
   Products = '/products/list',
   ProductSaleLogs = '/products/sale-logs',
+  ProductSaleLogDetails = '/products/sale-logs/:id/details',
 
   Referrers = '/referrals/referrers',
   ReferrerDetails = '/referrals/referrers/:id',
