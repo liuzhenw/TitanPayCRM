@@ -99,6 +99,8 @@
     size: number
     /** 总条目数 */
     total: number
+    /** 是否禁用分页后自动滚动到顶部 */
+    disableScrollToTop?: boolean
   }
 
   /** 分页器配置选项接口 */
@@ -246,6 +248,7 @@
   // 分页当前页变化
   const handleCurrentChange = (val: number) => {
     emit('pagination:current-change', val)
+    if (props.pagination?.disableScrollToTop) return
     scrollToTop() // 页码改变后滚动到表格顶部
   }
 

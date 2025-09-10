@@ -30,9 +30,16 @@
             <el-col :span="24">
               <el-card shadow="never" class="panel" >
                 <template #header>
-                  <span class="text-large font-600"> 下级用户 </span>
+                  <span class="text-large font-600"> 邀请关系 </span>
                 </template>
-                <Recommendees :referrer="referrer" />
+                <el-tabs >
+                  <el-tab-pane label="下级用户">
+                    <Recommendees :referrer="referrer" />
+                  </el-tab-pane>
+                  <el-tab-pane label="上级用户">
+                    <Ancestors :referrer="referrer" />
+                  </el-tab-pane>
+                </el-tabs>
               </el-card>
             </el-col>
           </el-row>
@@ -50,6 +57,7 @@
   import Basic from './basic.vue'
   import Statistics from './statistics.vue'
   import Recommendees from './recommendees.vue'
+  import Ancestors from './ancestors.vue'
 
   const router = useRouter()
   const route = useRoute()

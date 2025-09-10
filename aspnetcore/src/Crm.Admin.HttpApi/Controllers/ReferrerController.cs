@@ -26,6 +26,9 @@ public class ReferrerController(IReferrerService referrerService) : CrmAdminCont
         referrerService.UpdateAsync(id, input);
 
     [HttpGet("recommendees")]
-    public Task<PagedResultDto<RecommendeeViewDto>> GetRecommendeePagedListAsync([FromQuery] RecommendeeViewQueryInput input) =>
+    public Task<PagedResultDto<RecommendeeQueryModelDto>> GetRecommendeePagedListAsync([FromQuery] RecommendeeQueryModelQueryInput input) =>
         referrerService.GetRecommendeePagedListAsync(input);
+    
+    [HttpGet("{id:guid}/ancestors")]
+    public Task<List<AncestorQueryModelDto>> GetAncestorListAsync(Guid id) =>  referrerService.GetAncestorListAsync(id);
 }

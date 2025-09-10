@@ -1,0 +1,7 @@
+{
+  "volar.inlayHints.eventArgumentInInlineHandlers": true,
+  "i18n-ally.localesPaths": [
+    "vue/admin/src/locales",
+    "vue/admin/src/locales/langs"
+  ]
+}

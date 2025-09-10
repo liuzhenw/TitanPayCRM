@@ -104,8 +104,8 @@
           <el-table-column key="actions" width="160" align="right">
             <template #default="{ row }">
               <el-space>
-                <ArtButtonTable type="view" @click="onView(row)" />
                 <ArtButtonTable type="edit" @click="onEdit(row)" />
+                <ArtButtonTable type="view" @click="onView(row)" />
               </el-space>
             </template>
           </el-table-column>
@@ -125,7 +125,7 @@
 <script setup lang="ts">
   import { ref } from 'vue'
   import { useRouter } from 'vue-router'
-  import { ReferrerService, ReferrerDto, ReferrerQueryInput } from '@/api/services'
+  import { ReferrerService, ReferrerDto, ReferrerQueryInput, ReferralLevelService } from '@/api/services'
   import { SearchFormItem } from '@/types'
   import LevelTag from '../levelTag.vue'
   import ReferrerCreateDialog from './create.vue'
@@ -139,6 +139,15 @@
       label: '邮箱地址',
       prop: 'id',
       type: 'userSearch',
+      config: {
+        clearable: true
+      }
+    },
+    {
+      label: '推广等级',
+      prop: 'levelId',
+      type: 'select',
+      options: () => ReferralLevelService.getOptions(),
       config: {
         clearable: true
       }

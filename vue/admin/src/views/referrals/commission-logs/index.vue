@@ -24,32 +24,32 @@
               {{ row.product.name }}
             </template>
           </el-table-column>
-          <el-table-column key="receiver" prop="receiver.email" label="接收人" show-overflow-tooltip>
+          <el-table-column key="receiver" prop="receiver.email" label="推荐人" show-overflow-tooltip>
             <template #default="{ row }">
               {{ row.receiver.email }}
             </template>
           </el-table-column>
-          <el-table-column key="customer" prop="customer.email" label="客户" show-overflow-tooltip>
+          <el-table-column key="customer" prop="customer.email" label="被推荐人" show-overflow-tooltip>
             <template #default="{ row }">
               {{ row.customer.email }}
             </template>
           </el-table-column>
-          <el-table-column key="level" prop="level.name" label="推荐等级">
+          <el-table-column key="level" prop="level.name" label="推荐等级" sortable="custom">
             <template #default="{ row }">
               <LevelTag :value="row.level" />
             </template>
           </el-table-column>
-          <el-table-column key="referralDepth" prop="referralDepth" label="推荐层级" width="100" align="center">
+          <el-table-column key="referralDepth" prop="referralDepth" label="推荐层级" width="110" align="right" sortable="custom">
             <template #default="{ row }">
               {{ row.referralDepth }}
             </template>
           </el-table-column>
-          <el-table-column key="amount" prop="amount" label="佣金金额" width="120" align="right">
+          <el-table-column key="amount" prop="amount" label="佣金金额" width="120" align="right" sortable="custom">
             <template #default="{ row }">
               {{ formatAmount(row.amount) }}
             </template>
           </el-table-column>
-          <el-table-column key="createdAt" prop="createdAt" label="创建时间" align="right">
+          <el-table-column key="createdAt" prop="createdAt" label="创建时间" align="right" sortable="custom">
             <template #default="{ row }">
               <Datetime :value="row.createdAt" />
             </template>

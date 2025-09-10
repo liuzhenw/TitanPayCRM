@@ -57,15 +57,20 @@ public class ReferralMapperProfile : Profile
                 d => d.Level, s => s.LevelId);
         CreateMap<CommissionLogQueryInput, CommissionLogPagedParameter>();
 
-        CreateMap<RecommendeeView, RecommendeeViewDto>()
-            .ToValue<RecommendeeView, RecommendeeViewDto, string, ReferralLevelBasicDto, ReferralLevelValueConverter>(
+        CreateMap<RecommendeeQueryModel, RecommendeeQueryModelDto>()
+            .ToValue<RecommendeeQueryModel, RecommendeeQueryModelDto, string, ReferralLevelBasicDto, ReferralLevelValueConverter>(
                 d => d.Level, s => s.LevelId)
-            .ToValue<RecommendeeView, RecommendeeViewDto, Guid, UserBasicDto, UserValueConverter>(
+            .ToValue<RecommendeeQueryModel, RecommendeeQueryModelDto, Guid, UserBasicDto, UserValueConverter>(
                 d => d.Ancestor, s => s.AncestorId)
-            .ToValue<RecommendeeView, RecommendeeViewDto, Guid, UserBasicDto, UserValueConverter>(
+            .ToValue<RecommendeeQueryModel, RecommendeeQueryModelDto, Guid, UserBasicDto, UserValueConverter>(
                 d => d.Recommender, s => s.RecommenderId);
-        CreateMap<RecommendeeViewQueryInput, RecommendeeViewPagedParameter>();
+        CreateMap<RecommendeeQueryModelQueryInput, RecommendeeQueryModelPagedParameter>();
 
+        CreateMap<AncestorQueryModel, AncestorQueryModelDto>()
+            .ToValue<AncestorQueryModel, AncestorQueryModelDto, Guid, UserBasicDto, UserValueConverter>(
+                d => d.User, s => s.Id)
+            .ToValue<AncestorQueryModel, AncestorQueryModelDto, string, ReferralLevelBasicDto, ReferralLevelValueConverter>(
+                d => d.Level, s => s.LevelId);
     }
 }
 

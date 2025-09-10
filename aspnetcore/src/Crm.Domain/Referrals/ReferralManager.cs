@@ -221,7 +221,7 @@ public class ReferralManager(
         List<Referrer> referrers = [referrer];
         List<ReferralRelation> relations = [relation];
         // 处理间推
-        var ancestorRelations = await relationRepo.GetAncestorListAsync(recommender.Id, 1);
+        var ancestorRelations = await relationRepo.GetAncestorRelationListAsync(recommender.Id, 1);
         foreach (var item in ancestorRelations.OrderBy(x => x.Depth))
         {
             var ancestorUser = await userRepo.GetAsync(item.Ancestor.Id);
@@ -295,7 +295,7 @@ public class ReferralManager(
         customer.OnBuy(saleLog);
         await userRepo.UpdateAsync(customer);
 
-        var ancestorRelations = await relationRepo.GetAncestorListAsync(saleLog.CustomerId);
+        var ancestorRelations = await relationRepo.GetAncestorRelationListAsync(saleLog.CustomerId);
         if (ancestorRelations.Count < 1) return;
 
         var levels = await levelRepo.GetListAsync();

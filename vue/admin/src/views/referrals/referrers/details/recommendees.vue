@@ -4,8 +4,9 @@
       row-key="id"
       :data="tableData"
       :loading="dataLoading"
-      v-model:pagination="pagination"
       :marginTop="10"
+      height="400"
+      v-model:pagination="pagination"
       @pagination:current-change="onPaginationCurrentChange"
       @pagination:size-change="onPaginationSizeChange"
       @sort-change="onSortChange"
@@ -15,7 +16,7 @@
           <LevelTag :value="row.level" />
         </template>
       </el-table-column>
-      <el-table-column key="email" prop="email" label="用户邮箱" show-overflow-tooltip>
+      <el-table-column key="email" prop="email" label="下级用户" show-overflow-tooltip>
         <template #default="{ row }">
           {{ row.email }}
         </template>
@@ -66,7 +67,11 @@
       <el-table-column key="actions" width="80" align="right">
         <template #default="{ row }">
           <el-space>
-            <ArtButtonTable type="view" :disabled="row.level==null" @click="toReferrerDetails(row.id)"/>
+            <ArtButtonTable
+              type="view"
+              :disabled="row.level == null"
+              @click="toReferrerDetails(row.id)"
+            />
           </el-space>
         </template>
       </el-table-column>
@@ -82,8 +87,8 @@
   import { ref, reactive, onMounted, watch } from 'vue'
   import {
     ReferrerService,
-    RecommendeeViewDto,
-    RecommendeeViewQueryInput,
+    RecommendeeDto,
+    RecommendeeQueryInput,
     ReferrerDto
   } from '@/api/services'
   import LevelTag from '../../levelTag.vue'
@@ -94,8 +99,8 @@
   }>()
 
   const router = useRouter()
-  const tableData = ref<RecommendeeViewDto[]>([])
-  const filter = reactive<RecommendeeViewQueryInput>({
+  const tableData = ref<RecommendeeDto[]>([])
+  const filter = reactive<RecommendeeQueryInput>({
     ancestorId: props.referrer.id
   })
   const filterItems: SearchFormItem[] = [
@@ -112,11 +117,12 @@
   const pagination = reactive({
     current: 1,
     size: 10,
-    total: 0
+    total: 0,
+    disableScrollToTop: true
   })
   const dataLoading = ref(false)
 
-  const fetchData = async (input: RecommendeeViewQueryInput) => {
+  const fetchData = async (input: RecommendeeQueryInput) => {
     dataLoading.value = true
     try {
       const res = await ReferrerService.getRecommendees(input)

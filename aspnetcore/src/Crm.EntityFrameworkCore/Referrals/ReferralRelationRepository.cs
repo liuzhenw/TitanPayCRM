@@ -15,7 +15,7 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
     AstraEfCoreRepository<CrmDbContext, ReferralRelation, Guid>(dbContextProvider),
     IReferralRelationRepository
 {
-    public async Task<List<ReferralRelation>> GetAncestorListAsync(Guid recommendeeId, ushort? minDepth = null)
+    public async Task<List<ReferralRelation>> GetAncestorRelationListAsync(Guid recommendeeId, ushort? minDepth = null)
     {
         var dbContext = await GetDbContextAsync();
         var query = dbContext.Set<ReferralRelation>()
@@ -41,14 +41,14 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
             .AnyAsync(x => x.Recommendee.Id == recommendeeId);
     }
 
-    public async Task<PagedList<RecommendeeView>> GetRecommendeePagedListAsync(RecommendeeViewPagedParameter parameter)
+    public async Task<PagedList<RecommendeeQueryModel>> GetRecommendeePagedListAsync(RecommendeeQueryModelPagedParameter parameter)
     {
         var dbContext = await GetDbContextAsync();
         // 连表(LeftJoin)
         var joinQueryable = from rr in dbContext.ReferralRelations
             join er in dbContext.Referrers on rr.Recommendee.Id equals er.Id into g
             from er in g.DefaultIfEmpty()
-            select new RecommendeeView
+            select new RecommendeeQueryModel
             {
                 Id = rr.Recommendee.Id,
                 AncestorId = rr.Ancestor.Id,
@@ -79,6 +79,25 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
             .Skip(parameter.SkipCount)
             .Take(parameter.MaxResultCount);
         var items = await AsyncExecuter.ToListAsync(joinQueryable);
-        return new PagedList<RecommendeeView>(items, totalCount);
+        return new PagedList<RecommendeeQueryModel>(items, totalCount);
+    }
+
+    public async Task<List<AncestorQueryModel>> GetAncestorListAsync(Guid recommendeeId)
+    {
+        var dbContext = await GetDbContextAsync();
+        var joinQueryable = from rr in dbContext.ReferralRelations
+            join er in dbContext.Referrers on rr.Ancestor.Id equals er.Id into g
+            from er in g.DefaultIfEmpty()
+            where rr.Recommendee.Id == recommendeeId
+            select new AncestorQueryModel
+            {
+                Id = er.Id,
+                Depth = rr.Depth,
+                LevelId = er.LevelId,
+                TotalCommission = er.TotalCommission,
+                Statistics = er.Statistics,
+                CreatedAt = rr.CreatedAt
+            };
+        return await joinQueryable.ToListAsync();
     }
 }

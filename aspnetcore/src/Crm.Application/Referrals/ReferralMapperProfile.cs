@@ -21,12 +21,12 @@ public class ReferralMapperProfile : Profile
             .ToValue<SaleStatistic, ReferrerSaleStatisticDto, string, ProductBasicDto, ProductValueConverter>(
                 d => d.Product, s => s.ProductId);
 
-        CreateMap<RecommendeeView, RecommendeeDto>()
-            .ToValue<RecommendeeView, RecommendeeDto, string, ReferralLevelBasicDto, ReferralLevelConverter>(
+        CreateMap<RecommendeeQueryModel, RecommendeeDto>()
+            .ToValue<RecommendeeQueryModel, RecommendeeDto, string, ReferralLevelBasicDto, ReferralLevelConverter>(
                 d => d.Level, s => s.LevelId)
             .ForMember(d => d.CreatedAt,
                 o => o.MapFrom(s => s.CreatedAt.ToUnixTimeSeconds()));
-        CreateMap<RecommendeeQueryInput, RecommendeeViewPagedParameter>()
+        CreateMap<RecommendeeQueryInput, RecommendeeQueryModelPagedParameter>()
             .Ignore(x => x.AncestorId)
             .Ignore(x => x.RecommenderId);
 

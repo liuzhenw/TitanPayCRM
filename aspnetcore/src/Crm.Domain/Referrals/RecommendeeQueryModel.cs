@@ -5,7 +5,7 @@ using Astra.Paged;
 
 namespace Crm.Referrals;
 
-public class RecommendeeView
+public class RecommendeeQueryModel
 {
     public Guid Id { get; set; }
     public string Email { get; set; } = null!;
@@ -20,14 +20,14 @@ public class RecommendeeView
     public DateTimeOffset CreatedAt { get; set; }
 }
 
-public class RecommendeeViewPagedParameter : PagedParameter<RecommendeeView>
+public class RecommendeeQueryModelPagedParameter : PagedParameter<RecommendeeQueryModel>
 {
     public Guid?  AncestorId { get; set; }
     public Guid? RecommenderId { get; set; }
     public string? LevelId { get; set; }
     public uint? Depth { get; set; }
 
-    public override IQueryable<RecommendeeView> BuildPagedQueryable(IQueryable<RecommendeeView> queryable)
+    public override IQueryable<RecommendeeQueryModel> BuildPagedQueryable(IQueryable<RecommendeeQueryModel> queryable)
     {
         return queryable
             .WhereIf(AncestorId.HasValue, x => x.AncestorId == AncestorId)
