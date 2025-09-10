@@ -42,6 +42,7 @@ public class CrmPermissions
         public const string Default = GroupName + ".Referrers";
         public const string Create = Default + ".Create";
         public const string Update = Default + ".Update";
+        public const string Recommendees = Default + "Recommendees";
     }
     
     public static class ReferralLevels

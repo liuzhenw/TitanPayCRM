@@ -56,3 +56,29 @@ export interface ReferrerQueryInput extends Api.Query.PagedRequestBase {
   id?: string
   levelId?: string
 }
+
+export interface RecommendeeViewDto {
+  /** @format uuid */
+  id: string
+  email: string
+  level?: ReferralLevelBasicDto
+  recommender: UserBasicDto
+  ancestor: UserBasicDto
+  /** @format uint32 */
+  depth: number
+  /** @format double */
+  totalCommission: number
+  statistics?: ReferrerSaleStatisticDto[]
+  /** @format date-time */
+  createdAt: string
+}
+
+export interface RecommendeeViewQueryInput extends Api.Query.PagedRequestBase {
+  /** @format uuid */
+  ancestorId?: string
+  /** @format uuid */
+  recommenderId?: string
+  levelId?: string
+  /** @format uint32 */
+  depth?: number
+}

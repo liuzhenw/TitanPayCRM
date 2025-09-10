@@ -11,6 +11,7 @@ namespace Crm.Admin.Referrals;
 public class ReferrerService(
     ReferralManager referralManager,
     IReferrerRepository referrerRepo,
+    IReferralRelationRepository relationRepo,
     IUserRepository userRepo) : CrmAdminAppService, IReferrerService
 {
     public async Task<ReferrerWithDetails> GetAsync(Guid id)
@@ -34,7 +35,7 @@ public class ReferrerService(
     {
         var user = await userRepo.FindByEmailAsync(input.Email);
         if (user is null) throw new EntityNotFoundException(typeof(User));
-        
+
         var referrer = await referralManager.CreateOrModifyReferrerAsync(user, input.LevelId);
         return ObjectMapper.Map<Referrer, ReferrerWithDetails>(referrer);
     }
@@ -49,5 +50,16 @@ public class ReferrerService(
         referrer.Remark = input.Remark;
         await referrerRepo.UpdateAsync(referrer);
         return ObjectMapper.Map<Referrer, ReferrerWithDetails>(referrer);
+    }
+
+    [Authorize(CrmPermissions.Referrers.Recommendees)]
+    public async Task<PagedResultDto<RecommendeeViewDto>> GetRecommendeePagedListAsync(RecommendeeViewQueryInput input)
+    {
+        var parameter = new RecommendeeViewPagedParameter();
+        ObjectMapper.Map(input, parameter);
+        var paged = await relationRepo.GetRecommendeePagedListAsync(parameter);
+        return new PagedResultDto<RecommendeeViewDto>(
+            paged.TotalCount,
+            ObjectMapper.Map<List<RecommendeeView>, List<RecommendeeViewDto>>(paged.Items));
     }
 }

@@ -31,6 +31,7 @@ public class CrmPermissionDefinitionProvider : PermissionDefinitionProvider
         var referrers = group.AddPermission(CrmPermissions.Referrers.Default, F("推销员"));
         referrers.AddChild(CrmPermissions.Referrers.Create, F("创建"));
         referrers.AddChild(CrmPermissions.Referrers.Update, F("修改"));
+        referrers.AddChild(CrmPermissions.Referrers.Recommendees, F("下级用户"));
 
         var levels = group.AddPermission(CrmPermissions.ReferralLevels.Default, F("推荐等级"));
         levels.AddChild(CrmPermissions.ReferralLevels.Create, F("创建"));

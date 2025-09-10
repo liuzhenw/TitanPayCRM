@@ -56,6 +56,16 @@ public class ReferralMapperProfile : Profile
             .ToValue<CommissionLog, CommissionLogDto, string, ReferralLevelBasicDto, ReferralLevelValueConverter>(
                 d => d.Level, s => s.LevelId);
         CreateMap<CommissionLogQueryInput, CommissionLogPagedParameter>();
+
+        CreateMap<RecommendeeView, RecommendeeViewDto>()
+            .ToValue<RecommendeeView, RecommendeeViewDto, string, ReferralLevelBasicDto, ReferralLevelValueConverter>(
+                d => d.Level, s => s.LevelId)
+            .ToValue<RecommendeeView, RecommendeeViewDto, Guid, UserBasicDto, UserValueConverter>(
+                d => d.Ancestor, s => s.AncestorId)
+            .ToValue<RecommendeeView, RecommendeeViewDto, Guid, UserBasicDto, UserValueConverter>(
+                d => d.Recommender, s => s.RecommenderId);
+        CreateMap<RecommendeeViewQueryInput, RecommendeeViewPagedParameter>();
+
     }
 }
 
