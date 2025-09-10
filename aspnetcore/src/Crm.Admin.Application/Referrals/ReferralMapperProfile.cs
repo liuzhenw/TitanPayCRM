@@ -71,6 +71,11 @@ public class ReferralMapperProfile : Profile
                 d => d.User, s => s.Id)
             .ToValue<AncestorQueryModel, AncestorQueryModelDto, string, ReferralLevelBasicDto, ReferralLevelValueConverter>(
                 d => d.Level, s => s.LevelId);
+
+        CreateMap<WithdrawalRequest, WithdrawalRequestDto>()
+            .ToValue<WithdrawalRequest, WithdrawalRequestDto, Guid, UserBasicDto, UserValueConverter>(
+                d => d.Referrer, s => s.ReferrerId);
+        CreateMap<WithdrawalRequestQueryInput, WithdrawalRequestPagedParameter>();
     }
 }
 

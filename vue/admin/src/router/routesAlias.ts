@@ -15,6 +15,8 @@ export enum RoutesAlias {
 
   ReferrerRequests = '/referrals/requests',
   CommissionLogs = '/referrals/commission-logs',
+  WithdrawalRequests = '/referrals/withdrawal-requests',
+  WithdrawalRequestDetails = '/referrals/withdrawal-requests/:id',
 
   // 系统管理
   Blockchains = '/system/blockchains', // 区块链

@@ -1,4 +1,4 @@
-@email=user1@email.com
+@email=user1-2-1@email.com
 
 ### Home
 GET {{baseUrl}}/api/home
@@ -21,11 +21,11 @@ Content-Type: application/json
 
 {
   "email": "{{email}}",
-  "code": "128658"
+  "code": "919024"
 }
 
 > {%
-    client.global.set("accessToken",response.body["accessToken"])
+    client.global.set("accessToken", response.body["accessToken"])
 %}
 
 ### User
@@ -39,7 +39,7 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-    "newPassword": "123456"
+  "newPassword": "123456"
 }
 
 ### Levels
@@ -59,7 +59,7 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "levelId": "shareholder"
+  "levelId": "agent"
 }
 
 ### GetApply
@@ -69,3 +69,21 @@ Authorization: Bearer {{accessToken}}
 ### Commissions
 GET {{baseUrl}}/api/commissions
 Authorization: Bearer {{accessToken}}
+
+### Set Withdrawal Address
+PUT {{baseUrl}}/api/referral/withdrawal-address
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "address": "0x08a86528199B71B13271c85983a995078999D969"
+}
+
+### Withdrawal
+POST {{baseUrl}}/api/withdrawal/requests
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "amount": 50
+}

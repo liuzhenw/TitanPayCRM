@@ -11,7 +11,7 @@ public class CrmPermissionDefinitionProvider : PermissionDefinitionProvider
 
         var settings = group.AddPermission(CrmPermissions.Settings.Default, F("系统设置"));
         settings.AddChild(CrmPermissions.Settings.Update, F("修改"));
-        
+
         var users = group.AddPermission(CrmPermissions.Users.Default, F("用户"));
         users.AddChild(CrmPermissions.Users.Create, F("创建"));
         users.AddChild(CrmPermissions.Users.Update, F("修改"));
@@ -41,8 +41,11 @@ public class CrmPermissionDefinitionProvider : PermissionDefinitionProvider
         var requests = group.AddPermission(CrmPermissions.ReferrerRequests.Default, F("推广申请"));
         requests.AddChild(CrmPermissions.ReferrerRequests.Update, F("修改"));
 
-        var commissionLogs = group.AddPermission(CrmPermissions.CommissionLogs.Default, F("佣金记录"));
+        group.AddPermission(CrmPermissions.CommissionLogs.Default, F("佣金记录"));
 
+        var withdrawals = group.AddPermission(CrmPermissions.WithdrawalRequests.Default, F("提款申请"));
+        withdrawals.AddChild(CrmPermissions.WithdrawalRequests.Approve, F("同意"));
+        withdrawals.AddChild(CrmPermissions.WithdrawalRequests.Reject, F("拒绝"));
     }
 
     private static FixedLocalizableString F(string name)

@@ -27,3 +27,6 @@ export * from './productSaleLog/types'
 
 export * from './commissionLog'
 export * from './commissionLog/types'
+
+export * from './withdrawalRequest'
+export * from './withdrawalRequest/types'

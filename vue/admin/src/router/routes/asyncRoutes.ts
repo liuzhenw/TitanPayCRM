@@ -56,6 +56,23 @@ export const asyncRoutes: AppRouteRecord[] = [
         meta: {
           title: '佣金记录'
         }
+      },
+      {
+        name: 'WithdrawalRequests',
+        path: 'withdrawal-requests',
+        component: RoutesAlias.WithdrawalRequests,
+        meta: {
+          title: '提现申请'
+        }
+      },
+      {
+        name: 'WithdrawalRequestDetails',
+        path: 'withdrawal-requests/:id',
+        component: '/referrals/withdrawal-requests/details',
+        meta: {
+          title: '提现申请详情',
+          isHide: true
+        }
       }
     ]
   },
