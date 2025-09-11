@@ -38,7 +38,8 @@ public class ReferralMapperProfile : Profile
             .ToValue<CommissionLog, CommissionLogDto, string, ProductBasicDto, ProductValueConverter>(
                 d => d.Product, s => s.ProductId)
             .ToValue<CommissionLog, CommissionLogDto, string, ReferralLevelBasicDto, ReferralLevelConverter>(
-                d => d.Level, s => s.LevelId);
+                d => d.Level, s => s.LevelId)
+            .ForMember(x => x.CreatedAt, x => x.MapFrom(s => s.CreatedAt.ToUnixTimeSeconds()));
         CreateMap<CommissionLogQueryInput, CommissionLogPagedParameter>()
             .Ignore(x => x.ReceiverId)
             .Ignore(x => x.SaleLogId);

@@ -335,11 +335,12 @@ public class ReferralManager(
                 level = levels.First(x => x.Id == referrer.LevelId);
                 commission = saleLog.Amount * level.Multiplier;
             }
+
             var commissionLog = new CommissionLog(GuidGenerator.Create(), referrer, relation, saleLog, commission);
             await commissionRepo.InsertAsync(commissionLog);
             referrer.OnCommissionAdded(saleLog, commission);
             await referrerRepo.UpdateAsync(referrer);
-            
+
             saleLog.OnCommissionAdded(commission);
             if (level is not null)
             {

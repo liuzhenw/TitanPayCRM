@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Crm.Products;
 using Crm.Referrals;
@@ -9,8 +11,9 @@ namespace Crm.Events;
 public record ReferrerAddLevelDomainEvent(Referrer Referrer);
 
 public class ReferrerAddLevelDomainEventHandler(
-    ICommissionLogRepository commissionLogRepo,
+    IProductRepository productRepo,
     IProductSaleLogRepository saleLogRepo,
+    ICommissionLogRepository commissionLogRepo,
     IReferrerLevelRepository levelRepo) : 
     ILocalEventHandler<ReferrerAddLevelDomainEvent>, ITransientDependency
 {
@@ -33,5 +36,6 @@ public class ReferrerAddLevelDomainEventHandler(
         }
         await commissionLogRepo.UpdateManyAsync(commissions);
         await levelRepo.UpdateAsync(level);
+        await productRepo.UpdateStatisticAsync();
     }
 }

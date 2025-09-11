@@ -11,7 +11,7 @@ public class CommissionLogDto : EntityDto<Guid>
     public string CustomerEmail { get; set; } = null!;
     public uint ReferralDepth { get; set; }
     public decimal Amount { get; set; }
-    public DateTimeOffset CreatedAt { get; set; }
+    public long CreatedAt { get; set; }
 }
 
 public class CommissionLogQueryInput : PagedAndSortedResultRequestDto
