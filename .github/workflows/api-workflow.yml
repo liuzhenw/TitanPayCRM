@@ -1,0 +1,51 @@
+name: Api docker image build
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - vue/**
+  workflow_dispatch: 
+
+env:
+  ASPNETCORE_ENVIRONMENT: Production
+  ASPNETCORE_URLS: http://*:8080
+  IMAGE_NAME: slor/crm.api
+  REGISTRY: ghcr.io
+  DOCKERFILE_PATH: ./aspnetcore/src/Crm.WebApi/Dockerfile
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      id-token: write
+      packages: write
+      attestations: write
+      contents: read
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login to the Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch,pattern=main
+            type=semver,pattern={{version}},latest={{default}}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./aspnetcore
+          file: ${{ env.DOCKERFILE_PATH }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
