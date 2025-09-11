@@ -255,7 +255,7 @@ public class ReferralManager(
             ancestor.OnIndirectReferralAdded((uint)descendantRelations.Count + 1);
             referrers.Add(ancestor);
         }
-        
+
         await relationRepo.InsertManyAsync(recommenderRelations);
         await referrerRepo.UpdateManyAsync(referrers);
     }
@@ -326,18 +326,27 @@ public class ReferralManager(
         foreach (var relation in ancestorRelations)
         {
             var referrer = await referrerRepo.GetAsync(relation.Ancestor.Id);
-            if (referrer.IsDisabled || referrer.LevelId is null) continue;
+            if (referrer.IsDisabled) continue;
 
-            var level = levels.First(x => x.Id == referrer.LevelId);
-            var commission = saleLog.Amount * level.Multiplier;
+            ReferralLevel? level = null;
+            var commission = 0m;
+            if (referrer.LevelId is not null)
+            {
+                level = levels.First(x => x.Id == referrer.LevelId);
+                commission = saleLog.Amount * level.Multiplier;
+            }
             var commissionLog = new CommissionLog(GuidGenerator.Create(), referrer, relation, saleLog, commission);
             await commissionRepo.InsertAsync(commissionLog);
             referrer.OnCommissionAdded(saleLog, commission);
             await referrerRepo.UpdateAsync(referrer);
-            level.OnCommissionAdded(commission);
+            
             saleLog.OnCommissionAdded(commission);
-            if (updatedLevels.All(x => x.Id != level.Id))
-                updatedLevels.Add(level);
+            if (level is not null)
+            {
+                level.OnCommissionAdded(commission);
+                if (updatedLevels.All(x => x.Id != level.Id))
+                    updatedLevels.Add(level);
+            }
         }
 
         if (updatedLevels.Count > 0)

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Astra.Paged;
 using Crm.Products;
+using Volo.Abp;
 using Volo.Abp.Domain.Entities;
 
 namespace Crm.Referrals;
@@ -16,7 +17,7 @@ public class CommissionLog : BasicAggregateRoot<Guid>
         ProductId = saleLog.ProductId;
         SaleLogId = saleLog.Id;
         ReceiverId = referrer.Id;
-        LevelId = referrer.LevelId!;
+        LevelId = referrer.LevelId;
         CustomerId = saleLog.CustomerId;
         CustomerEmail = saleLog.CustomerEmail;
         ReferralDepth = relation.Depth;
@@ -27,12 +28,21 @@ public class CommissionLog : BasicAggregateRoot<Guid>
     public string ProductId { get; private set; } = null!;
     public Guid SaleLogId { get; private set; }
     public Guid ReceiverId { get; private set; }
-    public string LevelId { get; private set; } = null!;
+    public string? LevelId { get; private set; }
     public Guid CustomerId { get; private set; }
     public string CustomerEmail { get; private set; } = null!;
     public uint ReferralDepth { get; private set; }
     public decimal Amount { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
+
+    public void OnGrant(decimal commission, string levelId)
+    {
+        if (Amount > 0)
+            throw new UserFriendlyException("不能重复发放佣金!");
+        
+        Amount = commission;
+        LevelId = levelId;
+    }
 }
 
 public class CommissionLogPagedParameter : PagedParameter<CommissionLog>

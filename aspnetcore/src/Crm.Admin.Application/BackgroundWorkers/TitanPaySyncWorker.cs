@@ -135,7 +135,7 @@ public class TitanPaySyncWorker : AsyncPeriodicBackgroundWorkerBase
         }
 
         var count = 0;
-        foreach (var titanPayCard in addCards)
+        foreach (var titanPayCard in addCards.Where(x => x.CardType == "ENTITY").OrderBy(x => x.Id))
         {
             if (await saleLogRepo.ExistsAsync(product.Id, titanPayCard.Id.ToString()))
                 continue;

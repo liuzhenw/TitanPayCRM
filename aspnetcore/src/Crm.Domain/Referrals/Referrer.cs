@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Astra.Paged;
 using Crm.Accounts;
+using Crm.Events;
 using Crm.Products;
 using Volo.Abp;
 using Volo.Abp.Domain.Entities;
@@ -15,14 +16,14 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
 
     internal Referrer(ReferrerRequest request) : base(request.Id)
     {
-        LevelId = request.LevelId;
+        SetLevelId(request.LevelId);
         CreatedAt = DateTimeOffset.Now;
         ConcurrencyStamp = Guid.NewGuid().ToString("N");
     }
 
     internal Referrer(User user, ReferralLevel? level) : base(user.Id)
     {
-        LevelId = level?.Id;
+        SetLevelId(level?.Id);
         CreatedAt = DateTimeOffset.Now;
         ConcurrencyStamp = Guid.NewGuid().ToString("N");
     }
@@ -95,7 +96,7 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
     internal void OnIndirectReferralAdded(uint count = 1)
     {
         if (count == 0) return;
-        
+
         IndirectCount += count;
         TotalCount += count;
         UpdatedAt = DateTimeOffset.Now;
@@ -103,6 +104,8 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
 
     internal void OnCommissionAdded(ProductSaleLog log, decimal commission)
     {
+        if (commission <= 0) return;
+        
         TotalCommission += commission;
         Commission += commission;
         var statistic = Statistics.FirstOrDefault(x => x.ProductId == log.ProductId);
@@ -134,8 +137,15 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
 
     internal void SetLevel(ReferralLevel? newLevel)
     {
-        LevelId = newLevel?.Id;
+        SetLevelId(newLevel?.Id);
         UpdatedAt = DateTimeOffset.Now;
+    }
+
+    private void SetLevelId(string? levelId)
+    {
+        LevelId = levelId;
+        if (LevelId != null)
+            AddLocalEvent(new ReferrerAddLevelDomainEvent(this));
     }
 }
 
