@@ -50,6 +50,15 @@ export const asyncRoutes: AppRouteRecord[] = [
         }
       },
       {
+        name: 'ReferrerRequestDetails',
+        path: 'requests/:id',
+        component: '/referrals/requests/details',
+        meta: {
+          title: '代理申请详情',
+          isHide: true
+        }
+      },
+      {
         name: 'CommissionLogs',
         path: 'commission-logs',
         component: RoutesAlias.CommissionLogs,

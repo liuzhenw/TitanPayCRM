@@ -14,6 +14,7 @@ export enum RoutesAlias {
   ReferrerDetails = '/referrals/referrers/:id',
 
   ReferrerRequests = '/referrals/requests',
+  ReferrerRequestDetails = '/referrals/requests/:id',
   CommissionLogs = '/referrals/commission-logs',
   WithdrawalRequests = '/referrals/withdrawal-requests',
   WithdrawalRequestDetails = '/referrals/withdrawal-requests/:id',

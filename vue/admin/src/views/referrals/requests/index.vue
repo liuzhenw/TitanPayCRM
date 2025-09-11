@@ -29,7 +29,7 @@
               <LevelTag :value="row.level" />
             </template>
           </el-table-column>
-          <el-table-column key="status" prop="status" label="状态" width="100">
+          <el-table-column key="status" prop="status" label="状态" width="100" align="center">
             <template #default="{ row }">
               <StatusTag :value="row.status" />
             </template>
@@ -39,11 +39,10 @@
               <Datetime :value="row.createdAt" />
             </template>
           </el-table-column>
-          <el-table-column key="actions" width="140" align="right">
+          <el-table-column key="actions" width="80" align="right">
             <template #default="{ row }">
               <el-space>
-                <ArtButtonTable type="edit" />
-                <ArtButtonTable type="delete" />
+                <ArtButtonTable type="view" @click="onView(row)" />
               </el-space>
             </template>
           </el-table-column>
@@ -55,6 +54,7 @@
 
 <script setup lang="ts">
   import { ref, reactive } from 'vue'
+  import { useRouter } from 'vue-router'
   import {
     ReferrerRequestService,
     ReferrerRequestDto,
@@ -65,6 +65,7 @@
   import LevelTag from '../levelTag.vue'
   import StatusTag from './statusTag.vue'
 
+  const router = useRouter()
   const tableData = ref<ReferrerRequestDto[]>([])
   const filter = reactive<ReferrerRequestQueryInput>({})
   const filterItems: SearchFormItem[] = [
@@ -149,6 +150,10 @@
     filter.levelId = undefined
     filter.status = undefined
     onSearch()
+  }
+
+  const onView = (row: ReferrerRequestDto) => {
+    router.push(`/referrals/requests/${row.id}`)
   }
 
   onMounted(() => {

@@ -7,19 +7,19 @@
     </el-page-header>
 
     <div v-loading="!referrer" class="content">
-      <el-row v-if="referrer" :gutter="16">
-        <el-col :md="8" :sm="24">
-          <el-card shadow="never" class="panel">
+      <el-row v-if="referrer" :gutter="16" class="equal-height-row">
+        <el-col :md="8" :sm="24" class="equal-height-col">
+          <el-card shadow="never" class="panel" style="height: 100%">
             <template #header>
               <span class="text-large font-600"> 基本信息 </span>
             </template>
             <Basic :referrer="referrer" />
           </el-card>
         </el-col>
-        <el-col :md="16" :sm="24">
+        <el-col :md="16" :sm="24" class="equal-height-col">
           <el-row :gutter="16">
             <el-col :span="24">
-              <el-card shadow="never" class="panel" >
+              <el-card shadow="never" class="panel">
                 <template #header>
                   <span class="text-large font-600"> 推荐统计 </span>
                 </template>
@@ -28,11 +28,11 @@
             </el-col>
 
             <el-col :span="24">
-              <el-card shadow="never" class="panel" >
+              <el-card shadow="never" class="panel">
                 <template #header>
                   <span class="text-large font-600"> 邀请关系 </span>
                 </template>
-                <el-tabs >
+                <el-tabs>
                   <el-tab-pane label="下级用户">
                     <Recommendees :referrer="referrer" />
                   </el-tab-pane>
@@ -81,9 +81,19 @@
 <style scoped lang="scss">
   .content {
     margin-top: 20px;
-    height: 100%;
+
+    .panel {
+      margin-bottom: 16px;
+    }
   }
-  .panel {
-    margin-bottom: 16px;
+
+  .equal-height-row {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .equal-height-col {
+    display: flex;
+    flex-direction: column;
   }
 </style>
