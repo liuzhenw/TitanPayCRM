@@ -20,4 +20,11 @@ export class SettingService {
       data: input
     })
   }
+
+  static sendTestEmail(email: string) {
+    return request.post<void>({
+      url: `${this.apiUrl}/test/email`,
+      data: { receiverEmail: email }
+    })
+  }
 }

@@ -6,7 +6,7 @@
     <div v-loading="loading" class="warp">
       <el-tabs v-model="tab" tab-position="left" style="height: 100%">
         <el-tab-pane v-for="[groupName, items] in settings" :label="groupName" :name="groupName">
-          <SettingGroup :items="items" />
+          <SettingGroup :groupName="groupName" :items="items" />
         </el-tab-pane>
       </el-tabs>
     </div>
