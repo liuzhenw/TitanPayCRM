@@ -13,7 +13,7 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Crm.DbMigrations.App.Migrations
 {
     [DbContext(typeof(AppDbMigrationContext))]
-    [Migration("20250905154945_Initial")]
+    [Migration("20250911114955_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

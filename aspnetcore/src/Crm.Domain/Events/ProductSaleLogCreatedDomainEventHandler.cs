@@ -17,7 +17,7 @@ public class ProductSaleLogCreatedDomainEventHandler(
     public async Task HandleEventAsync(EntityCreatedEventData<ProductSaleLog> eventData)
     {
         await manager.OnProductSoldAsync(eventData.Entity);
-        logger.LogInformation(
+        logger.LogDebug(
             "售出 {Quantity} 件 {ProductId} 商品",
             eventData.Entity.Quantity, eventData.Entity.ProductId);
     }

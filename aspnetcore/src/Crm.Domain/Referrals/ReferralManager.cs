@@ -217,23 +217,46 @@ public class ReferralManager(
 
         referrer.OnDirectReferralAdded();
 
-        var relation = new ReferralRelation(recommendee, recommender, recommender, 1);
+        var recommenderRelation = new ReferralRelation(recommendee, recommender, recommender, 1);
         List<Referrer> referrers = [referrer];
-        List<ReferralRelation> relations = [relation];
+        List<ReferralRelation> recommenderRelations = [recommenderRelation];
+        var descendantRelations = await relationRepo.GetDescendantRelationListAsync(recommendee.Id, 1);
+        List<User> descendantUsers = [];
+        foreach (var descendantRelation in descendantRelations)
+        {
+            var descendantUser = await userRepo.GetAsync(descendantRelation.Recommendee.Id);
+            descendantUsers.Add(descendantUser);
+            recommenderRelations.Add(new ReferralRelation(
+                descendantUser, recommendee, recommender, descendantRelation.Depth + 1));
+            referrer.OnIndirectReferralAdded();
+        }
+
         // 处理间推
         var ancestorRelations = await relationRepo.GetAncestorRelationListAsync(recommender.Id, 1);
         foreach (var item in ancestorRelations.OrderBy(x => x.Depth))
         {
             var ancestorUser = await userRepo.GetAsync(item.Ancestor.Id);
+            // 将推荐人的上级关系添加到被推荐人的上级关系中
             var ancestorRelation = new ReferralRelation(recommendee, recommender, ancestorUser, item.Depth + 1u);
-            relations.Add(ancestorRelation);
+            recommenderRelations.Add(ancestorRelation);
+
+            // 将被推荐人的下级关系添加到推荐人的上级关系中
+            foreach (var descendantRelation in descendantRelations)
+            {
+                var descendantUser = descendantUsers.First(x => x.Id == descendantRelation.Recommendee.Id);
+                recommenderRelations.Add(new ReferralRelation(
+                    descendantUser,
+                    recommendee,
+                    ancestorUser,
+                    ancestorRelation.Depth + descendantRelation.Depth));
+            }
 
             var ancestor = await referrerRepo.GetAsync(item.Ancestor.Id);
-            ancestor.OnIndirectReferralAdded();
+            ancestor.OnIndirectReferralAdded((uint)descendantRelations.Count + 1);
             referrers.Add(ancestor);
         }
-
-        await relationRepo.InsertManyAsync(relations);
+        
+        await relationRepo.InsertManyAsync(recommenderRelations);
         await referrerRepo.UpdateManyAsync(referrers);
     }
 
@@ -319,7 +342,7 @@ public class ReferralManager(
 
         if (updatedLevels.Count > 0)
             await levelRepo.UpdateManyAsync(levels);
-        
+
         var product = await productRepo.GetAsync(saleLog.ProductId);
         product.OnSold(saleLog);
         await productRepo.UpdateAsync(product);

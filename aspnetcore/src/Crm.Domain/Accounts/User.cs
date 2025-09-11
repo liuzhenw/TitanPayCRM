@@ -11,10 +11,13 @@ public class User : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
 {
     protected User() { }
 
-    internal User(Guid id, string name, string email) : base(id)
+    internal User(Guid id, string name, string email) : this(id, name, email, DateTimeOffset.Now) { }
+
+    internal User(Guid id, string name, string email, DateTimeOffset createdAt) : base(id)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Email = email ?? throw new ArgumentNullException(nameof(email));
+        CreatedAt = createdAt;
     }
 
     public string Name { get; private set; } = null!;
@@ -25,7 +28,7 @@ public class User : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
     public ushort Attempts { get; private set; }
     public DateTimeOffset? LockedAt { get; private set; }
     public DateTimeOffset? UpdatedAt { get; internal set; }
-    public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.Now;
+    public DateTimeOffset CreatedAt { get; private set; }
     public string? PasswordSalt { get; internal set; }
     public string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString("N");
     public virtual List<UserRole> UserRoles { get; internal set; } = [];

@@ -28,15 +28,17 @@ public class UserManager(
         return user;
     }
 
-    public async Task<User?> FindByEmailOrNameAsync(string nameOrEmail)
+    public async Task<User> ImportAsync(string email, DateTimeOffset createdAt)
     {
-        return CheckHelper.IsEmailAddress(nameOrEmail)
-            ? await userRepo.FindByEmailAsync(nameOrEmail)
-            : await userRepo.FindByNameAsync(nameOrEmail);
+        var user = new User(GuidGenerator.Create(), email, email, createdAt);
+        return await userRepo.InsertAsync(user);
     }
 
     public async Task<User> CreateAsync(string email, string name, string password)
     {
+        if (string.IsNullOrWhiteSpace(password))
+            throw new UserFriendlyException("密码不能为空!");
+
         var user = await userRepo.FindByEmailAsync(email);
         if (user is not null)
             throw new UserFriendlyException("用户已存在!");
@@ -51,12 +53,19 @@ public class UserManager(
         return user;
     }
 
+    public async Task<User?> FindByEmailOrNameAsync(string nameOrEmail)
+    {
+        return CheckHelper.IsEmailAddress(nameOrEmail)
+            ? await userRepo.FindByEmailAsync(nameOrEmail)
+            : await userRepo.FindByNameAsync(nameOrEmail);
+    }
+
     public async Task ChangePassword(User user, string? oldPassword, string newPassword)
     {
         if (newPassword.IsNullOrWhiteSpace())
             throw new BusinessException(CrmErrorCodes.Accounts.InvalidPassword);
 
-        if(oldPassword is not null) await PasswordAuthAsync(user, oldPassword);
+        if (oldPassword is not null) await PasswordAuthAsync(user, oldPassword);
         user.PasswordSalt = null;
         user.PasswordHash = CalculatePasswordHash(user, newPassword);
     }

@@ -1,0 +1,10 @@
+@baseUrl = https://titanpay.vip/v1/open
+
+### Get Users
+GET {{baseUrl}}/api/users
+SHOP-ID: 1
+
+
+### Get Card
+GET {{baseUrl}}/api/cards?isAsc=desc&orderByColumn=id&pageNum=1&pageSize=10
+SHOP-ID: 1

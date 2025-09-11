@@ -8,4 +8,10 @@ public interface IUserRepository : IAstraBasicWithPagedBasicRepository<User, Gui
 {
     Task<User?> FindByNameAsync(string name, bool includeDetails = true);
     Task<User?> FindByEmailAsync(string email, bool includeDetails = true);
+
+    /// <summary>
+    /// 查找最后一个注册的用户
+    /// </summary>
+    /// <returns></returns>
+    Task<User?> FindLastAsync(bool includeInternalUser = false);
 }

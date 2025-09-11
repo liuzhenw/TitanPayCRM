@@ -2,6 +2,7 @@ using System.Text;
 using Astra;
 using Astra.Permissions;
 using Crm.Admin;
+using Crm.Admin.BackgroundWorkers;
 using Crm.DbMigrations;
 using Crm.DbMigrations.Abp;
 using Crm.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Volo.Abp;
 using Volo.Abp.Authorization.Permissions;
+using Volo.Abp.BackgroundWorkers;
 using Volo.Abp.Emailing;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.PostgreSql;
@@ -29,6 +31,7 @@ namespace Crm;
     typeof(CrmAdminApplicationModule),
     typeof(CrmEntityFrameworkCoreModule),
     typeof(AbpEntityFrameworkCorePostgreSqlModule),
+    typeof(AbpBackgroundWorkersModule),
     typeof(AbpMailKitModule))]
 public class CrmWebApiModule : AbpModule
 {
@@ -65,6 +68,12 @@ public class CrmWebApiModule : AbpModule
         await dbMigrationChecker.CheckAndApplyDatabaseMigrationsAsync();
     }
 
+    public override async Task OnPostApplicationInitializationAsync(ApplicationInitializationContext context)
+    {
+        await base.OnPostApplicationInitializationAsync(context);
+        await context.AddBackgroundWorkerAsync<TitanPaySyncWorker>();
+    }
+
     public override void OnPostApplicationInitialization(ApplicationInitializationContext context)
     {
         var app = context.GetApplicationBuilder();
@@ -72,7 +81,7 @@ public class CrmWebApiModule : AbpModule
 
         if (env.IsDevelopment())
             app.UseDeveloperExceptionPage();
-        
+
         app.UseCorrelationId();
         app.MapAbpStaticAssets();
         app.UseRouting();

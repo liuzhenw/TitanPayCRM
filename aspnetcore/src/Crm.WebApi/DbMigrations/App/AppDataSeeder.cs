@@ -18,7 +18,7 @@ public class AppDataSeeder(IServiceProvider services, IAbpHostEnvironment enviro
     {
         Log.Information("{Seeder} 开始初始化...", nameof(AppDataSeeder));
         await InitAsync();
-        await MockAsync();
+        //await MockAsync();
         Log.Information("{Seeder} 初始化完成!", nameof(AppDataSeeder));
     }
 
@@ -195,7 +195,7 @@ public class AppDataSeeder(IServiceProvider services, IAbpHostEnvironment enviro
             var product = await productRepo.GetAsync(CrmConsts.ProductUCard);
             var user = await userRepo.FindByEmailAsync(email);
             await productManager.SoldAsync(
-                product, user!, DateTimeOffset.Now.Ticks.ToString(), 1, new JsonObject());
+                product, user!, DateTimeOffset.Now.Ticks.ToString(), 1, new JsonObject(),DateTimeOffset.Now);
             await uow.CompleteAsync();
         }
     }

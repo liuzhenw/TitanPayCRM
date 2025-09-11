@@ -92,16 +92,18 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
         UpdatedAt = DateTimeOffset.Now;
     }
 
-    internal void OnIndirectReferralAdded()
+    internal void OnIndirectReferralAdded(uint count = 1)
     {
-        IndirectCount++;
-        TotalCount++;
+        if (count == 0) return;
+        
+        IndirectCount += count;
+        TotalCount += count;
         UpdatedAt = DateTimeOffset.Now;
     }
 
     internal void OnCommissionAdded(ProductSaleLog log, decimal commission)
     {
-        TotalCommission += commission; 
+        TotalCommission += commission;
         Commission += commission;
         var statistic = Statistics.FirstOrDefault(x => x.ProductId == log.ProductId);
         if (statistic is null)
@@ -109,6 +111,7 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
             statistic = new SaleStatistic(log.ProductId);
             Statistics.Add(statistic);
         }
+
         statistic.AddSale(log, commission);
     }
 

@@ -25,6 +25,7 @@ public static class SerilogConfigurator
             .MinimumLevel.Override("OpenIddict", LogEventLevel.Warning)
             .MinimumLevel.Override("Quartz", LogEventLevel.Warning)
             .MinimumLevel.Override("Castle", LogEventLevel.Warning)
+            .MinimumLevel.Override("Polly", LogEventLevel.Warning)
             .Enrich.FromLogContext()
             .Enrich.WithProperty("Application", context.HostingEnvironment.ApplicationName)
             .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)

@@ -12,7 +12,8 @@ public class ProductSaleLog : BasicAggregateRoot<Guid>
     protected ProductSaleLog() { }
 
     internal ProductSaleLog(
-        Guid id, Product product, User customer, string orderNo, uint quantity, JsonObject data) : base(id)
+        Guid id, Product product, User customer, string orderNo, uint quantity, JsonObject data,
+        DateTimeOffset createdAt) : base(id)
     {
         ProductId = product.Id;
         CustomerId = customer.Id;
@@ -21,7 +22,7 @@ public class ProductSaleLog : BasicAggregateRoot<Guid>
         Quantity = quantity;
         Amount = product.Price * quantity;
         Data = data;
-        CreatedAt = DateTimeOffset.Now;
+        CreatedAt = createdAt;
     }
 
     public string ProductId { get; private set; } = null!;

@@ -1,4 +1,5 @@
 ﻿using Astra;
+using Crm.Admin.TitanPay;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.Modularity;
@@ -16,7 +17,8 @@ public class CrmAdminApplicationModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        context.Services.AddAutoMapperObjectMapper<CrmAdminApplicationModule>();
         Configure<AbpAutoMapperOptions>(options => { options.AddMaps<CrmAdminApplicationModule>(validate: true); });
+        context.Services.AddAutoMapperObjectMapper<CrmAdminApplicationModule>();
+        context.Services.AddHttpClient<TitanPayApiClient>().AddStandardResilienceHandler();
     }
 }

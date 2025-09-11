@@ -27,6 +27,18 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
         return await query.OrderBy(x => x.Depth).ToListAsync();
     }
 
+    public async Task<List<ReferralRelation>> GetDescendantRelationListAsync(Guid ancestorId, ushort? minDepth = null)
+    {
+        var dbContext = await GetDbContextAsync();
+        var query = dbContext.Set<ReferralRelation>()
+            .Where(x => x.Ancestor.Id == ancestorId);
+        
+        if (minDepth.HasValue)
+            query = query.Where(x => x.Depth >= minDepth.Value);
+        
+        return await query.OrderBy(x => x.Depth).ToListAsync();
+    }
+
     public async Task<ReferralRelation?> FindParentAsync(Guid recommendeeId)
     {
         var dbContext = await GetDbContextAsync();
@@ -41,7 +53,8 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
             .AnyAsync(x => x.Recommendee.Id == recommendeeId);
     }
 
-    public async Task<PagedList<RecommendeeQueryModel>> GetRecommendeePagedListAsync(RecommendeeQueryModelPagedParameter parameter)
+    public async Task<PagedList<RecommendeeQueryModel>> GetRecommendeePagedListAsync(
+        RecommendeeQueryModelPagedParameter parameter)
     {
         var dbContext = await GetDbContextAsync();
         // 连表(LeftJoin)
