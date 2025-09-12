@@ -38,7 +38,7 @@ public class ReferralManager(
             throw new BusinessException(CrmErrorCodes.Referrals.ReferrerRequestIsApproved);
 
         var level = await levelRepo.GetAsync(levelId);
-        await ValidateReferrerRequest(user, level);
+        await ValidateReferrerRequest(user.Id, level);
 
         if (request is null)
         {
@@ -64,7 +64,7 @@ public class ReferralManager(
         request.Approve(auditorId);
         var requester = await userRepo.GetAsync(request.Id);
         var level = await levelRepo.GetAsync(request.LevelId);
-        await ValidateReferrerRequest(requester, level);
+        await ValidateReferrerRequest(requester.Id, level);
         await requestRepo.UpdateAsync(request);
 
         var referrer = await referrerRepo.FindAsync(request.Id);
@@ -101,7 +101,7 @@ public class ReferralManager(
         }
 
         if (level is not null)
-            await ValidateReferrerRequest(user, level);
+            await ValidateReferrerRequest(user.Id, level);
         referrer = new Referrer(user, level);
         await referrerRepo.InsertAsync(referrer);
 
@@ -136,10 +136,9 @@ public class ReferralManager(
         // 取消代理等级
         if (newLevelId is null)
         {
-            var maxLevelDescendant = await referrerRepo.FindMaxLevelDescendantAsync(referrer.Id);
-            if (maxLevelDescendant?.LevelId is not null)
-                throw new UserFriendlyException("此代理拥有下级代理,无法取消代理等级!");
-
+            // var maxLevelDescendant = await referrerRepo.FindMaxLevelDescendantAsync(referrer.Id);
+            // if (maxLevelDescendant?.LevelId is not null)
+            //     throw new UserFriendlyException("此代理拥有下级代理,无法取消代理等级!");
             referrer.SetLevel(null);
         }
         // 调整代理等级
@@ -149,31 +148,7 @@ public class ReferralManager(
             if (referrer.LevelId is not null)
                 curLevel = await levelRepo.GetAsync(referrer.LevelId);
 
-            // 下调:确保等级不能低于下级
-            if (curLevel is not null && newLevel < curLevel)
-            {
-                var maxLevelDescendant = await referrerRepo.FindMaxLevelDescendantAsync(referrer.Id);
-                if (maxLevelDescendant?.LevelId is not null)
-                {
-                    var minLevel = await levelRepo.GetAsync(maxLevelDescendant.LevelId);
-                    if (newLevel <= minLevel)
-                        throw new UserFriendlyException($"不能低于 {minLevel.Name} 等级!");
-                }
-            }
-            // 上调:确保等级不能高于上级
-            else
-            {
-                var parent = await referrerRepo.FindParentAsync(referrer.Id);
-                if (parent is not null)
-                {
-                    if (parent.LevelId is null)
-                        throw new UserFriendlyException("等级不能高于上级!");
-
-                    var maxLevel = await levelRepo.GetAsync(parent.LevelId);
-                    if (newLevel >= maxLevel)
-                        throw new UserFriendlyException($"不能高于 {maxLevel.Name} 等级!");
-                }
-            }
+            await ValidateReferrerRequest(referrer.Id, newLevel);
 
             referrer.SetLevel(newLevel);
             newLevel.OnUserJoined();
@@ -358,20 +333,31 @@ public class ReferralManager(
         await productRepo.UpdateAsync(product);
     }
 
-    private async Task ValidateReferrerRequest(User user, ReferralLevel level)
+    private async Task ValidateReferrerRequest(Guid userId, ReferralLevel level)
     {
-        var parentRelations = await relationRepo.FindParentAsync(user.Id);
-        if (parentRelations is not null)
+        var levels = await levelRepo.GetListAsync();
+        var ancestorRelations = await relationRepo.GetAncestorRelationListAsync(userId);
+        if (ancestorRelations.Count > 1)
         {
-            var parent = await referrerRepo.FindAsync(parentRelations.Ancestor.Id);
-            // 上级不是推荐人身份,下级也不能成为推荐人
-            if (parent?.LevelId is null)
-                throw new BusinessException(CrmErrorCodes.Referrals.CannotApplyThisLevel);
+            foreach (var ancestorRelation in ancestorRelations)
+            {
+                var ancestor = await referrerRepo.FindAsync(ancestorRelation.Ancestor.Id);
+                if (ancestor?.LevelId != null)
+                {
+                    var ancestorLevel = levels.First(x => x.Id == ancestor.LevelId);
+                    // 申请的等级不能比上级大
+                    if (level >= ancestorLevel)
+                        throw new BusinessException(CrmErrorCodes.Referrals.CannotApplyThisLevel);
+                }
+            }
+        }
 
-            var parentLevel = await levelRepo.GetAsync(parent.LevelId);
-            // 申请的等级不能比上级大
-            if (level >= parentLevel)
-                throw new BusinessException(CrmErrorCodes.Referrals.CannotApplyThisLevel);
+        var maxLevelDescendant = await referrerRepo.FindMaxLevelDescendantAsync(userId);
+        if (maxLevelDescendant?.LevelId is not null)
+        {
+            var minLevel = levels.First(x => x.Id == maxLevelDescendant.LevelId);
+            if (level <= minLevel)
+                throw new UserFriendlyException($"不能低于 {minLevel.Name} 等级!");
         }
     }
 }
