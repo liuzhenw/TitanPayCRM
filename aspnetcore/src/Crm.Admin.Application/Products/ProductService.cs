@@ -43,6 +43,7 @@ public class ProductService(IProductRepository repo) : CrmAdminAppService, IProd
     {
         var product = await repo.GetAsync(id);
 
+        product.Price = input.Price;
         product.Name = input.Name;
         product.ImageUri = input.ImageUri;
         product.Description = input.Description;

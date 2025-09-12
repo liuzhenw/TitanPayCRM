@@ -43,7 +43,7 @@ public class CreateProductInputValidator : AbstractValidator<CreateProductInput>
     public CreateProductInputValidator()
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(64);
-        RuleFor(x => x.ImageUri).NotEmpty().MaximumLength(128);
+        RuleFor(x => x.ImageUri).MaximumLength(128);
         RuleFor(x => x.Description).MaximumLength(255);
         RuleFor(x => x.Price).GreaterThan(0);
     }
@@ -54,7 +54,7 @@ public class UpdateProductInputValidator : AbstractValidator<UpdateProductInput>
     public UpdateProductInputValidator()
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(64);
-        RuleFor(x => x.ImageUri).NotEmpty().MaximumLength(128);
+        RuleFor(x => x.ImageUri).MaximumLength(128);
         RuleFor(x => x.Description).MaximumLength(255);
         RuleFor(x => x.Price).GreaterThan(0);
     }

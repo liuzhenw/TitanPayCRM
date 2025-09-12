@@ -1,10 +1,5 @@
 <template>
-  <el-drawer
-    v-model="visible"
-    :title="title"
-    :before-close="handleClose"
-    destroy-on-close
-  >
+  <el-drawer v-model="visible" :title="title" :before-close="handleClose" destroy-on-close>
     <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" label-position="left">
       <el-form-item label="等级名称" prop="name">
         <el-input v-model="form.name" placeholder="请输入等级名称" maxlength="32" show-word-limit />
@@ -148,7 +143,7 @@
           name: form.name,
           size: form.size,
           multiplier: form.multiplier,
-          description: form.description,
+          description: form.description
         })
         ElMessage.success('更新成功')
       } else {
@@ -158,7 +153,7 @@
           name: form.name,
           size: form.size,
           multiplier: form.multiplier,
-          description: form.description,
+          description: form.description
         })
         ElMessage.success('创建成功')
       }

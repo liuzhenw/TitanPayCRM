@@ -33,7 +33,7 @@ public class Product : BasicAggregateRoot<string>, ISoftDelete
     /// <summary>
     /// 商品价格
     /// </summary>
-    public decimal Price { get; private set; }
+    public decimal Price { get; set; }
 
     /// <summary>
     /// 销售量

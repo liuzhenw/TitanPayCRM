@@ -101,7 +101,9 @@ public class TitanPaySyncWorker : AsyncPeriodicBackgroundWorkerBase
         var saleLogRepo = _services.GetRequiredService<IProductSaleLogRepository>();
         var productManager = _services.GetRequiredService<ProductManager>();
 
-        var product = await productRepo.GetAsync(CrmConsts.ProductUCard, cancellationToken: ct);
+        var product = await productRepo.FindAsync(CrmConsts.ProductUCard, cancellationToken: ct);
+        if (product is null) return;
+        
         var lastSaleLog = await saleLogRepo.FindLastAsync(product.Id);
         var client = _services.GetRequiredService<TitanPayApiClient>();
         var pageNum = 1u;
