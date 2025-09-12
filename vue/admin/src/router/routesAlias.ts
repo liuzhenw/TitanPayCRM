@@ -19,6 +19,8 @@ export enum RoutesAlias {
   WithdrawalRequests = '/referrals/withdrawal-requests',
   WithdrawalRequestDetails = '/referrals/withdrawal-requests/:id',
 
+  ReferralLevels = '/referrals/levels',
+
   // 系统管理
   Blockchains = '/system/blockchains', // 区块链
   ChainTokens = '/system/chain-tokens', // 链代币

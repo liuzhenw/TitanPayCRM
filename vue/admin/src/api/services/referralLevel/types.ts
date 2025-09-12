@@ -36,6 +36,7 @@ export interface ReferralLevelCreateInput {
    * @min 0
    */
   multiplier?: number
+  description?: string
 }
 export interface ReferralLevelUpdateInput {
   /**
@@ -50,4 +51,5 @@ export interface ReferralLevelUpdateInput {
    * @min 0
    */
   multiplier?: number
+  description?: string
 }

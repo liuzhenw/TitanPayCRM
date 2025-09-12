@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Astra.EntityFrameworkCore;
 using Crm.EntityFrameworkCore;
@@ -15,5 +16,11 @@ public class ReferrerLevelRepository(IDbContextProvider<CrmDbContext> dbContextP
         var dbContext = await GetDbContextAsync();
         return await dbContext.Set<ReferralLevel>()
             .AnyAsync(x => x.Size == size);
+    }
+
+    public override async Task<IQueryable<ReferralLevel>> GetQueryableAsync()
+    {
+        var queryable = await base.GetQueryableAsync();
+        return queryable.OrderBy(x => x.Size);
     }
 }

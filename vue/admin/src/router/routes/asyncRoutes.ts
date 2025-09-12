@@ -82,6 +82,14 @@ export const asyncRoutes: AppRouteRecord[] = [
           title: '提现申请详情',
           isHide: true
         }
+      },
+      {
+        name: 'ReferralLevels',
+        path: 'levels',
+        component: RoutesAlias.ReferralLevels,
+        meta: {
+          title: '推荐等级'
+        }
       }
     ]
   },
