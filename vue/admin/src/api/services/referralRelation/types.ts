@@ -1,4 +1,4 @@
-import { ReferralLevelBasicDto, ReferrerSaleStatisticDto, UserBasicDto } from ".."
+import { ReferralLevelBasicDto, ReferrerSaleStatisticDto, UserBasicDto } from '..'
 
 export interface ReferralRelationDto {
   recommender: ReferralRelationUserDto
@@ -52,4 +52,3 @@ export interface AncestorDto {
   /** @format date-time */
   createdAt: string
 }
-

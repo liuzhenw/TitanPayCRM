@@ -22,7 +22,7 @@ public class RecommendeeQueryModel
 
 public class RecommendeeQueryModelPagedParameter : PagedParameter<RecommendeeQueryModel>
 {
-    public Guid?  AncestorId { get; set; }
+    public Guid? AncestorId { get; set; }
     public Guid? RecommenderId { get; set; }
     public string? LevelId { get; set; }
     public uint? Depth { get; set; }

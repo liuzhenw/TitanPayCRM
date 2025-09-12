@@ -1,5 +1,11 @@
 import request from '@/utils/http'
-import { AncestorDto, RecommendeeDto, RecommendeeQueryInput, ReferralRelationDto, ReferralRelationQueryInput } from './types'
+import {
+  AncestorDto,
+  RecommendeeDto,
+  RecommendeeQueryInput,
+  ReferralRelationDto,
+  ReferralRelationQueryInput
+} from './types'
 export class ReferralRelationService {
   static apiUrl = '/api/admin/referrals/relations'
 
@@ -10,7 +16,7 @@ export class ReferralRelationService {
     })
   }
 
-  static getRecommendees(id:string, params?: RecommendeeQueryInput) {
+  static getRecommendees(id: string, params?: RecommendeeQueryInput) {
     return request.get<Api.Query.PagedResult<RecommendeeDto>>({
       url: `${this.apiUrl}/${id}/recommendees`,
       params

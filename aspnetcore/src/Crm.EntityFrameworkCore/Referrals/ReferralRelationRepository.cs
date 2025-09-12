@@ -61,14 +61,15 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
         var joinQueryable = from rr in dbContext.ReferralRelations
             join er in dbContext.Referrers on rr.Recommendee.Id equals er.Id into g
             from er in g.DefaultIfEmpty()
+            join ur in dbContext.Users on rr.Recommendee.Id equals ur.Id
             select new RecommendeeQueryModel
             {
                 Id = rr.Recommendee.Id,
+                Email = rr.Recommendee.Email,
                 AncestorId = rr.Ancestor.Id,
                 AncestorEmail = rr.Ancestor.Email,
                 RecommenderId = rr.Recommender.Id,
                 RecommenderEmail = rr.Recommender.Email,
-                Email = rr.Recommendee.Email,
                 Depth = rr.Depth,
                 CreatedAt = rr.CreatedAt,
                 LevelId = er == null ? null : er.LevelId,
