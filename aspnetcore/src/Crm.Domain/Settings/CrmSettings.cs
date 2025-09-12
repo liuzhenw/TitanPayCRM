@@ -3,6 +3,7 @@
 public static class CrmSettings
 {
     public const string GroupName = "Crm";
-    
+
     public const string UCardTotalSaleVolume = GroupName + ".UCardTotalSaleVolume";
+    public const string UCardDayIncrement = GroupName + ".UCardDayIncrement";
 }

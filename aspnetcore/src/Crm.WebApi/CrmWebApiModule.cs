@@ -72,6 +72,7 @@ public class CrmWebApiModule : AbpModule
     {
         await base.OnPostApplicationInitializationAsync(context);
         await context.AddBackgroundWorkerAsync<TitanPaySyncWorker>();
+        await context.AddBackgroundWorkerAsync<HomeDataUpdateWorker>();
     }
 
     public override void OnPostApplicationInitialization(ApplicationInitializationContext context)
