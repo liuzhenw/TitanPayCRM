@@ -16,15 +16,9 @@
     <el-form-item label="总推荐人数">
       {{ referrer.totalCount }}
     </el-form-item>
-    <el-form-item label="可用佣金">
-      {{ referrer.commission }} USD
-    </el-form-item>
-    <el-form-item label="累计佣金">
-      {{ referrer.totalCommission }} USD
-    </el-form-item>
-    <el-form-item label="已提现金额">
-      {{ referrer.withdrawal }} USD
-    </el-form-item>
+    <el-form-item label="可用佣金"> {{ referrer.commission }} USD </el-form-item>
+    <el-form-item label="累计佣金"> {{ referrer.totalCommission }} USD </el-form-item>
+    <el-form-item label="已提现金额"> {{ referrer.withdrawal }} USD </el-form-item>
     <el-form-item label="提现地址">
       {{ referrer.withdrawalAddress || '未设置' }}
     </el-form-item>

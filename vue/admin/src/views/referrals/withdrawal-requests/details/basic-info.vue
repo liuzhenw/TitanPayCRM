@@ -30,7 +30,7 @@
           <div class="item-value">
             <el-space>
               <EllipticalLabel :value="withdrawalRequest.toAddress" :copy="false" />
-              <CopyIcon :content="withdrawalRequest.toAddress"/>
+              <CopyIcon :content="withdrawalRequest.toAddress" />
               <QrcodeIcon :value="withdrawalRequest.toAddress" />
             </el-space>
           </div>
@@ -101,12 +101,12 @@
         align-items: center;
         gap: 12px;
         padding: 16px;
-        background: #F8F9FA;
+        background: #f8f9fa;
         border-radius: 8px;
         transition: all 0.3s ease;
 
         &:hover {
-          background: #E9ECEF;
+          background: #e9ecef;
           transform: translateY(-2px);
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
@@ -145,7 +145,7 @@
             word-break: break-all;
 
             &.amount {
-              color: #E6A23C;
+              color: #e6a23c;
               font-weight: 600;
               font-size: 16px;
             }

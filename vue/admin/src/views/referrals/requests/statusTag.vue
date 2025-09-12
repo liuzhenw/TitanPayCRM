@@ -1,5 +1,5 @@
 <template>
-    <el-tag :type="type">{{ name }}</el-tag>
+  <el-tag :type="type">{{ name }}</el-tag>
 </template>
 
 <script setup lang="ts">

@@ -90,7 +90,7 @@
       label: '申请等级',
       prop: 'levelId',
       type: 'select',
-      options: ()=> ReferralLevelService.getOptions(),
+      options: () => ReferralLevelService.getOptions(),
       config: {
         clearable: true
       }

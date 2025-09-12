@@ -7,6 +7,8 @@ export interface UserBasicDto {
 }
 
 export interface UserDto extends UserBasicDto {
+  totalConsumption: number
+  consumptionCount: number
   avatarUri?: string
   attempts: number
   lockedAt?: string

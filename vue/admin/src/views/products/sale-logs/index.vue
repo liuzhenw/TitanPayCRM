@@ -34,10 +34,16 @@
           <el-table-column key="amount" prop="amount" label="金额" width="120" align="right">
             <template #default="{ row }"> {{ row.amount }} USD </template>
           </el-table-column>
-           <el-table-column key="amount" prop="amount" label="佣金" width="120" align="right">
+          <el-table-column key="amount" prop="amount" label="佣金" width="120" align="right">
             <template #default="{ row }"> {{ row.totalCommission }} USD </template>
           </el-table-column>
-          <el-table-column key="createdAt" prop="createdAt" label="创建时间" align="right" show-overflow-tooltip>
+          <el-table-column
+            key="createdAt"
+            prop="createdAt"
+            label="创建时间"
+            align="right"
+            show-overflow-tooltip
+          >
             <template #default="{ row }">
               <Datetime :value="row.createdAt" />
             </template>

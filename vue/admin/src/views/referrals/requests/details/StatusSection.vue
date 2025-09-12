@@ -103,7 +103,7 @@
   })
 
   const items = computed<InfoItem[]>(() => {
-    var items = []
+    let items = []
 
     // 添加referrer信息
     if (referrer.value) {
@@ -125,7 +125,6 @@
       }
     }
 
-  
     if (props.request.status === 'rejected' || props.request.status === 'disabled') {
       items.push({
         label: '拒绝原因',

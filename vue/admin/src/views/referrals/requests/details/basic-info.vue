@@ -80,12 +80,12 @@
         align-items: center;
         gap: 12px;
         padding: 16px;
-        background: #F8F9FA;
+        background: #f8f9fa;
         border-radius: 8px;
         transition: all 0.3s ease;
 
         &:hover {
-          background: #E9ECEF;
+          background: #e9ecef;
           transform: translateY(-2px);
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
@@ -130,7 +130,7 @@
             }
 
             &.reject-reason {
-              color: #F56C6C;
+              color: #f56c6c;
               font-weight: 500;
             }
 

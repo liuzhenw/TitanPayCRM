@@ -73,7 +73,7 @@
         <el-form-item label="提现地址">
           <el-space>
             <span>{{ approveDialog.form.toAddress }}</span>
-            <QrcodeIcon :value="approveDialog.form.toAddress"/>
+            <QrcodeIcon :value="approveDialog.form.toAddress" />
           </el-space>
         </el-form-item>
         <el-form-item label="交易哈希" prop="txid">

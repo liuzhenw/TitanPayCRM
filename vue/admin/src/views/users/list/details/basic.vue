@@ -11,7 +11,7 @@
               {{ value.name }}
             </el-form-item>
             <el-form-item label="邮件地址">
-               {{ value.email }}
+              {{ value.email }}
             </el-form-item>
             <el-form-item label="锁定时间" v-if="value.lockedAt">
               <Datetime :value="value.lockedAt" />

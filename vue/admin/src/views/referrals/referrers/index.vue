@@ -66,9 +66,7 @@
             sortable="custom"
             show-overflow-tooltip
           >
-            <template #default="{ row }">
-              {{ row.commission }} USD
-            </template>
+            <template #default="{ row }"> {{ row.commission }} USD </template>
           </el-table-column>
           <el-table-column
             key="totalCommission"
@@ -79,9 +77,7 @@
             sortable="custom"
             show-overflow-tooltip
           >
-            <template #default="{ row }">
-              {{ row.totalCommission }} USD
-            </template>
+            <template #default="{ row }"> {{ row.totalCommission }} USD </template>
           </el-table-column>
           <el-table-column key="status" prop="isDisabled" label="状态" width="80" align="center">
             <template #default="{ row }">
@@ -125,7 +121,12 @@
 <script setup lang="ts">
   import { ref } from 'vue'
   import { useRouter } from 'vue-router'
-  import { ReferrerService, ReferrerDto, ReferrerQueryInput, ReferralLevelService } from '@/api/services'
+  import {
+    ReferrerService,
+    ReferrerDto,
+    ReferrerQueryInput,
+    ReferralLevelService
+  } from '@/api/services'
   import { SearchFormItem } from '@/types'
   import LevelTag from '../levelTag.vue'
   import ReferrerCreateDialog from './create.vue'

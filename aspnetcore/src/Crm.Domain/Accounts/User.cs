@@ -23,6 +23,7 @@ public class User : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
     public string Name { get; private set; } = null!;
     public string Email { get; private set; } = null!;
     public decimal TotalConsumption { get; private set; }
+    public uint ConsumptionCount { get; private set; }
     public string? PasswordHash { get; internal set; }
     public string? AvatarUri { get; set; }
     public ushort Attempts { get; private set; }
@@ -50,6 +51,7 @@ public class User : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
 
     internal void OnBuy(ProductSaleLog log)
     {
+        ConsumptionCount++;
         TotalConsumption += log.Amount;
         UpdatedAt = DateTimeOffset.MaxValue;
     }

@@ -100,7 +100,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        
+
         .el-icon {
           font-size: 24px;
         }
@@ -148,7 +148,7 @@
 
               &.amount {
                 font-weight: 600;
-                color: #E6A23C;
+                color: #e6a23c;
               }
             }
           }
@@ -156,44 +156,44 @@
       }
 
       &.pending {
-        background: linear-gradient(135deg, #FFF7E6 0%, #FFF3CD 100%);
-        border: 1px solid #FFE4B5;
+        background: linear-gradient(135deg, #fff7e6 0%, #fff3cd 100%);
+        border: 1px solid #ffe4b5;
 
         .status-icon {
-          background: #FAAD14;
+          background: #faad14;
           color: white;
         }
 
         h3 {
-          color: #D48806;
+          color: #d48806;
         }
       }
 
       &.approved {
-        background: linear-gradient(135deg, #F0F9FF 0%, #E6F7FF 100%);
-        border: 1px solid #B5F5EC;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%);
+        border: 1px solid #b5f5ec;
 
         .status-icon {
-          background: #52C41A;
+          background: #52c41a;
           color: white;
         }
 
         h3 {
-          color: #389E0D;
+          color: #389e0d;
         }
       }
 
       &.rejected {
-        background: linear-gradient(135deg, #FFF2F0 0%, #FFE6E6 100%);
-        border: 1px solid #FFCCC7;
+        background: linear-gradient(135deg, #fff2f0 0%, #ffe6e6 100%);
+        border: 1px solid #ffccc7;
 
         .status-icon {
-          background: #FF4D4F;
+          background: #ff4d4f;
           color: white;
         }
 
         h3 {
-          color: #CF1322;
+          color: #cf1322;
         }
       }
 

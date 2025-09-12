@@ -13,8 +13,8 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Crm.DbMigrations.App.Migrations
 {
     [DbContext(typeof(AppDbMigrationContext))]
-    [Migration("20250911150359_Modify_CommissionLog_LevelId")]
-    partial class Modify_CommissionLog_LevelId
+    [Migration("20250912031709_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -73,6 +73,9 @@ namespace Crm.DbMigrations.App.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)")
                         .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<long>("ConsumptionCount")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");

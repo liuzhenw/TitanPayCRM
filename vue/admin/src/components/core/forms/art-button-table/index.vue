@@ -1,10 +1,6 @@
 <!-- 表格按钮 -->
 <template>
-  <div
-    :class="['btn-text', buttonClass]"
-    :style="btnStyle"
-    @click.stop="handleClick"
-  >
+  <div :class="['btn-text', buttonClass]" :style="btnStyle" @click.stop="handleClick">
     <i v-if="iconContent" class="iconfont-sys" v-html="iconContent"></i>
   </div>
 </template>
@@ -59,8 +55,8 @@
   }
   const btnStyle = computed(() => {
     return {
-      backgroundColor: props.buttonBgColor, 
-      color: props.iconColor, 
+      backgroundColor: props.buttonBgColor,
+      color: props.iconColor,
       cursor: props.disabled ? 'not-allowed' : 'pointer'
     }
   })

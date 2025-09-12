@@ -1,5 +1,5 @@
 <template>
-  <el-tag :type="tagType" style="width: 60px;">{{ value?.name || '无等级' }}</el-tag>
+  <el-tag :type="tagType" style="width: 60px">{{ value?.name || '无等级' }}</el-tag>
 </template>
 
 <script setup lang="ts">

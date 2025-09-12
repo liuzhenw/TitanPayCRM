@@ -24,12 +24,22 @@
               {{ row.product.name }}
             </template>
           </el-table-column>
-          <el-table-column key="receiver" prop="receiver.email" label="推荐人" show-overflow-tooltip>
+          <el-table-column
+            key="receiver"
+            prop="receiver.email"
+            label="推荐人"
+            show-overflow-tooltip
+          >
             <template #default="{ row }">
               {{ row.receiver.email }}
             </template>
           </el-table-column>
-          <el-table-column key="customer" prop="customer.email" label="被推荐人" show-overflow-tooltip>
+          <el-table-column
+            key="customer"
+            prop="customer.email"
+            label="被推荐人"
+            show-overflow-tooltip
+          >
             <template #default="{ row }">
               {{ row.customer.email }}
             </template>
@@ -39,17 +49,37 @@
               <LevelTag :value="row.level" />
             </template>
           </el-table-column>
-          <el-table-column key="referralDepth" prop="referralDepth" label="推荐层级" width="110" align="right" sortable="custom">
+          <el-table-column
+            key="referralDepth"
+            prop="referralDepth"
+            label="推荐层级"
+            width="110"
+            align="right"
+            sortable="custom"
+          >
             <template #default="{ row }">
               {{ row.referralDepth }}
             </template>
           </el-table-column>
-          <el-table-column key="amount" prop="amount" label="佣金金额" width="120" align="right" sortable="custom">
+          <el-table-column
+            key="amount"
+            prop="amount"
+            label="佣金金额"
+            width="120"
+            align="right"
+            sortable="custom"
+          >
             <template #default="{ row }">
               {{ formatAmount(row.amount) }}
             </template>
           </el-table-column>
-          <el-table-column key="createdAt" prop="createdAt" label="创建时间" align="right" sortable="custom">
+          <el-table-column
+            key="createdAt"
+            prop="createdAt"
+            label="创建时间"
+            align="right"
+            sortable="custom"
+          >
             <template #default="{ row }">
               <Datetime :value="row.createdAt" />
             </template>
@@ -83,7 +113,7 @@
   const filter = reactive<CommissionLogQueryInput>({})
   const filterItems: SearchFormItem[] = [
     {
-      label: '产品',
+      label: '销售产品',
       prop: 'productId',
       type: 'select',
       options: async () => {
@@ -95,7 +125,7 @@
       }
     },
     {
-      label: '接收人',
+      label: '推荐人',
       prop: 'receiverId',
       type: 'userSearch',
       config: {
@@ -103,7 +133,7 @@
       }
     },
     {
-      label: '客户',
+      label: '被推荐人',
       prop: 'customerId',
       type: 'userSearch',
       config: {

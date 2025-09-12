@@ -4,14 +4,10 @@
       <el-table-column prop="product.name" label="产品名称" />
       <el-table-column prop="volume" label="销售量" align="right" width="100" />
       <el-table-column prop="revenue" label="销售额" align="right" width="120">
-        <template #default="{ row }">
-          {{ row.revenue }} USD
-        </template>
+        <template #default="{ row }"> {{ row.revenue }} USD </template>
       </el-table-column>
       <el-table-column prop="commission" label="佣金" align="right" width="120">
-        <template #default="{ row }">
-          {{ row.commission }} USD
-        </template>
+        <template #default="{ row }"> {{ row.commission }} USD </template>
       </el-table-column>
     </el-table>
   </div>

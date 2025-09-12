@@ -45,7 +45,7 @@
         <EllipticalLabel :value="value.withdrawalAddress" />
       </el-form-item>
       <el-form-item label="加入黑名单" prop="isDisabled">
-        <el-switch v-model="model.isDisabled" style="--el-switch-on-color: #ff4949"/>
+        <el-switch v-model="model.isDisabled" style="--el-switch-on-color: #ff4949" />
       </el-form-item>
       <el-form-item label="备注说明" prop="remark">
         <el-input
@@ -113,7 +113,7 @@
 
   onMounted(async () => {
     levels.value = await ReferralLevelService.getOptions()
-    await ReferrerService.get(value.id);
+    await ReferrerService.get(value.id)
   })
 </script>
 

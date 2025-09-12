@@ -16,5 +16,4 @@ export class ProductSaleLogService {
       url: `${this.apiUrl}/${id}`
     })
   }
-
 }

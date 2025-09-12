@@ -1,5 +1,11 @@
 <template>
-  <el-dialog v-model="modelValue" :close-on-click-modal="false" width="500px" append-to-body @close="$emit('close')">
+  <el-dialog
+    v-model="modelValue"
+    :close-on-click-modal="false"
+    width="500px"
+    append-to-body
+    @close="$emit('close')"
+  >
     <template #title>添加推广员</template>
     <el-form :model="model" ref="form" :rules="rules" label-width="80px">
       <el-form-item label="邮箱地址" prop="email">

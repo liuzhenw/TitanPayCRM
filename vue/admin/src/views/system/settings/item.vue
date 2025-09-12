@@ -1,32 +1,44 @@
 <template>
   <el-form-item :key="value.name" :label="value.displayName">
-    <el-space alignment="center">
-      <slot :item="value">
-        <el-input
-          v-if="value.type === 'number'"
-          type="number"
-          v-model="value.value"
-          :placeholder="`请输入${value.displayName}`"
-          clearable
-          style="width: 340px"
-        />
-        <SettingSwitch v-else-if="value.type === 'boolean'" v-model="value.value" />
-        <el-input
-          v-else
-          v-model="value.value"
-          :placeholder="`请输入${value.displayName}`"
-          clearable
-          style="width: 340px"
-        />
-      </slot>
-      <el-tooltip placement="top" :content="value.description">
-        <el-icon :size="20" color="#909399"><QuestionFilled /></el-icon>
-      </el-tooltip>
-      <el-button type="primary" link :disabled="!hasChanged" @click="onReset">还原</el-button>
-      <el-button type="primary" link :loading="loading" :disabled="!hasChanged" @click="onSubmit">
-        保存
-      </el-button>
-    </el-space>
+    <div class="setting-item-container">
+      <div class="setting-input">
+        <slot :item="value">
+          <el-input
+            v-if="value.type === 'number'"
+            type="number"
+            v-model="value.value"
+            :placeholder="`请输入${value.displayName}`"
+            clearable
+            style="width: 340px"
+          />
+          <SettingSwitch v-else-if="value.type === 'boolean'" v-model="value.value" />
+          <el-input
+            v-else
+            v-model="value.value"
+            :placeholder="`请输入${value.displayName}`"
+            clearable
+            style="width: 340px"
+          />
+        </slot>
+      </div>
+      <div class="setting-actions">
+        <el-tooltip placement="top" :content="value.description">
+          <el-icon :size="20" color="#909399"><QuestionFilled /></el-icon>
+        </el-tooltip>
+        <el-button type="primary" link :disabled="isButtonDisabled" @click="onReset"
+          >还原</el-button
+        >
+        <el-button
+          type="primary"
+          link
+          :loading="loading"
+          :disabled="isButtonDisabled"
+          @click="onSubmit"
+        >
+          保存
+        </el-button>
+      </div>
+    </div>
   </el-form-item>
 </template>
 
@@ -55,6 +67,10 @@
     return value.value.value !== props.value.value
   })
 
+  const isButtonDisabled = computed(() => {
+    return !hasChanged.value || loading.value
+  })
+
   const loading = ref(false)
   const onSubmit = async () => {
     loading.value = true
@@ -70,4 +86,23 @@
   }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+  .setting-item-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .setting-input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .setting-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+</style>
