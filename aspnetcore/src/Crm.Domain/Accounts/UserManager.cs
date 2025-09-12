@@ -75,18 +75,26 @@ public class UserManager(
         if (user.LockedAt > DateTimeOffset.Now)
             throw new BusinessException(CrmErrorCodes.Accounts.Locked);
 
+        if(string.IsNullOrWhiteSpace(password))
+            throw new BusinessException(CrmErrorCodes.Accounts.InvalidPassword);
+        
         var passwordHash = CalculatePasswordHash(user, password);
         if (passwordHash != user.PasswordHash)
         {
-            using var uow = uowManager.Begin(true);
-            user.OnAttemptFailed();
-            await userRepo.UpdateAsync(user);
-            await uow.CompleteAsync();
+            await OnAttemptFailed(user);
             throw new BusinessException(CrmErrorCodes.Accounts.InvalidPassword);
         }
 
         user.OnAttemptSucceeded();
         await userRepo.UpdateAsync(user);
+    }
+
+    public async Task OnAttemptFailed(User user)
+    {
+        using var uow = uowManager.Begin(true);
+        user.OnAttemptFailed();
+        await userRepo.UpdateAsync(user);
+        await uow.CompleteAsync();
     }
 
     public async Task<List<Role>> GetRoleListAsync(User user)

@@ -14,16 +14,29 @@ namespace Crm.Services.Auth;
 public class AuthService(
     IConfiguration configuration,
     EmailVerificationCodeService codeService,
+    IUserRepository userRepo,
     UserManager userManager) :
     ITransientDependency
 {
     public async Task<AuthToken> VerificationCodeSignInAsync(CodeSignInInput input)
     {
-        await codeService.EnsureValidAsync(input.Email, input.Code);
-        var user = await userManager.FindByEmailOrNameAsync(input.Email);
-        return user is null
-            ? throw new BusinessException(CrmErrorCodes.Accounts.NotFound)
-            : GenerateToken(user);
+        var user = await userRepo.FindByEmailAsync(input.Email);
+        if (user is null)
+            throw new BusinessException(CrmErrorCodes.Accounts.NotFound);
+
+        if (user.LockedAt > DateTimeOffset.Now)
+            throw new BusinessException(CrmErrorCodes.Accounts.Locked);
+
+        var valid = await codeService.VerifyAsync(input.Email, input.Code);
+        if (!valid)
+        {
+            await userManager.OnAttemptFailed(user);
+            throw new BusinessException(CrmErrorCodes.Accounts.InvalidVerificationCode);
+        }
+
+        user.OnAttemptSucceeded();
+        await userRepo.UpdateAsync(user);
+        return GenerateToken(user);
     }
 
     public async Task<AuthToken> PasswordSignInAsync(PasswordSignInInput input)
@@ -41,7 +54,7 @@ public class AuthService(
         var user = await userManager.FindByEmailOrNameAsync(input.Email);
         if (user is null)
             throw new BusinessException(CrmErrorCodes.Accounts.NotFound);
-        
+
         await codeService.SendAsync(input.Email);
     }
 

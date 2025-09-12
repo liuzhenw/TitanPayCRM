@@ -34,18 +34,21 @@ public class User : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
     public string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString("N");
     public virtual List<UserRole> UserRoles { get; internal set; } = [];
 
+    public void OnAttemptSucceeded()
+    {
+        Attempts = 0;
+        LockedAt = null;
+        UpdatedAt = DateTimeOffset.Now;
+    }
+
     internal void OnAttemptFailed()
     {
         Attempts++;
         if (Attempts >= 5)
+        {
+            Attempts = 0;
             LockedAt = DateTimeOffset.Now.AddMinutes(5);
-        UpdatedAt = DateTimeOffset.Now;
-    }
-
-    internal void OnAttemptSucceeded()
-    {
-        Attempts = 0;
-        LockedAt = null;
+        }
         UpdatedAt = DateTimeOffset.Now;
     }
 

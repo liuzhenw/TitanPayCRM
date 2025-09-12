@@ -28,14 +28,15 @@ public class EmailVerificationCodeService(
 #endif
     }
 
-    public async Task EnsureValidAsync(string email, string code)
+    public async Task<bool> VerifyAsync(string email, string code)
     {
         var state = await stateStore.FindAsync(email);
         if (state is null || !state.Verify(code))
-            throw new BusinessException(CrmErrorCodes.Accounts.InvalidVerificationCode);
+          return false;
 
         state.ExpireAt = DateTimeOffset.Now;
         await stateStore.SetAsync(email, state);
+        return true;
     }
 
     private const string EmailTemplate =
