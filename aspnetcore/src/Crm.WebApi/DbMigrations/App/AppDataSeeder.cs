@@ -89,8 +89,8 @@ public class AppDataSeeder(IServiceProvider services, IAbpHostEnvironment enviro
         if (await levelRepo.GetCountAsync() < 1)
         {
             var referralManager = scope.ServiceProvider.GetRequiredService<ReferralManager>();
-            var team = await referralManager.CreateReferralLevelAsync("agent", "推广代理", 1, 0.1m);
-            var group = await referralManager.CreateReferralLevelAsync("group", "大团队长", 2, 0.2m);
+            var team = await referralManager.CreateReferralLevelAsync("agent", "代理", 1, 0.1m);
+            var group = await referralManager.CreateReferralLevelAsync("group", "团队长", 2, 0.05m);
             var shareholder = await referralManager.CreateReferralLevelAsync("shareholder", "股东", 3, 0.25m);
             await levelRepo.InsertManyAsync([team, group, shareholder]);
         }

@@ -1,4 +1,4 @@
-@email=user1-2-1@email.com
+@email=913637656@qq.com
 
 ### Home
 GET {{baseUrl}}/api/home
@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
   "email": "{{email}}",
-  "code": "919024"
+  "code": "326350"
 }
 
 > {%
@@ -85,5 +85,5 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "amount": 50
+  "amount": 10
 }

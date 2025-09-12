@@ -28,7 +28,13 @@
               {{ row.email }}
             </template>
           </el-table-column>
-          <el-table-column key="consumptionCount" prop="consumptionCount" label="消费次数" align="right" sortable="custom">
+          <el-table-column
+            key="consumptionCount"
+            prop="consumptionCount"
+            label="消费次数"
+            align="right"
+            sortable="custom"
+          >
             <template #default="{ row }">
               {{ row.consumptionCount }}
             </template>
