@@ -36,13 +36,17 @@ public class CrmPermissions
         public const string Delete = Default + ".Delete";
         public const string SaleLogs = Default + ".SaleLogs";
     }
+    
+    public static class ReferralRelations
+    {
+        public const string Default = GroupName + ".ReferralRelations";
+    }
 
     public static class Referrers
     {
         public const string Default = GroupName + ".Referrers";
         public const string Create = Default + ".Create";
         public const string Update = Default + ".Update";
-        public const string Relations = Default + "Relations";
     }
 
     public static class ReferralLevels

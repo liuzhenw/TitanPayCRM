@@ -51,22 +51,4 @@ public class ReferrerService(
         await referrerRepo.UpdateAsync(referrer);
         return ObjectMapper.Map<Referrer, ReferrerWithDetails>(referrer);
     }
-
-    [Authorize(CrmPermissions.Referrers.Relations)]
-    public async Task<PagedResultDto<RecommendeeQueryModelDto>> GetRecommendeePagedListAsync(RecommendeeQueryModelQueryInput input)
-    {
-        var parameter = new RecommendeeQueryModelPagedParameter();
-        ObjectMapper.Map(input, parameter);
-        var paged = await relationRepo.GetRecommendeePagedListAsync(parameter);
-        return new PagedResultDto<RecommendeeQueryModelDto>(
-            paged.TotalCount,
-            ObjectMapper.Map<List<RecommendeeQueryModel>, List<RecommendeeQueryModelDto>>(paged.Items));
-    }
-
-    [Authorize(CrmPermissions.Referrers.Relations)]
-    public async Task<List<AncestorQueryModelDto>> GetAncestorListAsync(Guid id)
-    {
-        var ancestors = await relationRepo.GetAncestorListAsync(id);
-        return ObjectMapper.Map<List<AncestorQueryModel>, List<AncestorQueryModelDto>>(ancestors);
-    }
 }

@@ -4,10 +4,7 @@ import {
   ReferrerUpdateInput,
   ReferrerDto,
   ReferrerQueryInput,
-  ReferrerCreateInput,
-  RecommendeeDto,
-  RecommendeeQueryInput,
-  AncestorDto
+  ReferrerCreateInput
 } from './types'
 
 export class ReferrerService {
@@ -37,19 +34,6 @@ export class ReferrerService {
     return request.put<ReferrerWithDetailsDto>({
       url: `${this.apiUrl}/${id}`,
       data: input
-    })
-  }
-
-  static getRecommendees(params?: RecommendeeQueryInput) {
-    return request.get<Api.Query.PagedResult<RecommendeeDto>>({
-      url: `${this.apiUrl}/recommendees`,
-      params
-    })
-  }
-
-  static getAncestors(id: string) {
-    return request.get<AncestorDto[]>({
-      url: `${this.apiUrl}/${id}/ancestors`
     })
   }
 }

@@ -6,7 +6,8 @@ using Astra.Paged;
 
 namespace Crm.Referrals;
 
-public interface IReferralRelationRepository : IAstraBasicRepository<ReferralRelation, Guid>
+public interface
+    IReferralRelationRepository : IAstraBasicWithPagedBasicRepository<ReferralRelation, Guid, ReferralRelationPagedParameter>
 {
     Task<List<ReferralRelation>> GetAncestorRelationListAsync(Guid recommendeeId, ushort? minDepth = null);
     Task<List<ReferralRelation>> GetDescendantRelationListAsync(Guid ancestorId, ushort? minDepth = null);

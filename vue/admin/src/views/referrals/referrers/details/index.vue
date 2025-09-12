@@ -40,7 +40,7 @@
                         <el-tab-pane label="下级用户">
                           <Recommendees :referrer="referrer" />
                         </el-tab-pane>
-                        <el-tab-pane label="上级用户">
+                        <el-tab-pane label="上级用户" lazy>
                           <Ancestors :referrer="referrer" />
                         </el-tab-pane>
                       </el-tabs>

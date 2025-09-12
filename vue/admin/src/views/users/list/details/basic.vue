@@ -13,6 +13,12 @@
             <el-form-item label="邮件地址">
               {{ value.email }}
             </el-form-item>
+            <el-form-item label="消费次数">
+              {{ value.consumptionCount }}
+            </el-form-item>
+            <el-form-item label="消费金额">
+              {{ value.totalConsumption }}
+            </el-form-item>
             <el-form-item label="锁定时间" v-if="value.lockedAt">
               <Datetime :value="value.lockedAt" />
             </el-form-item>
@@ -28,7 +34,7 @@
       <el-col :md="12" :sm="24">
         <el-card shadow="never">
           <template #header>
-            <span>用户角色</span>
+            <span>角色管理</span>
           </template>
           <el-tag
             v-if="value.roles.length"

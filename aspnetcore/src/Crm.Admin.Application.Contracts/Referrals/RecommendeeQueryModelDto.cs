@@ -18,7 +18,6 @@ public class RecommendeeQueryModelDto : EntityDto<Guid>
 
 public class RecommendeeQueryModelQueryInput : PagedAndSortedResultRequestDto
 {
-    public Guid? AncestorId { get; set; }
     public Guid? RecommenderId { get; set; }
     public string? LevelId { get; set; }
     public uint? Depth { get; set; }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <ArtTable row-key="id" :data="tableData" :loading="dataLoading">
-      <el-table-column key="level" prop="levelId" label="用户等级" width="110" sortable="custom">
+      <el-table-column key="level" prop="levelId" label="用户等级" width="110" sortable>
         <template #default="{ row }">
           <LevelTag :value="row.level" />
         </template>
@@ -53,7 +53,12 @@
 </template>
 
 <script setup lang="ts">
-  import { ReferrerService, AncestorDto, ReferrerDto } from '@/api/services'
+  import {
+    ReferrerService,
+    ReferralRelationService,
+    AncestorDto,
+    ReferrerDto
+  } from '@/api/services'
   import LevelTag from '../../levelTag.vue'
 
   const router = useRouter()
@@ -65,7 +70,7 @@
   const dataLoading = ref(false)
   const fetchData = async () => {
     dataLoading.value = true
-    tableData.value = await ReferrerService.getAncestors(referrer.id).finally(
+    tableData.value = await ReferralRelationService.getAncestors(referrer.id).finally(
       () => (dataLoading.value = false)
     )
   }

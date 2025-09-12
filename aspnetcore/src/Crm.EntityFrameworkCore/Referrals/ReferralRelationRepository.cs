@@ -12,7 +12,7 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Crm.Referrals;
 
 public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbContextProvider) :
-    AstraEfCoreRepository<CrmDbContext, ReferralRelation, Guid>(dbContextProvider),
+    AstraPagedEfCoreRepository<CrmDbContext, ReferralRelation, Guid, ReferralRelationPagedParameter>(dbContextProvider),
     IReferralRelationRepository
 {
     public async Task<List<ReferralRelation>> GetAncestorRelationListAsync(Guid recommendeeId, ushort? minDepth = null)
@@ -32,10 +32,10 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
         var dbContext = await GetDbContextAsync();
         var query = dbContext.Set<ReferralRelation>()
             .Where(x => x.Ancestor.Id == ancestorId);
-        
+
         if (minDepth.HasValue)
             query = query.Where(x => x.Depth >= minDepth.Value);
-        
+
         return await query.OrderBy(x => x.Depth).ToListAsync();
     }
 

@@ -87,6 +87,7 @@
   import { ref, reactive, onMounted, watch } from 'vue'
   import {
     ReferrerService,
+    ReferralRelationService,
     RecommendeeDto,
     RecommendeeQueryInput,
     ReferrerDto
@@ -100,19 +101,7 @@
 
   const router = useRouter()
   const tableData = ref<RecommendeeDto[]>([])
-  const filter = reactive<RecommendeeQueryInput>({
-    ancestorId: props.referrer.id
-  })
-  const filterItems: SearchFormItem[] = [
-    {
-      label: '邮箱地址',
-      prop: 'id',
-      type: 'userSearch',
-      config: {
-        clearable: true
-      }
-    }
-  ]
+  const filter = reactive<RecommendeeQueryInput>({})
 
   const pagination = reactive({
     current: 1,
@@ -125,7 +114,7 @@
   const fetchData = async (input: RecommendeeQueryInput) => {
     dataLoading.value = true
     try {
-      const res = await ReferrerService.getRecommendees(input)
+      const res = await ReferralRelationService.getRecommendees(props.referrer.id, input)
       pagination.total = res.totalCount
       tableData.value = res.items
     } finally {
@@ -147,7 +136,6 @@
   const onPaginationChange = () => {
     filter.maxResultCount = pagination.size
     filter.skipCount = (pagination.current - 1) * pagination.size
-    filter.ancestorId = props.referrer.id
     fetchData(filter)
   }
 
@@ -176,18 +164,11 @@
     () => props.referrer.id,
     (newId) => {
       if (newId) {
-        filter.ancestorId = newId
         refreshData()
       }
     },
     { immediate: true }
   )
-
-  onMounted(() => {
-    if (props.referrer.id) {
-      fetchData(filter)
-    }
-  })
 </script>
 
 <style scoped lang="scss"></style>

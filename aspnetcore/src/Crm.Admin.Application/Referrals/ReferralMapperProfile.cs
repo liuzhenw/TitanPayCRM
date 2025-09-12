@@ -64,7 +64,8 @@ public class ReferralMapperProfile : Profile
                 d => d.Ancestor, s => s.AncestorId)
             .ToValue<RecommendeeQueryModel, RecommendeeQueryModelDto, Guid, UserBasicDto, UserValueConverter>(
                 d => d.Recommender, s => s.RecommenderId);
-        CreateMap<RecommendeeQueryModelQueryInput, RecommendeeQueryModelPagedParameter>();
+        CreateMap<RecommendeeQueryModelQueryInput, RecommendeeQueryModelPagedParameter>()
+            .Ignore(x => x.AncestorId);
 
         CreateMap<AncestorQueryModel, AncestorQueryModelDto>()
             .ToValue<AncestorQueryModel, AncestorQueryModelDto, Guid, UserBasicDto, UserValueConverter>(

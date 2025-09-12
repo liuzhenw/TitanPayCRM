@@ -1,3 +1,5 @@
+import { ReferralLevelBasicDto, ReferrerSaleStatisticDto, UserBasicDto } from ".."
+
 export interface ReferralRelationDto {
   recommender: ReferralRelationUserDto
   recommendee: ReferralRelationUserDto
@@ -15,3 +17,39 @@ export interface ReferralRelationQueryInput extends Api.Query.PagedRequestBase {
   recommendeeId?: string
   minDepth?: number
 }
+
+export interface RecommendeeDto {
+  /** @format uuid */
+  id: string
+  email: string
+  level?: ReferralLevelBasicDto
+  recommender: UserBasicDto
+  ancestor: UserBasicDto
+  /** @format uint32 */
+  depth: number
+  /** @format double */
+  totalCommission: number
+  statistics?: ReferrerSaleStatisticDto[]
+  /** @format date-time */
+  createdAt: string
+}
+
+export interface RecommendeeQueryInput extends Api.Query.PagedRequestBase {
+  /** @format uuid */
+  recommenderId?: string
+  levelId?: string
+  /** @format uint32 */
+  depth?: number
+}
+
+export interface AncestorDto {
+  user: UserBasicDto
+  depth: number
+  level?: ReferralLevelBasicDto
+  /** @format double */
+  totalCommission: number
+  statistics?: ReferrerSaleStatisticDto[]
+  /** @format date-time */
+  createdAt: string
+}
+
