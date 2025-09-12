@@ -9,6 +9,8 @@ public class RecommendeeQueryModel
 {
     public Guid Id { get; set; }
     public string Email { get; set; } = null!;
+    public uint ConsumptionCount { get; set; }
+    public decimal TotalConsumption { get; set; }
     public string? LevelId { get; set; }
     public Guid RecommenderId { get; set; }
     public string RecommenderEmail { get; set; } = null!;

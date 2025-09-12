@@ -76,6 +76,8 @@ public class ReferrerApplyInput
 public class RecommendeeDto : EntityDto<Guid>
 {
     public string Email { get; set; } = null!;
+    public uint ConsumptionCount { get; set; }
+    public decimal TotalConsumption { get; set; }
     public ReferralLevelBasicDto? Level { get; set; }
     public string RecommenderEmail { get; set; } = null!;
     public uint Depth { get; set; }

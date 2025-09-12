@@ -44,13 +44,13 @@
         </template>
       </el-table-column>
       <el-table-column
-        key="totalCommission"
-        prop="totalCommission"
-        label="累计佣金"
+        key="consumptionCount"
+        prop="consumptionCount"
+        label="消费次数"
         width="120"
         align="right"
       >
-        <template #default="{ row }"> {{ row.totalCommission }} USD </template>
+        <template #default="{ row }"> {{ row.consumptionCount }} </template>
       </el-table-column>
       <el-table-column
         key="createdAt"
@@ -84,16 +84,14 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, onMounted, watch } from 'vue'
+  import { ref, reactive, watch } from 'vue'
   import {
-    ReferrerService,
     ReferralRelationService,
     RecommendeeDto,
     RecommendeeQueryInput,
     ReferrerDto
   } from '@/api/services'
   import LevelTag from '../../levelTag.vue'
-  import { SearchFormItem } from '@/types'
 
   const props = defineProps<{
     referrer: ReferrerDto

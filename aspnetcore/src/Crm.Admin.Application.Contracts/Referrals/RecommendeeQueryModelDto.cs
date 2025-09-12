@@ -6,6 +6,8 @@ namespace Crm.Admin.Referrals;
 public class RecommendeeQueryModelDto : EntityDto<Guid>
 {
     public string Email { get; set; } = null!;
+    public uint ConsumptionCount { get; set; }
+    public decimal TotalConsumption { get; set; }
     public ReferralLevelBasicDto? Level { get; set; }
     public UserBasicDto Recommender { get; set; } = null!;
     public UserBasicDto Ancestor { get; set; } = null!;

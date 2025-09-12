@@ -22,6 +22,8 @@ export interface RecommendeeDto {
   /** @format uuid */
   id: string
   email: string
+  totalConsumption: number
+  consumptionCount: number
   level?: ReferralLevelBasicDto
   recommender: UserBasicDto
   ancestor: UserBasicDto

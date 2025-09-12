@@ -50,7 +50,7 @@ GET {{baseUrl}}/api/referral/referrer
 Authorization: Bearer {{accessToken}}
 
 ### Recommendees
-GET {{baseUrl}}/api/referral/recommendees?sorting=totalCommission desc
+GET {{baseUrl}}/api/referral/recommendees?sorting=consumptionCount desc
 Authorization: Bearer {{accessToken}}
 
 ### Applying

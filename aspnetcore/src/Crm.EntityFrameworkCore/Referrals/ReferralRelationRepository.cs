@@ -66,6 +66,8 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
             {
                 Id = rr.Recommendee.Id,
                 Email = rr.Recommendee.Email,
+                ConsumptionCount = ur.ConsumptionCount,
+                TotalConsumption = ur.TotalConsumption,
                 AncestorId = rr.Ancestor.Id,
                 AncestorEmail = rr.Ancestor.Email,
                 RecommenderId = rr.Recommender.Id,
