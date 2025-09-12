@@ -72,7 +72,7 @@ public class AppDataSeeder(IServiceProvider services, IAbpHostEnvironment enviro
         var productRepo = scope.ServiceProvider.GetRequiredService<IProductRepository>();
         if (await productRepo.GetCountAsync() < 1)
         {
-            var card = new Product(CrmConsts.ProductUCard, "TitanPay U 卡", 100);
+            var card = new Product(CrmConsts.ProductUCard, "TitanPay U 卡", 200);
             await productRepo.InsertAsync(card, true);
         }
         
@@ -89,9 +89,9 @@ public class AppDataSeeder(IServiceProvider services, IAbpHostEnvironment enviro
         if (await levelRepo.GetCountAsync() < 1)
         {
             var referralManager = scope.ServiceProvider.GetRequiredService<ReferralManager>();
-            var team = await referralManager.CreateReferralLevelAsync("agent", "代理", 1, 0.1m);
-            var group = await referralManager.CreateReferralLevelAsync("group", "团队长", 2, 0.05m);
-            var shareholder = await referralManager.CreateReferralLevelAsync("shareholder", "股东", 3, 0.25m);
+            var team = await referralManager.CreateReferralLevelAsync("agent", "代理", 1, 0.05m);
+            var group = await referralManager.CreateReferralLevelAsync("group", "团队长", 2, 0.025m);
+            var shareholder = await referralManager.CreateReferralLevelAsync("shareholder", "股东", 3, 0.125m);
             await levelRepo.InsertManyAsync([team, group, shareholder]);
         }
         

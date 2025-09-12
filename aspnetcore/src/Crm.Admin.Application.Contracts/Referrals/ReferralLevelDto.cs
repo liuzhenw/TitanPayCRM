@@ -41,7 +41,7 @@ public class ReferralLevelCreateInputValidator : AbstractValidator<ReferralLevel
         RuleFor(x => x.Id).NotEmpty().MaximumLength(32);
         RuleFor(x => x.Name).NotEmpty().MaximumLength(32);
         RuleFor(x => x.Description).MaximumLength(255);
-        RuleFor(x => x.Multiplier).GreaterThan(0);
+        RuleFor(x => x.Multiplier).GreaterThanOrEqualTo(0);
     }
 }
 
@@ -51,6 +51,6 @@ public class ReferralLevelUpdateInputValidator : AbstractValidator<ReferralLevel
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(32);
         RuleFor(x => x.Description).MaximumLength(255);
-        RuleFor(x => x.Multiplier).GreaterThan(0);
+        RuleFor(x => x.Multiplier).GreaterThanOrEqualTo(0);
     }
 }

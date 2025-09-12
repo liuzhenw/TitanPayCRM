@@ -21,7 +21,7 @@
             align="right"
             sortable="custom"
           >
-            <template #default="{ row }"> {{ (row.multiplier || 1) * 100 }}% </template>
+            <template #default="{ row }"> {{ (row.multiplier) * 100 }}% </template>
           </el-table-column>
           <el-table-column
             key="userCount"

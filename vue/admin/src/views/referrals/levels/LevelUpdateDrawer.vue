@@ -1,6 +1,17 @@
 <template>
   <el-drawer v-model="visible" :title="title" :before-close="handleClose" destroy-on-close>
     <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" label-position="left">
+      <el-form-item label="等级标识" prop="id">
+        <el-input
+          required
+          v-model="levelId"
+          placeholder="请输入等级标识"
+          maxlength="32"
+          show-word-limit
+          :disabled="props.level != null"
+        />
+      </el-form-item>
+
       <el-form-item label="等级名称" prop="name">
         <el-input v-model="form.name" placeholder="请输入等级名称" maxlength="32" show-word-limit />
       </el-form-item>
@@ -8,7 +19,7 @@
       <el-form-item label="等级大小" prop="size">
         <el-input-number
           v-model="form.size"
-          :min="1"
+          :min="0"
           :max="999999"
           placeholder="请输入等级大小"
           style="width: 100%"
@@ -80,6 +91,7 @@
 
   const title = computed(() => (props.level ? '编辑推荐等级' : '创建推荐等级'))
 
+  const levelId = ref('')
   const form = reactive<ReferralLevelUpdateInput>({
     name: '',
     size: 1,
@@ -88,6 +100,10 @@
   })
 
   const rules: FormRules = {
+    // id: [
+    //   { required: true, message: '请输入等级标识', trigger: 'blur' },
+    //   { min: 1, max: 32, message: '等级名称长度在 1 到 32 个字符', trigger: 'blur' }
+    // ],
     name: [
       { required: true, message: '请输入等级名称', trigger: 'blur' },
       { min: 1, max: 32, message: '等级名称长度在 1 到 32 个字符', trigger: 'blur' }
@@ -116,12 +132,13 @@
     if (props.level) {
       form.name = props.level.name
       form.size = props.level.size
-      form.multiplier = props.level.multiplier || 1
-      form.description = props.level.description || ''
+      form.multiplier = props.level.multiplier
+      form.description = props.level.description
     } else {
+      levelId.value = ''
       form.name = ''
       form.size = 1
-      form.multiplier = 1
+      form.multiplier = 0
       form.description = ''
     }
   }
@@ -149,7 +166,7 @@
       } else {
         // Create new level
         await ReferralLevelService.create({
-          id: form.name.toLowerCase().replace(/\s+/g, '-'),
+          id: levelId.value,
           name: form.name,
           size: form.size,
           multiplier: form.multiplier,
