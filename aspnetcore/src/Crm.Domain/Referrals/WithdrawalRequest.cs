@@ -10,12 +10,15 @@ public class WithdrawalRequest : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
 {
     protected WithdrawalRequest() { }
 
-    internal WithdrawalRequest(Guid guid, Referrer referrer, decimal amount, string toAddress) : base(guid)
+    internal WithdrawalRequest(
+        Guid guid, Referrer referrer, decimal amount, string toAddress, decimal fee) : base(guid)
     {
-        if (amount <= 0 || toAddress.IsNullOrWhiteSpace()) throw new UserFriendlyException("参数异常!");
+        if (fee < 0 || amount <= fee || toAddress.IsNullOrWhiteSpace())
+            throw new UserFriendlyException("参数异常!");
 
         ReferrerId = referrer.Id;
         Amount = amount;
+        Fee = fee;
         ToAddress = toAddress;
         Status = WithdrawalRequestStatus.Pending;
         CreatedAt = DateTimeOffset.Now;
@@ -25,6 +28,7 @@ public class WithdrawalRequest : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
     public Guid ReferrerId { get; private set; }
     public WithdrawalRequestStatus Status { get; private set; }
     public decimal Amount { get; private set; }
+    public decimal Fee { get; private set; }
     public string ToAddress { get; private set; } = null!;
     public string? Txid { get; private set; }
     public string? RejectReason { get; private set; }

@@ -6,4 +6,6 @@ public static class CrmSettings
 
     public const string UCardTotalSaleVolume = GroupName + ".UCardTotalSaleVolume";
     public const string UCardDayIncrement = GroupName + ".UCardDayIncrement";
+    
+    public const string WithdrawalFee = GroupName + ".WithdrawalFee";
 }

@@ -6,18 +6,8 @@
           <el-icon><User /></el-icon>
         </div>
         <div class="item-content">
-          <div class="item-label">申请人</div>
+          <div class="item-label">申请用户</div>
           <div class="item-value">{{ withdrawalRequest.referrer.email }}</div>
-        </div>
-      </div>
-
-      <div class="info-item">
-        <div class="item-icon">
-          <el-icon><Money /></el-icon>
-        </div>
-        <div class="item-content">
-          <div class="item-label">提现金额</div>
-          <div class="item-value amount">{{ withdrawalRequest.amount }} USDT</div>
         </div>
       </div>
 
@@ -26,7 +16,7 @@
           <el-icon><Wallet /></el-icon>
         </div>
         <div class="item-content">
-          <div class="item-label">提现地址</div>
+          <div class="item-label">提款地址</div>
           <div class="item-value">
             <el-space>
               <EllipticalLabel :value="withdrawalRequest.toAddress" :copy="false" />
@@ -44,6 +34,39 @@
         <div class="item-content">
           <div class="item-label">申请时间</div>
           <div class="item-value"><Datetime :value="withdrawalRequest.createdAt" /></div>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <div class="item-icon">
+          <el-icon><Money /></el-icon>
+        </div>
+        <div class="item-content">
+          <div class="item-label">提款金额</div>
+          <div class="item-value amount">{{ withdrawalRequest.amount }} USDT</div>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <div class="item-icon">
+          <el-icon><Money /></el-icon>
+        </div>
+        <div class="item-content">
+          <div class="item-label">提款费用</div>
+          <div class="item-value amount">{{ withdrawalRequest.fee }} USDT</div>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <div class="item-icon">
+          <el-icon><Money /></el-icon>
+        </div>
+        <div class="item-content">
+          <div class="item-label">应付数额</div>
+          <div class="item-value amount"
+            :class="{ highlight: withdrawalRequest.status === 'pending' }"
+            >{{ withdrawalRequest.amount - withdrawalRequest.fee }} USDT</div
+          >
         </div>
       </div>
 
@@ -149,6 +172,18 @@
               font-weight: 600;
               font-size: 16px;
             }
+
+            &.highlight {
+              color: #f56c6c;
+              font-weight: 700;
+              font-size: 18px;
+              text-shadow: 0 0 10px rgba(245, 108, 108, 0.3);
+              background: linear-gradient(135deg, #ff6b6b, #f56c6c);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+              animation: pulse 2s ease-in-out infinite;
+            }
           }
         }
 
@@ -186,6 +221,19 @@
     @media (max-width: 768px) {
       .info-grid {
         grid-template-columns: 1fr;
+      }
+    }
+
+    // 脉冲动画
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
       }
     }
   }

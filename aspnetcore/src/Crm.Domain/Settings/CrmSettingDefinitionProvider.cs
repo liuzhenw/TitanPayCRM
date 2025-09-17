@@ -19,6 +19,13 @@ public class CrmSettingDefinitionProvider : SettingDefinitionProvider
                 F("开卡每日增量"),
                 F("用于增加累计开卡数量"))
             .WithProperty("Type", "number"));
+        
+        context.Add((new SettingDefinition(
+            CrmSettings.WithdrawalFee,
+            "0.05",
+            F("提款手续费"),
+            F("用户申请提款时扣除的手续费")))
+            .WithProperty("Type", "number"));
     }
 
     private static FixedLocalizableString F(string name) => new(name);

@@ -3,6 +3,7 @@ using System;
 using Crm.DbMigrations.App;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Volo.Abp.EntityFrameworkCore;
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Crm.DbMigrations.App.Migrations
 {
     [DbContext(typeof(AppDbMigrationContext))]
-    partial class AppDbMigrationContextModelSnapshot : ModelSnapshot
+    [Migration("20250917080135_Modify_WithdrawalRequest_AddField_Fee")]
+    partial class Modify_WithdrawalRequest_AddField_Fee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

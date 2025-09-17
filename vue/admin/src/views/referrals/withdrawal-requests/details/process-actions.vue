@@ -10,22 +10,23 @@
         <p>请仔细核对申请信息后，选择批准或拒绝此申请。</p>
         <div class="quick-info">
           <div class="info-item">
-            <span class="label">申请人：</span>
+            <span class="label">申请用户：</span>
             <span class="value">{{ withdrawalRequest.referrer.email }}</span>
           </div>
           <div class="info-item">
-            <span class="label">申请金额：</span>
-            <span class="value amount">{{ withdrawalRequest.amount }} USDT</span>
+            <span class="label">账户余额</span>
+            <span class="value amount">{{ referrer?.commission }} USDT</span>
           </div>
           <div class="info-item">
-            <span class="label">提现地址：</span>
-            <span class="value"><EllipticalLabel :value="withdrawalRequest.toAddress" /></span>
+            <span class="label">累计提款</span>
+            <span class="value amount">{{ referrer?.withdrawal }} USDT</span>
           </div>
-          <div class="info-item">
-            <span class="label">申请时间：</span>
-            <span class="value"><Datetime :value="withdrawalRequest.createdAt" /></span>
+           <div class="info-item">
+            <span class="label">累计佣金</span>
+            <span class="value amount">{{ referrer?.totalCommission }} USDT</span>
           </div>
         </div>
+        
       </div>
     </div>
 
@@ -74,12 +75,21 @@
 </template>
 
 <script setup lang="ts">
-  import { WithdrawalRequestDto } from '@/api/services'
+  import { ReferrerService, ReferrerWithDetailsDto, WithdrawalRequestDto } from '@/api/services'
   import { Clock, CircleCheck, CircleClose } from '@element-plus/icons-vue'
 
-  defineProps<{
+  const prop = defineProps<{
     withdrawalRequest: WithdrawalRequestDto
   }>()
+
+  const referrer = ref<ReferrerWithDetailsDto>()
+  const fetchReferrer = async () => {
+    referrer.value = await ReferrerService.get(prop.withdrawalRequest.referrer.id)
+  }
+
+  watchEffect(() => {
+    fetchReferrer()
+  })
 </script>
 
 <style scoped lang="scss">

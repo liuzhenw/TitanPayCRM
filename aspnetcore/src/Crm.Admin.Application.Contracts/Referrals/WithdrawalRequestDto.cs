@@ -10,6 +10,7 @@ public class WithdrawalRequestDto : EntityDto<Guid>
     public UserBasicDto Referrer { get; set; } = null!;
     public WithdrawalRequestStatus Status { get; set; }
     public decimal Amount { get; set; }
+    public decimal Fee { get; set; }
     public string ToAddress { get; set; } = null!;
     public string? Txid { get; set; }
     public string? RejectReason { get; set; }

@@ -7,6 +7,7 @@ public class WithdrawalRequestDto : EntityDto<Guid>
 {
     public string Status { get; set; } = null!;
     public decimal Amount { get; set; }
+    public decimal Fee { get; set; }
     public string ToAddress { get; set; } = null!;
     public string? Txid { get; set; }
     public string? RejectReason { get; set; }

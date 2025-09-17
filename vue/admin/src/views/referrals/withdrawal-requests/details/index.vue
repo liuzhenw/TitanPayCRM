@@ -2,7 +2,7 @@
   <div id="container">
     <el-page-header @back="goBack">
       <template #content>
-        <span class="text-large font-600 mr-3"> 提现申请详情 </span>
+        <span class="text-large font-600 mr-3"> 提款申请详情 </span>
       </template>
     </el-page-header>
 
@@ -54,7 +54,7 @@
     <!-- Approve Dialog -->
     <el-dialog
       v-model="approveDialog.visible"
-      title="批准提现申请"
+      title="批准提款申请"
       width="500px"
       :close-on-click-modal="false"
     >
@@ -64,13 +64,21 @@
         :rules="approveDialog.rules"
         label-width="100px"
       >
-        <el-form-item label="申请人">
+        <el-form-item label="申请用户">
           <span>{{ approveDialog.form.referrerEmail }}</span>
         </el-form-item>
-        <el-form-item label="提现金额">
+        <el-form-item label="提款金额">
           <span>{{ approveDialog.form.amount }} USDT</span>
         </el-form-item>
-        <el-form-item label="提现地址">
+        <el-form-item label="提款费用">
+          <span>{{ approveDialog.form.fee }} USDT</span>
+        </el-form-item>
+        <el-form-item label="应付金额">
+          <span :class="{ 'highlight-amount': withdrawalRequest?.status === 'pending' }">
+            {{ approveDialog.form.amount - approveDialog.form.fee }} USDT
+          </span>
+        </el-form-item>
+        <el-form-item label="提款地址">
           <el-space>
             <span>{{ approveDialog.form.toAddress }}</span>
             <QrcodeIcon :value="approveDialog.form.toAddress" />
@@ -98,7 +106,7 @@
     <!-- Reject Dialog -->
     <el-dialog
       v-model="rejectDialog.visible"
-      title="拒绝提现申请"
+      title="拒绝提款申请"
       width="500px"
       :close-on-click-modal="false"
     >
@@ -111,10 +119,18 @@
         <el-form-item label="申请人">
           <span>{{ rejectDialog.form.referrerEmail }}</span>
         </el-form-item>
-        <el-form-item label="提现金额">
+        <el-form-item label="提款金额">
           <span>{{ rejectDialog.form.amount }} USDT</span>
         </el-form-item>
-        <el-form-item label="提现地址">
+        <el-form-item label="提款费用">
+          <span>{{ rejectDialog.form.fee }} USDT</span>
+        </el-form-item>
+        <el-form-item label="应付金额">
+          <span :class="{ 'highlight-amount': withdrawalRequest?.status === 'pending' }">
+            {{ rejectDialog.form.amount - rejectDialog.form.fee }} USDT
+          </span>
+        </el-form-item>
+        <el-form-item label="提款地址">
           <span>{{ rejectDialog.form.toAddress }}</span>
         </el-form-item>
         <el-form-item label="拒绝原因" prop="reason">
@@ -146,7 +162,6 @@
   import BasicInfo from './basic-info.vue'
   import ProcessActions from './process-actions.vue'
   import { Check, Close, Document, Setting } from '@element-plus/icons-vue'
-  import statusTag from '../statusTag.vue'
   import StatusTag from '../statusTag.vue'
 
   const router = useRouter()
@@ -167,6 +182,7 @@
       id: '',
       referrerEmail: '',
       amount: 0,
+      fee: 0,
       toAddress: '',
       txid: ''
     },
@@ -187,6 +203,7 @@
       id: '',
       referrerEmail: '',
       amount: 0,
+      fee: 0,
       toAddress: '',
       reason: ''
     },
@@ -204,6 +221,7 @@
     approveDialog.form.id = withdrawalRequest.value.id
     approveDialog.form.referrerEmail = withdrawalRequest.value.referrer.email
     approveDialog.form.amount = withdrawalRequest.value.amount
+    approveDialog.form.fee = withdrawalRequest.value.fee
     approveDialog.form.toAddress = withdrawalRequest.value.toAddress
     approveDialog.form.txid = ''
     approveDialog.visible = true
@@ -215,6 +233,7 @@
     rejectDialog.form.id = withdrawalRequest.value.id
     rejectDialog.form.referrerEmail = withdrawalRequest.value.referrer.email
     rejectDialog.form.amount = withdrawalRequest.value.amount
+    rejectDialog.form.fee = withdrawalRequest.value.fee
     rejectDialog.form.toAddress = withdrawalRequest.value.toAddress
     rejectDialog.form.reason = ''
     rejectDialog.visible = true
@@ -231,7 +250,7 @@
         txid: approveDialog.form.txid
       })
 
-      ElMessage.success('提现申请已批准')
+      ElMessage.success('提款申请已批准')
       approveDialog.visible = false
       // 刷新数据
       await loadWithdrawalRequest()
@@ -254,7 +273,7 @@
         reason: rejectDialog.form.reason
       })
 
-      ElMessage.success('提现申请已拒绝')
+      ElMessage.success('提款申请已拒绝')
       rejectDialog.visible = false
       // 刷新数据
       await loadWithdrawalRequest()
@@ -277,7 +296,7 @@
     try {
       withdrawalRequest.value = await WithdrawalRequestService.get(withdrawalRequestId)
     } catch (error) {
-      ElMessage.error('获取提现申请详情失败')
+      ElMessage.error('获取提款申请详情失败')
       router.back()
     }
   }
@@ -351,6 +370,32 @@
         width: 100%;
         justify-content: flex-end;
       }
+    }
+  }
+
+  // 高亮金额样式
+  .highlight-amount {
+    color: #f56c6c;
+    font-weight: 700;
+    font-size: 16px;
+    text-shadow: 0 0 8px rgba(245, 108, 108, 0.3);
+    background: linear-gradient(135deg, #ff6b6b, #f56c6c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  // 脉冲动画
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
     }
   }
 </style>

@@ -9,6 +9,7 @@ export interface WithdrawalRequestDto {
   status: WithdrawalRequestStatus
   /** @format double */
   amount: number
+  fee: number
   toAddress: string
   txid?: string
   rejectReason?: string

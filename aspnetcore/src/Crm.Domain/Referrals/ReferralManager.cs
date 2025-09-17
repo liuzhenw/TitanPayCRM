@@ -4,12 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Crm.Accounts;
 using Crm.Products;
+using Crm.Settings;
 using Volo.Abp;
 using Volo.Abp.Domain.Services;
+using Volo.Abp.Settings;
 
 namespace Crm.Referrals;
 
 public class ReferralManager(
+    ISettingProvider settingProvider,
     IUserRepository userRepo,
     IReferrerRepository referrerRepo,
     IReferralRelationRepository relationRepo,
@@ -243,7 +246,8 @@ public class ReferralManager(
         if (referrer.Commission < amount)
             throw new BusinessException(CrmErrorCodes.Referrals.CommissionInsufficient);
 
-        var request = new WithdrawalRequest(GuidGenerator.Create(), referrer, amount, referrer.WithdrawalAddress);
+        var fee = await settingProvider.GetAsync(CrmSettings.WithdrawalFee, 0m);
+        var request = new WithdrawalRequest(GuidGenerator.Create(), referrer, amount, referrer.WithdrawalAddress, fee);
         await withdrawalRepo.InsertAsync(request);
 
         referrer.OnWithdrawal(request);
