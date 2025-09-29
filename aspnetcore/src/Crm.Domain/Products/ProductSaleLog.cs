@@ -12,15 +12,15 @@ public class ProductSaleLog : BasicAggregateRoot<Guid>
     protected ProductSaleLog() { }
 
     internal ProductSaleLog(
-        Guid id, Product product, User customer, string orderNo, uint quantity, JsonObject data,
-        DateTimeOffset createdAt) : base(id)
+        Guid id, Product product, User customer, string orderNo, decimal price, uint quantity, 
+        JsonObject data, DateTimeOffset createdAt) : base(id)
     {
         ProductId = product.Id;
         CustomerId = customer.Id;
         CustomerEmail = customer.Email;
         OrderNo = orderNo;
         Quantity = quantity;
-        Amount = product.Price * quantity;
+        Amount = price * quantity;
         Data = data;
         CreatedAt = createdAt;
     }

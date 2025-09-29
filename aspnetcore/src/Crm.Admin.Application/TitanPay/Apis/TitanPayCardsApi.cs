@@ -24,5 +24,6 @@ public record TitanPayCard
     public required string CardType { get; init; }
     [JsonPropertyName("cardNo")]
     public required string CardNo { get; init; }
+    public required decimal? OpenCardFee { get; init; }
     public required DateTimeOffset CreateTime { get; init; }
 }

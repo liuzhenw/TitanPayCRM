@@ -103,7 +103,7 @@ public class TitanPaySyncWorker : AsyncPeriodicBackgroundWorkerBase
 
         var product = await productRepo.FindAsync(CrmConsts.ProductUCard, cancellationToken: ct);
         if (product is null) return;
-        
+
         var lastSaleLog = await saleLogRepo.FindLastAsync(product.Id);
         var client = _services.GetRequiredService<TitanPayApiClient>();
         var pageNum = 1u;
@@ -147,10 +147,12 @@ public class TitanPaySyncWorker : AsyncPeriodicBackgroundWorkerBase
             {
                 { "Id", titanPayCard.Id },
                 { "CardType", titanPayCard.CardType },
-                { "CardNo", titanPayCard.CardNo }
+                { "CardNo", titanPayCard.CardNo },
+                { "OpenCardFee", titanPayCard.OpenCardFee }
             };
+            var price = titanPayCard.OpenCardFee ?? product.Price;
             await productManager.SoldAsync(
-                product, user!, titanPayCard.Id.ToString(), 1, data, titanPayCard.CreateTime);
+                product, user!, titanPayCard.Id.ToString(), price, 1, data, titanPayCard.CreateTime);
             count++;
         }
 
