@@ -17,7 +17,11 @@ public class CrmAdminApplicationModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
+        var configuration = context.Services.GetConfiguration();
+       
         Configure<AbpAutoMapperOptions>(options => { options.AddMaps<CrmAdminApplicationModule>(validate: true); });
+        Configure<TitanPayApiOptions>(configuration.GetSection(TitanPayApiOptions.SectionName));
+        
         context.Services.AddAutoMapperObjectMapper<CrmAdminApplicationModule>();
         context.Services.AddHttpClient<TitanPayApiClient>().AddStandardResilienceHandler();
     }

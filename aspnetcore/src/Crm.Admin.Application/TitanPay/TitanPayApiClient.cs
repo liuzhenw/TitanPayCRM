@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Web;
+using Microsoft.Extensions.Options;
 
 namespace Crm.Admin.TitanPay;
 
@@ -14,11 +15,11 @@ public class TitanPayApiClient
 
     private readonly HttpClient _httpClient;
 
-    public TitanPayApiClient(HttpClient httpClient)
+    public TitanPayApiClient(HttpClient httpClient, IOptions<TitanPayApiOptions> options)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = new Uri("https://titanpay.vip/v1/open/");
-        _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("SHOP-ID", "1");
+        _httpClient.BaseAddress = new Uri(options.Value.BaseUrl);
+        _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("SHOP-ID", options.Value.ShopId);
     }
 
     public async Task<T> SendAsync<T>(HttpRequestMessage request)
