@@ -24,4 +24,8 @@ public class ReferrerController(IReferrerService referrerService) : CrmAdminCont
     [HttpPut("{id:guid}")]
     public Task<ReferrerWithDetails> UpdateAsync(Guid id, [FromBody] ReferrerUpdateInput input) =>
         referrerService.UpdateAsync(id, input);
+
+    [HttpPut("{id:guid}/commission")]
+    public Task<ReferrerWithDetails> ChangeCommissionAsync(Guid id, [FromBody] ReferrerChangeCommissionInput input) =>
+        referrerService.ChangeCommissionAsync(id, input);
 }

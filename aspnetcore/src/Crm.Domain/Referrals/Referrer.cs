@@ -86,6 +86,15 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
         UpdatedAt = DateTimeOffset.Now;
     }
 
+    public void ChangeCommission(decimal commission)
+    {
+        Commission += commission;
+        TotalCommission += commission;
+        if (Commission < 0) Commission = 0;
+        if (TotalCommission < 0) TotalCommission = 0;
+        UpdatedAt = DateTimeOffset.Now;
+    }
+
     internal void OnDirectReferralAdded()
     {
         DirectCount++;
@@ -105,7 +114,7 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
     internal void OnCommissionAdded(ProductSaleLog log, decimal commission)
     {
         if (commission <= 0) return;
-        
+
         TotalCommission += commission;
         Commission += commission;
         var statistic = Statistics.FirstOrDefault(x => x.ProductId == log.ProductId);

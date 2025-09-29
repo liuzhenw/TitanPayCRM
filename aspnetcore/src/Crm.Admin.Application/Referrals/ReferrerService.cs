@@ -11,7 +11,6 @@ namespace Crm.Admin.Referrals;
 public class ReferrerService(
     ReferralManager referralManager,
     IReferrerRepository referrerRepo,
-    IReferralRelationRepository relationRepo,
     IUserRepository userRepo) : CrmAdminAppService, IReferrerService
 {
     public async Task<ReferrerWithDetails> GetAsync(Guid id)
@@ -48,6 +47,15 @@ public class ReferrerService(
             await referralManager.ModifyReferrerLevelAsync(referrer, input.LevelId);
         referrer.IsDisabled = input.IsDisabled;
         referrer.Remark = input.Remark;
+        await referrerRepo.UpdateAsync(referrer);
+        return ObjectMapper.Map<Referrer, ReferrerWithDetails>(referrer);
+    }
+    
+    [Authorize(CrmPermissions.Referrers.ChangeCommission)]
+    public async Task<ReferrerWithDetails> ChangeCommissionAsync(Guid id, ReferrerChangeCommissionInput input)
+    {
+        var referrer = await referrerRepo.GetAsync(id);
+        referrer.ChangeCommission(input.Commission);
         await referrerRepo.UpdateAsync(referrer);
         return ObjectMapper.Map<Referrer, ReferrerWithDetails>(referrer);
     }

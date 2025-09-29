@@ -52,6 +52,11 @@ export interface ReferrerUpdateInput {
   remark?: string
 }
 
+export interface ReferrerChangeCommissionInput {
+  /** @format double */
+  commission: number
+}
+
 export interface ReferrerQueryInput extends Api.Query.PagedRequestBase {
   id?: string
   levelId?: string

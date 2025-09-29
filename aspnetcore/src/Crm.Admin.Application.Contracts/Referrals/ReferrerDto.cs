@@ -34,6 +34,11 @@ public class ReferrerUpdateInput
     public string? Remark { get; set; }
 }
 
+public class ReferrerChangeCommissionInput
+{
+    public decimal Commission { get; set; }
+}
+
 public class ReferrerCreateInput
 {
     public string Email { get; set; } = null!;

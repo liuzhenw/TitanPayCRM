@@ -4,7 +4,8 @@ import {
   ReferrerUpdateInput,
   ReferrerDto,
   ReferrerQueryInput,
-  ReferrerCreateInput
+  ReferrerCreateInput,
+  ReferrerChangeCommissionInput
 } from './types'
 
 export class ReferrerService {
@@ -33,6 +34,13 @@ export class ReferrerService {
   static update(id: string, input: ReferrerUpdateInput) {
     return request.put<ReferrerWithDetailsDto>({
       url: `${this.apiUrl}/${id}`,
+      data: input
+    })
+  }
+
+  static changeCommission(id: string, input: ReferrerChangeCommissionInput) {
+    return request.put<ReferrerWithDetailsDto>({
+      url: `${this.apiUrl}/${id}/commission`,
       data: input
     })
   }
