@@ -13,8 +13,10 @@ public class WithdrawalRequest : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
     internal WithdrawalRequest(
         Guid guid, Referrer referrer, decimal amount, string toAddress, decimal fee) : base(guid)
     {
-        if (fee < 0 || amount <= fee || toAddress.IsNullOrWhiteSpace())
-            throw new UserFriendlyException("参数异常!");
+        if (fee < 0 || amount <= fee)
+            throw new UserFriendlyException("提取金额过低!");
+        if (toAddress.IsNullOrWhiteSpace())
+            throw new UserFriendlyException("未提供收款地址!");
 
         ReferrerId = referrer.Id;
         Amount = amount;

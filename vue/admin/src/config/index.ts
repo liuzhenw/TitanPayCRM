@@ -8,10 +8,11 @@ import { configImages } from './assets/images'
 import fastEnterConfig from './fastEnter'
 import { headerBarConfig } from './headerBar'
 
+const { VITE_APP_NAME } = import.meta.env
 const appConfig: SystemConfig = {
   // 系统信息
   systemInfo: {
-    name: 'TitanPay 商务版' // 系统名称
+    name: VITE_APP_NAME // 系统名称
   },
   // Element Plus 主题
   elementPlusTheme: {

@@ -4,7 +4,7 @@
       <el-form-item label="等级标识" prop="id">
         <el-input
           required
-          v-model="levelId"
+          v-model="form.id"
           placeholder="请输入等级标识"
           maxlength="32"
           show-word-limit
@@ -22,6 +22,7 @@
           :min="0"
           :max="999999"
           placeholder="请输入等级大小"
+          controls-position="right"
           style="width: 100%"
         />
       </el-form-item>
@@ -32,8 +33,9 @@
           :min="0"
           :max="10"
           :step="0.1"
-          :precision="2"
+          :precision="4"
           placeholder="请输入佣金系数"
+          controls-position="right"
           style="width: 100%"
         >
           <template #suffix>
@@ -91,8 +93,8 @@
 
   const title = computed(() => (props.level ? '编辑推荐等级' : '创建推荐等级'))
 
-  const levelId = ref('')
-  const form = reactive<ReferralLevelUpdateInput>({
+  const form = reactive<ReferralLevelUpdateInput & { id: string }>({
+    id: '',
     name: '',
     size: 1,
     multiplier: 0,
@@ -100,10 +102,15 @@
   })
 
   const rules: FormRules = {
-    // id: [
-    //   { required: true, message: '请输入等级标识', trigger: 'blur' },
-    //   { min: 1, max: 32, message: '等级名称长度在 1 到 32 个字符', trigger: 'blur' }
-    // ],
+    id: [
+      { required: true, message: '请输入等级标识', trigger: 'blur' },
+      { min: 1, max: 32, message: '等级名称长度在 1 到 32 个字符', trigger: 'blur' },
+      {
+        pattern: /^[a-zA-Z0-9_-]+$/,
+        message: '等级标识只能包含字母、数字、下划线和短横线',
+        trigger: 'blur'
+      }
+    ],
     name: [
       { required: true, message: '请输入等级名称', trigger: 'blur' },
       { min: 1, max: 32, message: '等级名称长度在 1 到 32 个字符', trigger: 'blur' }
@@ -130,12 +137,13 @@
     }
 
     if (props.level) {
+      form.id = props.level.id
       form.name = props.level.name
       form.size = props.level.size
       form.multiplier = props.level.multiplier
       form.description = props.level.description
     } else {
-      levelId.value = ''
+      form.id = ''
       form.name = ''
       form.size = 1
       form.multiplier = 0
@@ -149,9 +157,9 @@
 
   const handleSubmit = async () => {
     if (!formRef.value) return
+    if (!(await formRef.value.validate())) return
 
     try {
-      await formRef.value.validate()
       loading.value = true
 
       if (props.level) {
@@ -166,7 +174,7 @@
       } else {
         // Create new level
         await ReferralLevelService.create({
-          id: levelId.value,
+          id: form.id,
           name: form.name,
           size: form.size,
           multiplier: form.multiplier,
