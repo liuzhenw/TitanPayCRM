@@ -29,4 +29,7 @@ public class ReferralController(IReferralService service) : CrmController
     [HttpPut("withdrawal-address")]
     public Task<ReferrerDto> UpdateWithdrawalAddressAsync(ReferrerWithdrawalAddressUpdateInput input) =>
         service.SetWithdrawalAddressAsync(input);
+    
+    [HttpGet("ancestors")]
+    public Task<List<AncestorQueryModelDto>> GetAncestorListAsync(string email) => service.GetAncestorListAsync(email);
 }

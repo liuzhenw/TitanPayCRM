@@ -4,13 +4,17 @@ using Volo.Abp.Application.Dtos;
 
 namespace Crm.Users;
 
-public class UserDto : EntityDto<Guid>
+public class UserBasicDto : EntityDto<Guid>
+{
+    public string Email { get; set; } = null!;
+    public string? AvatarUrl { get; set; }
+}
+
+public class UserDto : UserBasicDto
 {
     public decimal TotalConsumption { get; set; }
     public uint ConsumptionCount { get; set; }
-    public string Email { get; set; } = null!;
     public bool HasPassword { get; set; }
-    public string? AvatarUrl { get; set; }
 }
 
 public record UserCheckDto(string Email, bool Exist);

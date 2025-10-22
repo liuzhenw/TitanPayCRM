@@ -13,4 +13,5 @@ public interface IReferralService : IApplicationService
     Task<PagedResultDto<RecommendeeDto>> GetRecommendeePagedListAsync(RecommendeeQueryInput input);
     Task<ReferrerRequestDto> ReferrerApplyingAsync(ReferrerApplyInput input);
     Task<ReferrerRequestDto?> FindReferrerRequestAsync();
+    Task<List<AncestorQueryModelDto>> GetAncestorListAsync(string email);
 }

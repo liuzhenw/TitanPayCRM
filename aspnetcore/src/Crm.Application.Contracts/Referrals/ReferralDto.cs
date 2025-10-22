@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Crm.Products;
+using Crm.Users;
 using FluentValidation;
 using Volo.Abp.Application.Dtos;
 
@@ -90,4 +91,11 @@ public class RecommendeeQueryInput : PagedAndSortedResultRequestDto
 {
     public string? LevelId { get; set; }
     public uint? Depth { get; set; }
+}
+
+public class AncestorQueryModelDto
+{
+    public uint Depth { get; set; }
+    public UserBasicDto User { get; set; } = null!;
+    public ReferralLevelBasicDto? Level { get; set; }
 }

@@ -3,6 +3,7 @@ using Astra.AutoMapper;
 using Astra.AutoMapper.Converters;
 using AutoMapper;
 using Crm.Products;
+using Crm.Users;
 using Volo.Abp.AutoMapper;
 
 namespace Crm.Referrals;
@@ -51,6 +52,12 @@ public class ReferralMapperProfile : Profile
                 o => o.MapFrom(d => d.CompletedAt == null ? 0 : d.CompletedAt.Value.ToUnixTimeSeconds()));
         CreateMap<WithdrawalRequestQueryInput, WithdrawalRequestPagedParameter>()
             .Ignore(x => x.ReferrerId);
+
+        CreateMap<AncestorQueryModel, AncestorQueryModelDto>()
+            .ToValue<AncestorQueryModel, AncestorQueryModelDto, Guid, UserBasicDto, UserValueConverter>(
+                d => d.User, s => s.Id)
+            .ToValue<AncestorQueryModel, AncestorQueryModelDto, string, ReferralLevelBasicDto, ReferralLevelConverter>(
+                d => d.Level, s => s.LevelId);
     }
 }
 

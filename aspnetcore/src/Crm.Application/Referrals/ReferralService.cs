@@ -22,6 +22,7 @@ public class ReferralService(
         var levels = await levelRepo.GetListAsync();
         return ObjectMapper.Map<List<ReferralLevel>, List<ReferralLevelDto>>(levels);
     }
+
     public async Task<ReferrerDto> GetReferrerAsync()
     {
         var referrer = await referrerRepo.FindAsync(CurrentUserId);
@@ -53,11 +54,21 @@ public class ReferralService(
         var request = await manager.ReferrerApplyingAsync(user, input.LevelId);
         return ObjectMapper.Map<ReferrerRequest, ReferrerRequestDto>(request);
     }
-    
+
     public async Task<ReferrerRequestDto?> FindReferrerRequestAsync()
     {
         var request = await requestRepo.FindAsync(CurrentUserId);
         if (request == null) return null;
         return ObjectMapper.Map<ReferrerRequest, ReferrerRequestDto>(request);
+    }
+
+    [AllowAnonymous]
+    public async Task<List<AncestorQueryModelDto>> GetAncestorListAsync(string email)
+    {
+        var user = await userRepo.FindByEmailAsync(email);
+        if (user is null) return [];
+
+        var ancestors = await relationRepo.GetAncestorListAsync(user.Id);
+        return ObjectMapper.Map<List<AncestorQueryModel>, List<AncestorQueryModelDto>>(ancestors);
     }
 }

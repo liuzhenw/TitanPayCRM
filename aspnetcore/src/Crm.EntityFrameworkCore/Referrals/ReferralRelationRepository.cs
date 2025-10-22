@@ -105,6 +105,7 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
             join er in dbContext.Referrers on rr.Ancestor.Id equals er.Id into g
             from er in g.DefaultIfEmpty()
             where rr.Recommendee.Id == recommendeeId
+            orderby rr.Depth
             select new AncestorQueryModel
             {
                 Id = er.Id,
