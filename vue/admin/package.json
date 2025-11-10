@@ -6,6 +6,7 @@
     "dev": "vite --open",
     "build": "vue-tsc --noEmit && vite build",
     "build:fnspay": "vite build --mode fnspay",
+    "build:fdogpay": "vite build --mode fdogpay",
     "serve": "vite preview",
     "lint": "eslint",
     "fix": "eslint --fix",

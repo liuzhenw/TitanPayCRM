@@ -25,6 +25,7 @@ public class TitanPaySyncWorker : AsyncPeriodicBackgroundWorkerBase
         _services = workerContext.ServiceProvider;
         await SyncTitanPayUsersAsync(workerContext.CancellationToken);
         await SyncTitanPayCardsAsync(workerContext.CancellationToken);
+        await SyncTitanNftOrdersAsync(workerContext.CancellationToken);
     }
 
     private async Task SyncTitanPayUsersAsync(CancellationToken ct)
@@ -157,5 +158,71 @@ public class TitanPaySyncWorker : AsyncPeriodicBackgroundWorkerBase
         }
 
         Logger.LogDebug("同步 TitanPay U 卡数据完成, 新增 {Count} 张 U 卡!", count);
+    }
+
+    private async Task SyncTitanNftOrdersAsync(CancellationToken ct)
+    {
+        Logger.LogDebug("开始同步 TitanPay NFT 数据...");
+        var userRepo = _services.GetRequiredService<IUserRepository>();
+        var productRepo = _services.GetRequiredService<IProductRepository>();
+        var saleLogRepo = _services.GetRequiredService<IProductSaleLogRepository>();
+        var productManager = _services.GetRequiredService<ProductManager>();
+
+        var product = await productRepo.FindAsync(CrmConsts.ProductNftGenesis, cancellationToken: ct);
+        if (product is null) return;
+
+        var lastSaleLog = await saleLogRepo.FindLastAsync(product.Id);
+        var client = _services.GetRequiredService<TitanPayApiClient>();
+        var pageNum = 1u;
+        var pageSize = 100u;
+        List<TitanNftOrder> addOrders = [];
+        while (true)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            var input = new TitanPayApiPagedParams
+            {
+                IsAsc = "desc",
+                OrderByColumn = "id",
+                PageNum = pageNum,
+                PageSize = pageSize
+            };
+            Logger.LogDebug("正在获取第 {PageNum} 页 NFT 订单...", pageNum);
+            var orders = await client.GetNftOrdersAsync(input);
+            if (orders.Count < 1) break;
+
+            if (lastSaleLog is not null && lastSaleLog.CreatedAt > orders.Last().CreateTime)
+            {
+                addOrders.AddRange(orders
+                    .Where(x => x.CreateTime >= lastSaleLog.CreatedAt)
+                    .OrderBy(x => x.CreateTime));
+                break;
+            }
+
+            addOrders.AddRange(orders);
+            pageNum++;
+        }
+
+        var count = 0;
+        foreach (var nftOrder in addOrders.OrderBy(x => x.Id))
+        {
+            if (await saleLogRepo.ExistsAsync(product.Id, nftOrder.Id.ToString()))
+                continue;
+
+            var user = await userRepo.FindByEmailAsync(nftOrder.Email);
+            var data = new JsonObject
+            {
+                { "Id", nftOrder.Id },
+                { "ProjectId", nftOrder.ProjectId },
+                { "ProjectName", nftOrder.ProjectName },
+                { "Amount", nftOrder.Amount }
+            };
+            var price = nftOrder.Amount ?? product.Price;
+            await productManager.SoldAsync(
+                product, user!, nftOrder.Id.ToString(), price, 1, data, nftOrder.CreateTime);
+            count++;
+        }
+
+        Logger.LogDebug("同步 TitanPay NFT 订单数据完成, 新增 {Count} 个 NFT 订单!", count);
     }
 }

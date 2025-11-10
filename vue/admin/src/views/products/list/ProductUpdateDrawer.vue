@@ -1,6 +1,15 @@
 <template>
   <el-drawer v-model="visible" :title="title" :before-close="handleClose" destroy-on-close>
     <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" label-position="left">
+      <el-form-item v-if="!product" label="产品ID" prop="id">
+        <el-input
+          v-model="form.id"
+          placeholder="请输入产品ID（只能包含数字、字母和下划线）"
+          maxlength="32"
+          show-word-limit
+        />
+      </el-form-item>
+
       <el-form-item label="产品名称" prop="name">
         <el-input v-model="form.name" placeholder="请输入产品名称" maxlength="64" show-word-limit />
       </el-form-item>
@@ -11,6 +20,7 @@
           :min="0"
           :max="999999"
           :precision="2"
+          controls-position="right"
           placeholder="请输入产品价格"
           style="width: 100%"
         >
@@ -84,6 +94,15 @@
   })
 
   const rules: FormRules = {
+    id: [
+      { required: true, message: '请输入产品ID', trigger: 'blur' },
+      {
+        pattern: /^[a-zA-Z0-9_]+$/,
+        message: '产品ID只能包含数字、字母和下划线',
+        trigger: 'blur'
+      },
+      { min: 1, max: 32, message: '产品ID长度在 1 到 32 个字符', trigger: 'blur' }
+    ],
     name: [
       { required: true, message: '请输入产品名称', trigger: 'blur' },
       { min: 1, max: 64, message: '产品名称长度在 1 到 64 个字符', trigger: 'blur' }
@@ -130,14 +149,6 @@
     visible.value = false
   }
 
-  const generateId = (name: string) => {
-    return name
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '')
-      .replace(/\s+/g, '-')
-      .substring(0, 32)
-  }
-
   const handleSubmit = async () => {
     if (!formRef.value) return
 
@@ -159,7 +170,7 @@
       } else {
         // Create new product
         const createData: ProductCreateInput = {
-          id: generateId(form.name),
+          id: form.id,
           name: form.name,
           price: form.price,
           imageUri: form.imageUri || undefined,
