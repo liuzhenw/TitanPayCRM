@@ -19,9 +19,14 @@
           @pagination:size-change="onPaginationSizeChange"
           @sort-change="onSortChange"
         >
-          <el-table-column key="product" prop="product.name" label="产品名称" show-overflow-tooltip>
+          <el-table-column key="product" prop="product.name" label="产品名称" show-overflow-tooltip width="140">
             <template #default="{ row }">
               {{ row.product.name }}
+            </template>
+          </el-table-column>
+          <el-table-column key="level" prop="level.name" label="推荐等级" sortable="custom" width="120">
+            <template #default="{ row }">
+              <LevelTag :value="row.level" />
             </template>
           </el-table-column>
           <el-table-column
@@ -42,11 +47,6 @@
           >
             <template #default="{ row }">
               {{ row.customer.email }}
-            </template>
-          </el-table-column>
-          <el-table-column key="level" prop="level.name" label="推荐等级" sortable="custom">
-            <template #default="{ row }">
-              <LevelTag :value="row.level" />
             </template>
           </el-table-column>
           <el-table-column

@@ -1,7 +1,7 @@
 <template>
   <div class="recommendees">
     <div v-if="tableData.length === 0 && !dataLoading" class="empty-state">
-      <el-empty description="暂无推荐用户" />
+      <el-empty />
     </div>
     <ArtTable
       v-else

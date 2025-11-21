@@ -29,31 +29,33 @@
         </div>
       </template>
 
-      <div v-if="ancestors.length > 0" class="ancestors-list">
-        <div v-for="(ancestor, index) in ancestors" :key="ancestor.user.id" class="ancestor-item">
-          <div class="ancestor-level">
-            <el-tag :type="getLevelTagType(index)" size="small"> L{{ ancestor.depth }} </el-tag>
-          </div>
-          <div class="ancestor-info">
-            <div class="ancestor-name">{{ ancestor.user.email }}</div>
-            <div class="ancestor-details">
-              <span class="level-badge">
+      <div v-if="ancestors.length > 0">
+        <el-timeline>
+          <el-timeline-item
+            v-for="(ancestor, index) in ancestors"
+            :key="ancestor.user.id"
+            :timestamp="`第${ancestor.depth}层推荐人`"
+            placement="top"
+            :color="getTimelineColor(index)"
+          >
+            <div class="timeline-content">
+              <div class="ancestor-info">
                 <LevelTag v-if="ancestor.level" :value="ancestor.level" />
-                <el-tag v-else type="info"> 普通用户 </el-tag>
-              </span>
+                <el-tag v-else type="info" size="small">普通用户</el-tag>
+                <span class="ancestor-email">{{ ancestor.user.email }}</span>
+              </div>
+              <el-button
+                type="primary"
+                link
+                size="small"
+                icon="View"
+                @click="viewReferrerDetails(ancestor.user.id)"
+              >
+                查看详情
+              </el-button>
             </div>
-          </div>
-          <div class="ancestor-actions">
-            <el-button
-              type="primary"
-              link
-              size="small"
-              @click="viewReferrerDetails(ancestor.user.id)"
-            >
-              查看详情
-            </el-button>
-          </div>
-        </div>
+          </el-timeline-item>
+        </el-timeline>
       </div>
 
       <div v-else class="empty-state">
@@ -87,14 +89,16 @@
   const ancestors = ref<AncestorDto[]>([])
   const loading = ref(false)
 
-  const getLevelTagType = (depth: number): 'success' | 'warning' | 'danger' | 'primary' => {
-    const types: ('success' | 'warning' | 'danger' | 'primary')[] = [
-      'success',
-      'warning',
-      'danger',
-      'primary'
+  
+  const getTimelineColor = (index: number): string => {
+    const colors = [
+      '#409EFF', // primary - L1
+      '#67C23A', // success - L2
+      '#E6A23C', // warning - L3
+      '#F56C6C', // danger - L4
+      '#909399' // info - L5+
     ]
-    return types[depth - 1] || 'primary'
+    return colors[index] || colors[4]
   }
 
   const fetchData = async () => {
@@ -118,11 +122,12 @@
   const actionLoading = ref(false)
   const onRemoveAncestors = async () => {
     const confirm = await ElMessageBox.confirm(
-      `确定要移除该用户的所有上级推荐关系吗?`,
+      `确定要移除该用户的所有上级以及下级用户的所有共同上级推荐关系吗?`,
       '确认移除',
       {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        confirmButtonClass: 'el-button--danger',
         type: 'warning'
       }
     )
@@ -164,64 +169,51 @@
       align-items: center;
     }
 
-    .ancestors-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .ancestor-item {
+    // 时间线内容样式
+    .timeline-content {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 16px;
-      border: 1px solid #e4e7ed;
-      border-radius: 8px;
-      background: #fafafa;
-      transition: all 0.3s ease;
-
-      &:hover {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        background: #fff;
-      }
-    }
-
-    .ancestor-level {
-      flex-shrink: 0;
-    }
-
-    .ancestor-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .ancestor-name {
-      font-weight: 600;
-      font-size: 14px;
-      color: #303133;
-      margin-bottom: 4px;
-    }
-
-    .ancestor-details {
-      display: flex;
-      align-items: center;
+      justify-content: space-between;
       gap: 12px;
-      flex-wrap: wrap;
-      font-size: 12px;
-      color: #909399;
 
-      .level-badge {
-        flex-shrink: 0;
+      .ancestor-info {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
       }
 
-      .commission-info {
-        color: #67c23a;
-        font-weight: 500;
+      .ancestor-email {
+        font-weight: 600;
+        font-size: 14px;
+        color: #303133;
       }
     }
 
-    .ancestor-actions {
-      flex-shrink: 0;
+    // 自定义时间线样式 - 紧凑布局
+    :deep(.el-timeline) {
+      .el-timeline-item {
+        padding-bottom: 12px;
+
+        &:last-child {
+          padding-bottom: 0;
+        }
+      }
+
+      .el-timeline-item__tail {
+        left: 7px;
+      }
+
+      .el-timeline-item__node {
+        left: 2px;
+      }
+
+      .el-timeline-item__timestamp {
+        color: #606266;
+        font-weight: 500;
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
     }
 
     .empty-state {
@@ -232,20 +224,14 @@
 
   @media (max-width: 768px) {
     .superior-relations {
-      .ancestor-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
-
-      .ancestor-details {
+      .timeline-content {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
-      }
 
-      .ancestor-actions {
-        align-self: flex-end;
+        .el-button {
+          align-self: flex-end;
+        }
       }
     }
   }

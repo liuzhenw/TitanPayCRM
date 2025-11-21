@@ -1,10 +1,10 @@
 <template>
   <el-card shadow="never">
-    <el-tabs>
-      <el-tab-pane label="下级用户">
+    <el-tabs v-model="tab">
+      <el-tab-pane label="下级用户" name="descendants" lazy>
         <Descendants :user-id="userIdValue" />
       </el-tab-pane>
-      <el-tab-pane label="上级用户" lazy>
+      <el-tab-pane label="上级用户" name="ancestors" lazy>
         <Ancestors :user-id="userIdValue" />
       </el-tab-pane>
     </el-tabs>
@@ -22,6 +22,7 @@
   watchEffect(() => {
     userIdValue.value = userId
   })
+  const tab = ref('descendants')
 </script>
 
 <style scoped lang="scss"></style>
