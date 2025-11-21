@@ -1,6 +1,10 @@
 <template>
   <div class="recommendees">
+    <div v-if="tableData.length === 0 && !dataLoading" class="empty-state">
+      <el-empty description="暂无推荐用户" />
+    </div>
     <ArtTable
+      v-else
       row-key="id"
       :data="tableData"
       :loading="dataLoading"
@@ -67,34 +71,21 @@
       <el-table-column key="actions" width="80" align="right">
         <template #default="{ row }">
           <el-space>
-            <ArtButtonTable
-              type="view"
-              :disabled="row.level == null"
-              @click="toReferrerDetails(row.id)"
-            />
+            <ArtButtonTable type="view" @click="toUserDetails(row.id)" />
           </el-space>
         </template>
       </el-table-column>
     </ArtTable>
-
-    <div v-if="tableData.length === 0 && !dataLoading" class="empty-state">
-      <el-empty description="暂无推荐用户" />
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, reactive, watch } from 'vue'
-  import {
-    ReferralRelationService,
-    RecommendeeDto,
-    RecommendeeQueryInput,
-    ReferrerDto
-  } from '@/api/services'
+  import { ReferralRelationService, RecommendeeDto, RecommendeeQueryInput } from '@/api/services'
   import LevelTag from '../../levelTag.vue'
 
-  const props = defineProps<{
-    referrer: ReferrerDto
+  const { userId } = defineProps<{
+    userId: string
   }>()
 
   const router = useRouter()
@@ -112,7 +103,7 @@
   const fetchData = async (input: RecommendeeQueryInput) => {
     dataLoading.value = true
     try {
-      const res = await ReferralRelationService.getRecommendees(props.referrer.id, input)
+      const res = await ReferralRelationService.getRecommendees(userId, input)
       pagination.total = res.totalCount
       tableData.value = res.items
     } finally {
@@ -154,19 +145,17 @@
     fetchData(filter)
   }
 
-  const toReferrerDetails = (id: string) => {
-    router.push(`/referrals/referrers/${id}`)
+  const toUserDetails = (id: string) => {
+    router.push(`/users/${id}/details`)
   }
 
-  watch(
-    () => props.referrer.id,
-    (newId) => {
-      if (newId) {
-        refreshData()
-      }
-    },
-    { immediate: true }
-  )
+  watchEffect(() => {
+    if (userId) {
+      refreshData()
+    } else {
+      tableData.value = []
+    }
+  })
 </script>
 
 <style scoped lang="scss"></style>

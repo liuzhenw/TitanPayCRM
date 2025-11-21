@@ -6,7 +6,7 @@
   import { computed } from 'vue'
   import { ReferralLevelBasicDto } from '@/api/services'
 
-  const { value } = defineProps<{ value: ReferralLevelBasicDto }>()
+  const { value } = defineProps<{ value: ReferralLevelBasicDto | null }>()
   const tagType = computed(() => {
     switch (value?.size) {
       case 1:
@@ -15,6 +15,8 @@
         return 'success'
       case 3:
         return 'warning'
+      case 4:
+        return 'danger'
       default:
         return 'info'
     }

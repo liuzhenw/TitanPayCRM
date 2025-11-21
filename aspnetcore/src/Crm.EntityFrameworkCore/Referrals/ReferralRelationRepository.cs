@@ -15,7 +15,7 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
     AstraPagedEfCoreRepository<CrmDbContext, ReferralRelation, Guid, ReferralRelationPagedParameter>(dbContextProvider),
     IReferralRelationRepository
 {
-    public async Task<List<ReferralRelation>> GetAncestorRelationListAsync(Guid recommendeeId, ushort? minDepth = null)
+    public async Task<List<ReferralRelation>> GetAncestorRelationListAsync(Guid recommendeeId, uint? minDepth = null)
     {
         var dbContext = await GetDbContextAsync();
         var query = dbContext.Set<ReferralRelation>()
@@ -27,7 +27,7 @@ public class ReferralRelationRepository(IDbContextProvider<CrmDbContext> dbConte
         return await query.OrderBy(x => x.Depth).ToListAsync();
     }
 
-    public async Task<List<ReferralRelation>> GetDescendantRelationListAsync(Guid ancestorId, ushort? minDepth = null)
+    public async Task<List<ReferralRelation>> GetDescendantRelationListAsync(Guid ancestorId, uint? minDepth = null)
     {
         var dbContext = await GetDbContextAsync();
         var query = dbContext.Set<ReferralRelation>()

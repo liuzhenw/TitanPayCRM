@@ -8,4 +8,6 @@ public interface IReferralRelationService : IApplicationService
     Task<PagedResultDto<ReferralRelationDto>> GetPagedListAsync(ReferralRelationQueryInput input);
     Task<PagedResultDto<RecommendeeQueryModelDto>> GetRecommendeePagedListAsync(Guid ancestorId, RecommendeeQueryModelQueryInput input);
     Task<List<AncestorQueryModelDto>> GetAncestorListAsync(Guid recommendeeId);
+    Task RemoveAncestorRelationsAsync(Guid recommendeeId);
+    Task CreateAsync(ReferralRelationCreateInput input);
 }

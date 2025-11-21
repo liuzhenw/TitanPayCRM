@@ -95,19 +95,44 @@ public class Referrer : BasicAggregateRoot<Guid>, IHasConcurrencyStamp
         UpdatedAt = DateTimeOffset.Now;
     }
 
-    internal void OnDirectReferralAdded()
-    {
-        DirectCount++;
-        TotalCount++;
-        UpdatedAt = DateTimeOffset.Now;
-    }
-
-    internal void OnIndirectReferralAdded(uint count = 1)
+    internal void OnDirectReferralChanged(int count)
     {
         if (count == 0) return;
 
-        IndirectCount += count;
-        TotalCount += count;
+        var countAbs = (uint)Math.Abs(count);
+        if (count < 0)
+        {
+            if (DirectCount < countAbs) DirectCount = 0;
+            else DirectCount -= countAbs;
+            if (TotalCount < countAbs) TotalCount = 0;
+            else TotalCount -= countAbs;
+        }
+        else
+        {
+            DirectCount += countAbs;
+            TotalCount += countAbs;
+        }
+        UpdatedAt = DateTimeOffset.Now;
+    }
+
+    internal void OnIndirectReferralChanged(int count)
+    {
+        if (count == 0) return;
+
+        var countAbs = (uint)Math.Abs(count);
+        if (count < 0)
+        {
+            if (IndirectCount < countAbs) IndirectCount = 0;
+            else IndirectCount -= countAbs;
+            if (TotalCount < countAbs) TotalCount = 0;
+            else TotalCount -= countAbs;
+        }
+        else
+        {
+            IndirectCount += countAbs;
+            TotalCount += countAbs;
+        }
+
         UpdatedAt = DateTimeOffset.Now;
     }
 

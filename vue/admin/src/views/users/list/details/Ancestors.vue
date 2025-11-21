@@ -3,7 +3,29 @@
     <el-card shadow="never" v-loading="loading">
       <template #header>
         <div class="card-header">
-          <span>上级推荐关系</span>
+          <span>上级关系</span>
+          <el-button
+            v-if="ancestors.length > 0"
+            link
+            size="small"
+            type="danger"
+            icon="Delete"
+            :loading="actionLoading"
+            @click="onRemoveAncestors"
+          >
+            移除上级
+          </el-button>
+          <el-button
+            v-else
+            link
+            type="primary"
+            size="small"
+            icon="Plus"
+            :loading="actionLoading"
+            @click="onCreateRelation"
+          >
+            添加直推
+          </el-button>
         </div>
       </template>
 
@@ -18,10 +40,6 @@
               <span class="level-badge">
                 <LevelTag v-if="ancestor.level" :value="ancestor.level" />
                 <el-tag v-else type="info"> 普通用户 </el-tag>
-              </span>
-
-              <span class="commission-info">
-                佣金: ${{ formatAmount(ancestor.totalCommission) }}
               </span>
             </div>
           </div>
@@ -42,45 +60,47 @@
         <el-empty description="该用户暂无上级推荐人" />
       </div>
     </el-card>
+
+    <CreateRelationDialog
+      v-model="createVisible"
+      v-model:loading="actionLoading"
+      :user="user"
+      @close="onCreateDialogClose"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
-  import { ElMessage } from 'element-plus'
-  import { ReferralRelationService, AncestorDto } from '@/api/services'
+  import { ElMessage, ElMessageBox } from 'element-plus'
+  import { ReferralRelationService, AncestorDto, UserDto } from '@/api/services'
   import LevelTag from '@/views/referrals/levelTag.vue'
-  import { Refresh } from '@element-plus/icons-vue'
+  import CreateRelationDialog from './CreateRelationDialog.vue'
 
-  interface Props {
-    userId: string
-  }
-
-  const props = defineProps<Props>()
+  const { user } = defineProps<{ user: UserDto }>()
+  const emit = defineEmits<{
+    (e: 'change'): void
+  }>()
   const router = useRouter()
 
   const ancestors = ref<AncestorDto[]>([])
   const loading = ref(false)
 
-  const formatAmount = (amount: number) => {
-    return amount.toFixed(2)
-  }
-
-  const getLevelTagType = (depth: number): 'success' | 'warning' | 'danger' | 'info' => {
-    const types: ('success' | 'warning' | 'danger' | 'info')[] = [
+  const getLevelTagType = (depth: number): 'success' | 'warning' | 'danger' | 'primary' => {
+    const types: ('success' | 'warning' | 'danger' | 'primary')[] = [
       'success',
       'warning',
       'danger',
-      'info'
+      'primary'
     ]
-    return types[depth - 1] || 'info'
+    return types[depth - 1] || 'primary'
   }
 
   const fetchData = async () => {
     loading.value = true
     try {
-      const data = await ReferralRelationService.getAncestors(props.userId)
+      const data = await ReferralRelationService.getAncestors(user.id)
       // 按 Depth 从小到大排列 (L1, L2, L3...)
       ancestors.value = data.sort((a, b) => a.depth - b.depth)
     } catch (error) {
@@ -93,6 +113,42 @@
 
   const viewReferrerDetails = (userId: string) => {
     router.push(`/referrals/referrers/${userId}`)
+  }
+
+  const actionLoading = ref(false)
+  const onRemoveAncestors = async () => {
+    const confirm = await ElMessageBox.confirm(
+      `确定要移除该用户的所有上级推荐关系吗?`,
+      '确认移除',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    )
+    if (!confirm) return
+
+    actionLoading.value = true
+    try {
+      await ReferralRelationService.removeAncestors(user.id)
+      ElMessage.success('移除成功')
+      emit('change')
+      fetchData()
+    } catch (error) {
+      console.error('移除失败:', error)
+      ElMessage.error('移除失败')
+    } finally {
+      actionLoading.value = false
+    }
+  }
+
+  const createVisible = ref(false)
+  const onCreateRelation = () => {
+    createVisible.value = true
+  }
+  const onCreateDialogClose = async () => {
+    emit('change')
+    await fetchData()
   }
 
   onMounted(() => {

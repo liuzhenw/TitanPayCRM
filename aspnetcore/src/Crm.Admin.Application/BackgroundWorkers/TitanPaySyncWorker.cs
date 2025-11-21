@@ -85,7 +85,7 @@ public class TitanPaySyncWorker : AsyncPeriodicBackgroundWorkerBase
                 if (await relationRepo.ExistsAsync(recommendee.Id))
                     continue;
 
-                await referralManager.AddRelationAsync(recommender, recommendee);
+                await referralManager.CreateRelationAsync(recommender, recommendee);
             }
 
             count++;

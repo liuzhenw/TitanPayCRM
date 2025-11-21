@@ -14,11 +14,28 @@ public class ReferralRelationController(IReferralRelationService service) : CrmA
         return service.GetPagedListAsync(input);
     }
 
+    [HttpPost]
+    public Task CreateAsync(ReferralRelationCreateInput input)
+    {
+        return service.CreateAsync(input);
+    }
+
     [HttpGet("{ancestorId:guid}/recommendees")]
-    public Task<PagedResultDto<RecommendeeQueryModelDto>> GetRecommendeePagedListAsync(Guid ancestorId,
-        [FromQuery] RecommendeeQueryModelQueryInput input) => service.GetRecommendeePagedListAsync(ancestorId, input);
+    public Task<PagedResultDto<RecommendeeQueryModelDto>> GetRecommendeePagedListAsync(
+        Guid ancestorId, [FromQuery] RecommendeeQueryModelQueryInput input)
+    {
+        return service.GetRecommendeePagedListAsync(ancestorId, input);
+    }
 
     [HttpGet("{recommendeeId:guid}/ancestors")]
-    public Task<List<AncestorQueryModelDto>> GetAncestorListAsync(Guid recommendeeId) =>
-        service.GetAncestorListAsync(recommendeeId);
+    public Task<List<AncestorQueryModelDto>> GetAncestorListAsync(Guid recommendeeId)
+    {
+        return  service.GetAncestorListAsync(recommendeeId);
+    }
+    
+    [HttpDelete("{recommendeeId:guid}/ancestors")]
+    public Task RemoveAncestorRelationsAsync(Guid recommendeeId)
+    {
+        return service.RemoveAncestorRelationsAsync(recommendeeId);
+    }
 }

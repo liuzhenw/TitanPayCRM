@@ -8,7 +8,7 @@
     :remote-method="onInputChange"
     @change="onSelected"
   >
-    <el-option v-for="item in users" :key="item.id" :value="item.id" :label="item.name" />
+    <el-option v-for="user in users" :key="user.id" :value="user.id" :label="user.name" />
   </el-select>
 </template>
 
@@ -16,16 +16,15 @@
   import { UserService, UserDto } from '@/api/services'
   import { SearchFormItem } from '@/types'
 
-  const value = defineModel('value')
+  const value = defineModel<string>('value')
   const { item } = defineProps({
     item: {
-      type: Object as () => SearchFormItem,
-      required: true
+      type: Object as () => SearchFormItem
     }
   })
   const config = reactive({
     placeholder: `请输入用户名`,
-    ...(item.config || {})
+    ...(item?.config || {})
   })
 
   watch(
@@ -50,14 +49,14 @@
     users.value = res.items
     value.value = users.value[0]?.id
   }
-  const onSelected = (item: string | undefined) => {
-    console.debug('onSelected', item)
-    if (!item) {
+  const onSelected = (userId: string | undefined) => {
+    console.debug('onSelected', userId)
+    if (!userId) {
       value.value = undefined
       return
     }
 
-    value.value = item
+    value.value = userId
   }
 
   onMounted(async () => {

@@ -1,7 +1,9 @@
 <template>
   <el-form label-width="auto" label-suffix=":" style="min-width: 400px">
     <el-form-item label="用户邮箱">
-      {{ referrer.user.email }}
+      <el-link type="primary" :href="`#/users/${referrer.user.id}/details`" :underline="false">
+        {{ referrer.user.email }}
+      </el-link>
     </el-form-item>
     <el-form-item label="推荐等级">
       <LevelTag :value="referrer.level" v-if="referrer.level" />

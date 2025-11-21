@@ -4,7 +4,8 @@ import {
   RecommendeeDto,
   RecommendeeQueryInput,
   ReferralRelationDto,
-  ReferralRelationQueryInput
+  ReferralRelationQueryInput,
+  ReferralRelationCreateInput
 } from './types'
 export class ReferralRelationService {
   static apiUrl = '/api/admin/referrals/relations'
@@ -13,6 +14,13 @@ export class ReferralRelationService {
     return request.get<Api.Query.PagedResult<ReferralRelationDto>>({
       url: this.apiUrl,
       params: input
+    })
+  }
+
+  static create(input: ReferralRelationCreateInput) {
+    return request.post<void>({
+      url: this.apiUrl,
+      data: input
     })
   }
 
@@ -25,6 +33,12 @@ export class ReferralRelationService {
 
   static getAncestors(id: string) {
     return request.get<AncestorDto[]>({
+      url: `${this.apiUrl}/${id}/ancestors`
+    })
+  }
+
+  static removeAncestors(id: string) {
+    return request.del<void>({
       url: `${this.apiUrl}/${id}/ancestors`
     })
   }

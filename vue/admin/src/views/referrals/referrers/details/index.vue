@@ -38,10 +38,10 @@
                       </template>
                       <el-tabs>
                         <el-tab-pane label="下级用户">
-                          <Recommendees :referrer="referrer" />
+                          <Descendants :user-id="referrer.id" />
                         </el-tab-pane>
                         <el-tab-pane label="上级用户" lazy>
-                          <Ancestors :referrer="referrer" />
+                          <Ancestors :user-id="referrer.id" />
                         </el-tab-pane>
                       </el-tabs>
                     </el-card>
@@ -73,7 +73,7 @@
   import { ReferrerService, ReferrerWithDetailsDto } from '@/api/services'
   import Basic from './basic.vue'
   import Statistics from './statistics.vue'
-  import Recommendees from './recommendees.vue'
+  import Descendants from './descendants.vue'
   import Ancestors from './ancestors.vue'
   import CommissionLogs from './commission-logs.vue'
   import WithdrawalRequests from './withdrawal-requests.vue'

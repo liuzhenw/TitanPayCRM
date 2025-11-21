@@ -15,7 +15,7 @@
           {{ value.consumptionCount }}
         </el-form-item>
         <el-form-item label="消费金额">
-          {{ value.totalConsumption }}
+          ${{ value.totalConsumption }}
         </el-form-item>
         <el-form-item label="锁定时间" v-if="value.lockedAt">
           <Datetime :value="value.lockedAt" />

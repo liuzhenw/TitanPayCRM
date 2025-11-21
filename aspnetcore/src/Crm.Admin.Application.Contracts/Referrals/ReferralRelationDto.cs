@@ -9,15 +9,23 @@ public class ReferralRelationDto : EntityDto<Guid>
     public uint Depth { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
 }
+
 public class ReferralRelationUserDto
 {
     public Guid Id { get; set; }
     public string Email { get; set; } = null!;
 }
+
 public class ReferralRelationQueryInput : PagedAndSortedResultRequestDto
 {
     public Guid? AncestorId { get; set; }
     public Guid? RecommenderId { get; set; }
     public Guid? RecommendeeId { get; set; }
     public uint? MinDepth { get; set; }
+}
+
+public class ReferralRelationCreateInput
+{
+    public Guid RecommenderId { get; set; }
+    public Guid RecommendeeId { get; set; }
 }

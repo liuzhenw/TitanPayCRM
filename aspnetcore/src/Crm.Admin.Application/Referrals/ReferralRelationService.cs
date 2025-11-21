@@ -1,3 +1,4 @@
+using Crm.Accounts;
 using Crm.Admin.Permissions;
 using Crm.Referrals;
 using Microsoft.AspNetCore.Authorization;
@@ -6,8 +7,20 @@ using Volo.Abp.Application.Dtos;
 namespace Crm.Admin.Referrals;
 
 [Authorize(CrmPermissions.ReferralRelations.Default)]
-public class ReferralRelationService(IReferralRelationRepository relationRepo) : CrmAdminAppService, IReferralRelationService
+public class ReferralRelationService(
+    ReferralManager referralManager,
+    IReferralRelationRepository relationRepo,
+    IUserRepository userRepo) :
+    CrmAdminAppService, IReferralRelationService
 {
+    [Authorize(CrmPermissions.ReferralRelations.Create)]
+    public async Task CreateAsync(ReferralRelationCreateInput input)
+    {
+        var recommendee = await userRepo.GetAsync(input.RecommendeeId);
+        var recommender = await userRepo.GetAsync(input.RecommenderId);
+        await referralManager.CreateRelationAsync(recommender, recommendee);
+    }
+    
     public async Task<PagedResultDto<ReferralRelationDto>> GetPagedListAsync(ReferralRelationQueryInput input)
     {
         var parameter = new ReferralRelationPagedParameter();
@@ -34,4 +47,12 @@ public class ReferralRelationService(IReferralRelationRepository relationRepo) :
         var ancestors = await relationRepo.GetAncestorListAsync(recommendeeId);
         return ObjectMapper.Map<List<AncestorQueryModel>, List<AncestorQueryModelDto>>(ancestors);
     }
+
+    [Authorize(CrmPermissions.ReferralRelations.Delete)]
+    public async Task RemoveAncestorRelationsAsync(Guid recommendeeId)
+    {
+        var user = await userRepo.GetAsync(recommendeeId);
+        await referralManager.RemoveAncestorRelationAsync(user);
+    }
+    
 }

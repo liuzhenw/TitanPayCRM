@@ -12,6 +12,11 @@ export interface ReferralRelationUserDto {
   email: string
 }
 
+export interface ReferralRelationCreateInput {
+  recommenderId: string
+  recommendeeId: string
+}
+
 export interface ReferralRelationQueryInput extends Api.Query.PagedRequestBase {
   recommenderId?: string
   recommendeeId?: string

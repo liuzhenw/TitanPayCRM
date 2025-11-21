@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Crm.Accounts;
 using Crm.Products;
 using Crm.Settings;
+using Microsoft.Extensions.Logging;
 using Volo.Abp;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.Settings;
@@ -139,9 +140,6 @@ public class ReferralManager(
         // 取消代理等级
         if (newLevelId is null)
         {
-            // var maxLevelDescendant = await referrerRepo.FindMaxLevelDescendantAsync(referrer.Id);
-            // if (maxLevelDescendant?.LevelId is not null)
-            //     throw new UserFriendlyException("此代理拥有下级代理,无法取消代理等级!");
             referrer.SetLevel(null);
         }
         // 调整代理等级
@@ -177,13 +175,18 @@ public class ReferralManager(
     /// <param name="recommender"></param>
     /// <param name="recommendee"></param>
     /// <exception cref="UserFriendlyException"></exception>
-    public async Task AddRelationAsync(User recommender, User recommendee)
+    public async Task CreateRelationAsync(User recommender, User recommendee)
     {
         if (recommender.Id == recommendee.Id)
             throw new UserFriendlyException("推荐人不能是自己!");
 
         if (await relationRepo.ExistsAsync(recommendee.Id))
             throw new UserFriendlyException($"{recommendee.Email} 已有推荐人!");
+
+        // 被推荐人的下级
+        var descendantRelations = await relationRepo.GetDescendantRelationListAsync(recommendee.Id, 1);
+        if (descendantRelations.Any(x => x.Recommendee.Id == recommender.Id))
+            throw new UserFriendlyException("直推用户不能是自己的下级!");
 
         // 处理直推
         var referrer = await referrerRepo.FindAsync(recommender.Id);
@@ -193,20 +196,19 @@ public class ReferralManager(
             await referrerRepo.InsertAsync(referrer, true);
         }
 
-        referrer.OnDirectReferralAdded();
+        referrer.OnDirectReferralChanged(1);
 
         var recommenderRelation = new ReferralRelation(recommendee, recommender, recommender, 1);
         List<Referrer> referrers = [referrer];
-        List<ReferralRelation> recommenderRelations = [recommenderRelation];
-        var descendantRelations = await relationRepo.GetDescendantRelationListAsync(recommendee.Id, 1);
+        List<ReferralRelation> shouldAppendRelations = [recommenderRelation];
         List<User> descendantUsers = [];
         foreach (var descendantRelation in descendantRelations)
         {
             var descendantUser = await userRepo.GetAsync(descendantRelation.Recommendee.Id);
             descendantUsers.Add(descendantUser);
-            recommenderRelations.Add(new ReferralRelation(
+            shouldAppendRelations.Add(new ReferralRelation(
                 descendantUser, recommendee, recommender, descendantRelation.Depth + 1));
-            referrer.OnIndirectReferralAdded();
+            referrer.OnIndirectReferralChanged(1);
         }
 
         // 处理间推
@@ -216,13 +218,13 @@ public class ReferralManager(
             var ancestorUser = await userRepo.GetAsync(item.Ancestor.Id);
             // 将推荐人的上级关系添加到被推荐人的上级关系中
             var ancestorRelation = new ReferralRelation(recommendee, recommender, ancestorUser, item.Depth + 1u);
-            recommenderRelations.Add(ancestorRelation);
+            shouldAppendRelations.Add(ancestorRelation);
 
             // 将被推荐人的下级关系添加到推荐人的上级关系中
             foreach (var descendantRelation in descendantRelations)
             {
                 var descendantUser = descendantUsers.First(x => x.Id == descendantRelation.Recommendee.Id);
-                recommenderRelations.Add(new ReferralRelation(
+                shouldAppendRelations.Add(new ReferralRelation(
                     descendantUser,
                     recommendee,
                     ancestorUser,
@@ -230,12 +232,60 @@ public class ReferralManager(
             }
 
             var ancestor = await referrerRepo.GetAsync(item.Ancestor.Id);
-            ancestor.OnIndirectReferralAdded((uint)descendantRelations.Count + 1);
+            ancestor.OnIndirectReferralChanged(descendantRelations.Count + 1);
             referrers.Add(ancestor);
         }
 
-        await relationRepo.InsertManyAsync(recommenderRelations);
+        await relationRepo.InsertManyAsync(shouldAppendRelations);
         await referrerRepo.UpdateManyAsync(referrers);
+        foreach (var relation in shouldAppendRelations)
+            Logger.LogDebug("添加推荐关系: [{Depth}]{Ancestor} -> {Recommendee}",
+                relation.Depth, relation.Ancestor.Email, relation.Recommendee.Email);
+        Logger.LogDebug("合计添加 {Count} 条推荐关系", shouldAppendRelations.Count);
+    }
+
+    /// <summary>
+    /// 移除上级推荐关系
+    /// </summary>
+    public async Task RemoveAncestorRelationAsync(User user)
+    {
+        if (await relationRepo.ExistsAsync(user.Id) is false)
+            return;
+
+        // 获取自身所有下级关系
+        var descendantRelations = await relationRepo.GetDescendantRelationListAsync(user.Id);
+        // 获取自身的所有上级关系
+        var ancestorRelations = await relationRepo.GetAncestorRelationListAsync(user.Id);
+        // 更新上级推荐人数据
+        foreach (var ancestorRelation in ancestorRelations)
+        {
+            var ancestor = await referrerRepo.GetAsync(ancestorRelation.Ancestor.Id);
+            var indirectCount = descendantRelations.Count + 1;
+            if (ancestorRelation.Depth == 1)
+            {
+                ancestor.OnIndirectReferralChanged(-(indirectCount - 1));
+                ancestor.OnDirectReferralChanged(-1);
+            }
+            else
+            {
+                ancestor.OnIndirectReferralChanged(-indirectCount);
+            }
+        }
+
+        // 获取下级与上级的间推关系并删除
+        List<ReferralRelation> shouldDeletedRelations = [..ancestorRelations];
+        foreach (var descendantRelation in descendantRelations)
+        {
+            var relations = await relationRepo
+                .GetAncestorRelationListAsync(descendantRelation.Recommendee.Id, descendantRelation.Depth + 1);
+            shouldDeletedRelations.AddRange(relations);
+        }
+
+        await relationRepo.DeleteManyAsync(shouldDeletedRelations);
+        foreach (var relation in shouldDeletedRelations)
+            Logger.LogDebug("删除推荐关系: [{Depth}]{Ancestor} -> {Recommendee}",
+                relation.Depth, relation.Ancestor.Email, relation.Recommendee.Email);
+        Logger.LogDebug("合计删除 {Count} 条推荐关系", shouldDeletedRelations.Count);
     }
 
     public async Task<WithdrawalRequest> CreateWithdrawalRequestAsync(Referrer referrer, decimal amount)
